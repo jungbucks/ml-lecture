@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!--
+  검증 프로브 템플릿 — 사용법 (CLAUDE.md '검증 방법' 참조):
+  1. 이 파일을 dist/__probe.html 로 복사하고 TODO 채우기
+  2. ml-lecture 루트를 Node http 서버로 서빙 (scratchpad에 ~15줄 서버)
+  3. msedge --headless=new --virtual-time-budget=12000 --dump-dom http://localhost:PORT/dist/__probe.html
+  4. <pre id="out"> 결과 수확 → 끝나면 __probe.html 반드시 삭제
+  주의: 페이지의 top-level const/let(STEP7 등)은 w.이름 으로 접근 불가 — DOM에서 읽을 것.
+       top-level function(ofUpdate, gradeFinal 등)은 w.이름 으로 호출 가능.
+-->
+<iframe id="f" src="http://localhost:8155/dist/ml_dl_interactive.html" style="width:1280px;height:900px"></iframe>
+<pre id="out">RUNNING</pre>
+<script>
+document.getElementById('f').addEventListener('load', () => setTimeout(async () => {
+  const w = document.getElementById('f').contentWindow, d = w.document;
+  const R = [], t = (n, c) => R.push((c ? 'PASS' : 'FAIL') + ' ' + n);
+  const fire = (el, ty) => el.dispatchEvent(new w.Event(ty, { bubbles: true }));
+  try {
+    // TODO: 시나리오 작성. 예)
+    // t('01 cards render', d.querySelectorAll('#grid-clf .flip').length === 5);
+  } catch (e) { R.push('ERROR ' + e.message); }
+  document.getElementById('out').textContent = R.join('\n');
+}, 700));
+</script>

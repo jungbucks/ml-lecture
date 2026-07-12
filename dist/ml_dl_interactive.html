@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>머신러닝과 딥러닝 특강 — 인터랙티브 부교재</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sup:#e8863a; --sup-bg:#fdf3e7; --sup-deep:#c96a1f;
+  --unsup:#3a7de8; --unsup-bg:#e9f1fd; --unsup-deep:#2560c4;
+  --ens:#2fa05a; --ens-bg:#e8f7ee; --ens-deep:#1f7d43;
+  --dl:#8a4fd3; --dl-bg:#f3ecfc; --dl-deep:#6c35b0;
+  --ink:#2c2620; --paper:#faf7f2; --card:#ffffff;
+  --beige:#f0e3cf; --beige-deep:#d9c39a;
+  --ok:#2fa05a; --bad:#d64545;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:70px;}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:2px solid var(--beige);box-shadow:0 2px 10px rgba(0,0,0,.06);}
+nav .inner{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:10px 14px;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+nav .brand{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto;position:sticky;left:0;z-index:2;background:rgba(255,255,255,.95);padding-right:11px;margin-right:6px;border-right:1.5px solid var(--beige);}
+nav .logo{font-weight:800;font-size:.95rem;color:var(--sup-deep);}
+nav .brand-insta{font-size:.8rem;font-weight:800;color:var(--dl-deep);text-decoration:none;background:var(--dl-bg);padding:3px 9px;border-radius:20px;transition:.15s;}
+nav .brand-insta:hover{background:var(--dl);color:#fff;}
+nav a{flex:0 0 auto;font-size:.82rem;text-decoration:none;color:#6b5f50;padding:5px 11px;border-radius:20px;transition:.15s;}
+nav a:hover{background:var(--beige);color:var(--ink);}
+/* ---------- LAYOUT ---------- */
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 80px;}
+header.hero{text-align:center;padding:52px 16px 36px;background:linear-gradient(160deg,#fdf3e7,#f3ecfc);border-bottom:1px solid var(--beige);}
+header.hero h1{font-size:1.9rem;margin-bottom:10px;}
+header.hero p{color:#7a6c58;font-size:1rem;}
+header.hero .badges{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{font-size:.78rem;padding:4px 12px;border-radius:20px;font-weight:700;}
+.badge.sup{background:var(--sup-bg);color:var(--sup-deep);}
+.badge.unsup{background:var(--unsup-bg);color:var(--unsup-deep);}
+.badge.ens{background:var(--ens-bg);color:var(--ens-deep);}
+.badge.dl{background:var(--dl-bg);color:var(--dl-deep);}
+section{margin-top:56px;}
+h2.sec{font-size:1.4rem;padding:12px 18px;border-radius:12px;background:var(--beige);border-left:6px solid var(--beige-deep);margin-bottom:8px;}
+h2.sec.sup{background:var(--sup-bg);border-left-color:var(--sup);}
+h2.sec.unsup{background:var(--unsup-bg);border-left-color:var(--unsup);}
+h2.sec.ens{background:var(--ens-bg);border-left-color:var(--ens);}
+h2.sec.dl{background:var(--dl-bg);border-left-color:var(--dl);}
+.hint{font-size:.85rem;color:#8a7a63;margin:6px 2px 18px;}
+h3.sub{font-size:1.05rem;margin:26px 0 10px;color:#5b4c38;}
+/* ④ 딥러닝 입문 하위 주제 (2026-07-09 메뉴 통합) */
+.dlsub{margin-top:36px;}
+h3.subsec{font-size:1.12rem;padding:9px 14px;border-radius:10px;background:var(--dl-bg);border-left:4px solid var(--dl);color:var(--dl-deep);margin-bottom:8px;}
+/* ---------- FLIP CARDS ---------- */
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
+.flip{perspective:1000px;height:230px;cursor:pointer;}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d;}
+.flip.on .in{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.08);background:var(--card);}
+.face.back{transform:rotateY(180deg);justify-content:flex-start;padding-top:20px;overflow:auto;}
+.face .name{font-weight:800;font-size:1.05rem;margin:8px 0 4px;}
+.face .one{font-size:.85rem;color:#7a6c58;}
+.face.back .def{font-size:.87rem;text-align:left;line-height:1.55;}
+.face .tap{position:absolute;bottom:8px;right:12px;font-size:.7rem;color:#b7a88f;}
+/* 뒷면은 스크롤 컨테이너 — absolute면 긴 설명(Lasso·DBSCAN 등)과 겹치므로 흐름 배치로 글 끝에 붙인다 */
+.face.back .tap{position:static;align-self:flex-end;margin-top:10px;flex-shrink:0;}
+.flip.c-sup .face{border-top:5px solid var(--sup);}
+.flip.c-unsup .face{border-top:5px solid var(--unsup);}
+.flip.c-ens .face{border-top:5px solid var(--ens);}
+#grid-ens .flip{height:265px;}          /* XGBoost·Stacking 설명이 길어 앙상블 카드만 여유 확보 */
+#grid-ens .face.back{padding-bottom:26px;}
+.flip.c-dl .face{border-top:5px solid var(--dl);}
+/* ---------- BOXES / TABLES ---------- */
+.card{background:var(--card);border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.07);padding:20px;margin:14px 0;}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.06);}
+table.t th{background:var(--beige);padding:10px 12px;text-align:left;font-size:.86rem;}
+table.t td{padding:10px 12px;border-top:1px solid #f0e8da;vertical-align:top;}
+table.t tr:hover td{background:#fdfaf4;}
+/* ---------- CODE WALKTHROUGH ---------- */
+.codebox{background:#211d2b;border-radius:12px;overflow:hidden;margin:12px 0 4px;box-shadow:0 5px 16px rgba(0,0,0,.18);}
+.codebox .bar{background:#312b40;color:#cfc6e6;font-size:.78rem;padding:7px 14px;display:flex;justify-content:space-between;}
+.codebox .bar .dots span{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:5px;}
+.codebox pre{margin:0;padding:10px 0;overflow-x:auto;}
+.cl{display:block;padding:2px 16px;font-family:Consolas,'Courier New',monospace;font-size:.83rem;color:#e8e3f4;white-space:pre;cursor:pointer;border-left:3px solid transparent;transition:.12s;}
+.cl:hover{background:#2e2840;}
+.cl.sel{background:#3b3160;border-left-color:#b79bf0;}
+.cl.blank{cursor:default;}
+.cl.blank:hover{background:none;}
+.note-panel{background:var(--dl-bg);border:1px solid #ddc9f5;border-radius:10px;padding:12px 16px;font-size:.88rem;min-height:46px;color:#4b3a63;margin-bottom:8px;}
+.note-panel b{color:var(--dl-deep);}
+/* ---------- BUG HUNT ---------- */
+.bug-msg{margin-top:10px;font-size:.9rem;padding:10px 14px;border-radius:10px;display:none;}
+.bug-msg.show{display:block;}
+.bug-msg.ok{background:#e8f7ee;color:#1f7d43;border:1px solid #b8e4c8;}
+.bug-msg.no{background:#fdecec;color:#a33;border:1px solid #f2c6c6;}
+.fix-choices{display:none;margin-top:10px;gap:8px;flex-direction:column;}
+.fix-choices.show{display:flex;}
+.fix-choices button{text-align:left;font-family:Consolas,monospace;font-size:.8rem;padding:9px 12px;border-radius:8px;border:1.5px solid #d8cfe8;background:#fff;cursor:pointer;transition:.15s;}
+.fix-choices button:hover{border-color:var(--dl);}
+.fix-choices button.right{background:#e8f7ee;border-color:var(--ok);}
+.fix-choices button.wrong{background:#fdecec;border-color:var(--bad);}
+.shake{animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* ---------- PERCEPTRON ---------- */
+.pctl{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;}
+button.act{border:none;border-radius:24px;padding:10px 22px;font-size:.9rem;font-weight:700;cursor:pointer;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15);transition:.15s;}
+button.act:hover{transform:translateY(-2px);}
+button.act:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+button.act.fwd{background:var(--dl);}
+button.act.bwd{background:var(--bad);}
+button.act.neutral{background:#8a7a63;}
+#pstatus{font-size:.9rem;font-weight:700;color:var(--dl-deep);min-height:1.6em;}
+.psvg .node{fill:#fff;stroke:#b7a88f;stroke-width:2;}
+.psvg .node.hot{fill:#f3ecfc;stroke:var(--dl);stroke-width:3;}
+.psvg .node.err{fill:#fdecec;stroke:var(--bad);stroke-width:3;}
+.psvg .edge{stroke:#c9bda6;stroke-width:2;fill:none;}
+.psvg .edge.hot{stroke:var(--dl);stroke-width:3.5;}
+.psvg .edge.err{stroke:var(--bad);stroke-width:3.5;}
+.psvg text{font-size:13px;fill:#2c2620;font-weight:700;}
+.psvg .wlab.upd{fill:var(--bad);}
+/* ---------- ACTIVATION PLAYGROUND ---------- */
+.fn-toggles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.fn-toggles label{display:flex;align-items:center;gap:5px;font-size:.83rem;font-weight:700;padding:5px 12px;border-radius:18px;background:#fff;border:1.5px solid #e5dbc8;cursor:pointer;user-select:none;}
+#actCanvas{width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+.xslider{width:100%;margin:14px 0 6px;accent-color:var(--dl);}
+.fn-values{display:flex;gap:8px;flex-wrap:wrap;font-size:.82rem;}
+.fn-values span{padding:4px 10px;border-radius:8px;background:#fff;border:1px solid #eee;font-weight:700;}
+/* ---------- SCALER ---------- */
+.sc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.sc-btns button{padding:8px 16px;border-radius:20px;border:2px solid var(--ens);background:#fff;color:var(--ens-deep);font-weight:700;cursor:pointer;font-size:.85rem;}
+.sc-btns button.on{background:var(--ens);color:#fff;}
+#scCanvas{width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+/* ---------- PROJECT TIMELINE (PDF 스타일) ---------- */
+#projTimeline{max-width:780px;margin:0 auto;}
+.pstage>button{width:100%;text-align:left;padding:13px 18px;border:none;border-radius:12px;color:#fff;font-size:.95rem;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,.14);font-family:inherit;}
+.pstage>button .chev{transition:.25s;font-size:.8rem;}
+.pstage.open>button .chev{transform:rotate(180deg);}
+.pstage .pbody{display:none;background:#fff;border-radius:0 0 12px 12px;padding:16px 18px 14px;box-shadow:0 4px 12px rgba(0,0,0,.08);border-left:5px solid;}
+.pstage.open .pbody{display:block;}
+.pconn{width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:14px solid;margin:5px auto;}
+.pbody ul{padding-left:20px;font-size:.9rem;}
+.pbody .ex{margin-top:10px;border-radius:10px;padding:12px 14px;font-size:.88rem;}
+/* ---------- QUIZ ---------- */
+.q-item{background:#fff;border-radius:12px;padding:16px 18px;margin:12px 0;box-shadow:0 3px 10px rgba(0,0,0,.06);}
+.q-item .qt{font-weight:700;margin-bottom:10px;font-size:.93rem;}
+.q-opts{display:flex;flex-direction:column;gap:7px;}
+.q-opts label{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;padding:8px 12px;border-radius:9px;border:1.5px solid #eee5d5;cursor:pointer;transition:.12s;}
+.q-opts label:hover{border-color:var(--sup);}
+.q-opts label.right{background:#e8f7ee;border-color:var(--ok);}
+.q-opts label.wrong{background:#fdecec;border-color:var(--bad);}
+.q-exp{display:none;margin-top:10px;font-size:.85rem;background:var(--unsup-bg);border-radius:8px;padding:10px 13px;color:#2c4a76;}
+.q-exp.show{display:block;}
+.reveal-btn{margin-top:10px;padding:7px 16px;border-radius:18px;border:none;background:var(--unsup);color:#fff;font-weight:700;font-size:.82rem;cursor:pointer;}
+#quizResult{display:none;text-align:center;padding:26px;border-radius:14px;background:linear-gradient(140deg,var(--sup-bg),var(--dl-bg));margin-top:18px;}
+#quizResult .score{font-size:2.4rem;font-weight:800;color:var(--sup-deep);}
+.formula{font-size:1.35rem;text-align:center;font-family:'Times New Roman',serif;padding:18px;background:var(--unsup-bg);border-radius:12px;margin:12px 0;font-style:italic;}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;padding:2px 10px;border-radius:12px;margin-left:6px;vertical-align:middle;}
+.tag.warn{background:#fff3cd;color:#8a6d0b;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:720px){.two-col{grid-template-columns:1fr;}}
+nav a.cur{background:var(--sup);color:#fff;font-weight:700;}
+/* ---------- 학번/이름 (부교재 표지) ---------- */
+.idrow{margin-top:18px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:.9rem;font-weight:700;color:#7a6c58;}
+.idrow input{border:none;border-bottom:2px solid var(--beige-deep);background:transparent;padding:4px 8px;font-size:.95rem;width:110px;text-align:center;font-family:inherit;outline:none;}
+.idrow input:focus{border-bottom-color:var(--sup);}
+/* ---------- 스크롤 페이드인 & 호버 폴리시 ---------- */
+.card:hover{box-shadow:0 8px 22px rgba(0,0,0,.11);}
+.fade-el{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease,box-shadow .25s;}
+.fade-el.vis{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){.fade-el{opacity:1;transform:none;transition:none;}}
+/* ---------- BAYES / SOFTMAX DEMO ---------- */
+.slider-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:.87rem;flex-wrap:wrap;}
+.slider-row label{flex:0 0 200px;font-weight:700;}
+.slider-row input[type=range]{flex:1;min-width:120px;accent-color:var(--unsup);}
+.slider-row .val{flex:0 0 52px;text-align:right;font-weight:700;color:var(--unsup-deep);}
+.bayes-result{margin-top:14px;background:var(--unsup-bg);border-radius:10px;padding:14px;font-size:.9rem;}
+.prob-bar{height:26px;background:#e4ddcf;border-radius:13px;overflow:hidden;margin-top:8px;}
+.prob-bar>span{display:block;height:100%;background:var(--unsup);border-radius:13px;transition:width .25s;text-align:right;color:#fff;font-size:.8rem;font-weight:700;line-height:26px;padding-right:10px;min-width:40px;}
+/* ---------- STEP ORDER GAME ---------- */
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.pool button{padding:8px 14px;border-radius:20px;border:2px solid var(--sup);background:#fff;color:var(--sup-deep);font-size:.83rem;font-weight:700;cursor:pointer;}
+.pool button:disabled{opacity:.35;cursor:default;}
+ol.order-answer{padding-left:24px;font-size:.88rem;min-height:24px;margin:6px 0;}
+ol.order-answer li{margin:3px 0;padding:4px 10px;border-radius:8px;background:#fdfaf4;}
+ol.order-answer li.good{background:#e8f7ee;color:#1f7d43;font-weight:700;}
+ol.order-answer li.bad{background:#fdecec;color:#a33;font-weight:700;}
+/* ---------- ANN MATCHING GAME ---------- */
+.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+.chiprow button{padding:8px 16px;border-radius:20px;border:2px solid var(--dl);background:#fff;color:var(--dl-deep);font-weight:700;font-size:.85rem;cursor:pointer;transition:.12s;}
+.chiprow button.done{opacity:.3;cursor:default;}
+.chiprow button.flash{background:#fdecec;border-color:var(--bad);}
+.match-q{background:var(--dl-bg);border-radius:10px;padding:14px 16px;font-size:.92rem;min-height:60px;}
+footer{text-align:center;padding:40px 16px;color:#a89877;font-size:.82rem;border-top:1px solid var(--beige);margin-top:60px;}
+
+/* ── 과적합 양궁 시뮬레이션 ── */
+.of-a{animation:ofPop .28s ease both;}
+@keyframes ofPop{from{opacity:0;}to{opacity:1;}}
+.of-badge{display:inline-block;font-weight:800;font-size:.9rem;padding:4px 14px;border-radius:20px;margin-bottom:8px;}
+.of-ticks{display:flex;justify-content:space-between;max-width:420px;font-size:.78rem;color:#8a7a63;margin:2px 0 12px;}
+
+/* ── 페이지 접근 관문 (교사 공유용) ── */
+/* 해제 전: 관문만 보이고 본문은 감춘다 (FOUC 방지 — 관문 마크업은 HTML에 직접 있어 첫 페인트부터 뜸) */
+body.gated{overflow:hidden;}
+body.gated > *:not(#pageGate){visibility:hidden;}
+#pageGate{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px;}
+#pageGate.hidden{display:none;}
+.gate-card{background:var(--card);border-radius:16px;box-shadow:0 12px 44px rgba(0,0,0,.16);border-top:6px solid var(--dl);max-width:440px;width:100%;padding:34px 26px;text-align:center;animation:gateIn .35s ease;}
+@keyframes gateIn{from{opacity:0;transform:translateY(12px) scale(.98);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion:reduce){.gate-card{animation:none;}}
+.vault-input{font-family:inherit;font-size:.95rem;padding:10px 14px;border:2px solid var(--beige-deep);border-radius:10px;width:220px;max-width:80vw;}
+.vault-input:focus{outline:none;border-color:var(--dl);}
+.vault-msg{margin-top:12px;font-size:.9rem;font-weight:700;min-height:22px;}
+.vault-msg.err{color:var(--bad);}
+.vault-msg.ok{color:var(--ens-deep);}
+.gate-credit{margin-top:18px;padding-top:14px;border-top:1px solid var(--beige);font-size:.82rem;color:#8a7a63;line-height:1.9;}
+.gate-credit a{display:inline-block;margin:0 5px;color:var(--dl-deep);font-weight:800;text-decoration:none;}
+.gate-credit a:hover{text-decoration:underline;}
+.foot-credit{display:inline-block;margin-top:8px;font-size:.82rem;}
+.foot-credit a{color:var(--dl-deep);font-weight:700;text-decoration:none;}
+.foot-credit a:hover{text-decoration:underline;}
+</style>
+</head>
+<body class="gated">
+
+<!-- ══ 페이지 접근 관문 (교사 공유용 비밀번호) — 해제 전 전체 화면을 덮음 ══ -->
+<div id="pageGate" role="dialog" aria-modal="true" aria-label="비밀번호 입력">
+  <div class="gate-card">
+    <div style="font-size:3rem;line-height:1">🔒</div>
+    <h1 style="font-size:1.5rem;font-weight:800;margin:8px 0 4px">머신러닝·딥러닝 특강 자료</h1>
+    <p style="color:#7a6c58;font-size:.95rem;margin-bottom:4px">이 자료는 비밀번호를 아는 <b style="color:var(--dl-deep)">능력자</b>만 볼 수 있습니다.</p>
+    <p class="hint" style="margin-bottom:18px">🔑 이 자료를 공유받을 때 <b>선생님께 안내받은 비밀번호</b>를 입력하세요.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <input type="password" id="gatePw" class="vault-input" placeholder="비밀번호 입력"
+             autocomplete="off" autofocus onkeydown="if(event.key==='Enter')gateTry()">
+      <button class="act fwd" onclick="gateTry()">🔓 입장</button>
+    </div>
+    <div id="gateMsg" class="vault-msg"></div>
+    <div class="gate-credit">
+      made by <b>jungbucks</b><br>
+      <a href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer">📸 Insta @jungbucks</a>
+      <a href="https://blog.naver.com/kachu_t" target="_blank" rel="noopener noreferrer">📝 Blog</a>
+    </div>
+  </div>
+</div>
+
+<nav><div class="inner">
+  <span class="brand">
+    <span class="logo">🤖 ML/DL 특강</span>
+    <a class="brand-insta" href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer" title="제작자 인스타그램">📸 @jungbucks</a>
+  </span>
+  <a href="#steps7">문제 푸는 순서</a>
+  <a href="#algos">알고리즘 도감</a>
+  <a href="#scaling">데이터 다듬기</a>
+  <a href="#dlintro">딥러닝 입문</a>
+  <a href="#hyper">하이퍼파라미터</a>
+  <a href="#code">코드 읽기</a>
+  <a href="#bughunt">버그 찾기</a>
+  <a href="#codequiz">코드 퀴즈</a>
+  <a href="#project">AI 프로젝트</a>
+  <a href="#finalquiz">실력 점검</a>
+  <a href="#vault">보너스 자료</a>
+</div></nav>
+
+<header class="hero">
+  <h1>머신러닝과 딥러닝 특강 <span style="color:var(--dl-deep)">인터랙티브 부교재</span></h1>
+  <p>카드를 뒤집고, 코드를 클릭하고, 버그를 찾으며 시험을 준비해 봅시다!</p>
+  <div class="badges">
+    <span class="badge sup">지도학습</span>
+    <span class="badge unsup">비지도학습</span>
+    <span class="badge ens">앙상블학습</span>
+    <span class="badge dl">딥러닝</span>
+  </div>
+  <div class="idrow">
+    <label>학번 <input type="text" id="stuId" maxlength="12" placeholder="10101"></label>
+    <label>이름 <input type="text" id="stuName" maxlength="10" placeholder="홍길동"></label>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section id="steps7">
+  <h2 class="sec sup">① AI가 문제 푸는 순서 — 문제 해결 7단계</h2>
+  <div class="card">
+    <ol style="padding-left:24px;font-size:.92rem;display:flex;flex-direction:column;gap:8px">
+      <li>데이터 수집 및 불러오기</li>
+      <li>데이터 전처리 및 탐색적 데이터 분석</li>
+      <li>데이터를 훈련 데이터와 테스트 데이터로 분할 (train_test_split)</li>
+      <li>데이터 스케일링을 통해 Train 데이터의 값의 범위를 조정 (Scaler 활용)</li>
+      <li>다양한 머신러닝 알고리즘 및 인공신경망을 적용해 훈련 데이터로 모델 학습</li>
+      <li>테스트 데이터로 학습한 모델의 성능을 평가하고 개선</li>
+      <li>가장 성능이 좋은 모델을 실제 환경에 적용</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🧩 순서 맞추기 게임</h3>
+    <p class="hint" style="margin-bottom:8px">섞여 있는 단계들을 1단계부터 순서대로 클릭하세요. 7개를 모두 고르면 자동으로 채점됩니다.</p>
+    <div class="pool" id="stepPool"></div>
+    <b style="font-size:.88rem">내가 만든 순서</b>
+    <ol class="order-answer" id="stepAnswer"></ol>
+    <div class="bug-msg" id="stepMsg"></div>
+    <button class="act neutral" style="margin-top:10px" onclick="initStepGame()">🔀 다시 섞기</button>
+  </div>
+</section>
+
+<section id="algos">
+  <h2 class="sec sup">② 머신러닝 알고리즘 도감</h2>
+  <p class="hint">💡 카드를 클릭하면 뒤집혀서 정확한 정의가 나옵니다. 앞면의 직관 → 뒷면의 정의 순서로 암기하세요.</p>
+
+  <h3 class="sub">🟠 지도학습 — 예측 (회귀)</h3>
+  <p class="hint" style="margin-bottom:10px">숫자(연속값)를 맞히는 회귀. 직선(선형)부터 곡선(다항), 과적합을 막는 규제 모델까지 <b>같은 회귀 가족</b>이에요.</p>
+  <div class="cardgrid" id="grid-pred"></div>
+
+  <h3 class="sub">🟠 지도학습 — 분류</h3>
+  <div class="cardgrid" id="grid-clf"></div>
+
+  <h3 class="sub">🟠 체험존 ① — kNN: k 값에 따라 답이 바뀐다!</h3>
+  <div class="card">
+    <div class="two-col">
+      <div style="text-align:center">
+        <svg id="knnSvg" viewBox="0 0 240 200" style="width:100%;max-width:300px">
+          <circle id="knnC5" cx="120" cy="100" r="92" fill="none" stroke="#8a7a63" stroke-width="2.5" stroke-dasharray="7,5" opacity=".22"/>
+          <circle id="knnC3" cx="120" cy="100" r="55" fill="none" stroke="#c96a1f" stroke-width="2.5" stroke-dasharray="7,5" opacity="1"/>
+          <path d="M87 78 L95 63 L103 78 Z" fill="#d64545"/>
+          <path d="M142 88 L150 73 L158 88 Z" fill="#d64545"/>
+          <rect x="132" y="127" width="15" height="15" fill="#3a7de8"/>
+          <rect x="48" y="40" width="15" height="15" fill="#3a7de8"/>
+          <rect x="172" y="132" width="15" height="15" fill="#3a7de8"/>
+          <circle id="knnDot" cx="120" cy="100" r="10" fill="#d64545"/>
+          <text x="120" y="105" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">?</text>
+          <text x="166" y="52" font-size="12" fill="#c96a1f" font-weight="700">k=3</text>
+          <text x="194" y="24" font-size="12" fill="#8a7a63" font-weight="700">k=5</text>
+        </svg>
+      </div>
+      <div>
+        <p style="font-size:.9rem;margin-bottom:10px">가운데 점(<b>?</b>)은 아직 종류를 모르는 새 데이터예요. 가장 가까운 이웃 <b>k</b>개에게 물어봅시다. k 값을 바꿔 보세요!</p>
+        <div class="pctl">
+          <button class="act fwd" id="knnK3" onclick="setKnn(3)">k = 3</button>
+          <button class="act neutral" id="knnK5" onclick="setKnn(5)">k = 5</button>
+        </div>
+        <div id="knnMsg" style="margin-top:6px;font-size:.9rem;padding:10px 14px;border-radius:10px;background:var(--sup-bg)"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">🟠 체험존 ② — 의사 결정 트리: 스무고개로 동물 찾기</h3>
+  <div class="card">
+    <p class="hint" style="margin:0 0 10px">간단한 예시 트리예요. 질문에 답하며 가지를 따라 내려가 보세요. (매·펭귄·돌고래·곰 중 하나!)</p>
+    <div class="match-q" id="dtQ" style="background:var(--sup-bg)"></div>
+    <div class="pctl" id="dtBtns" style="margin-top:10px"></div>
+    <div id="dtPath" style="font-size:.85rem;color:#8a7a63;margin-top:6px"></div>
+  </div>
+
+  <h3 class="sub">🟠 체험존 ③ — 나이브 베이즈: 스팸 메일 필터 🎯</h3>
+  <p class="hint" style="margin:0 0 10px">나이브 베이즈(위 분류 카드)는 <b>조건부 확률</b>로 판단해요. 아래에서 스팸 필터가 확률을 어떻게 계산하는지 직접 만져 보세요.</p>
+  <div id="bayes">
+  <div class="card">
+    <svg viewBox="0 0 560 200" style="width:100%;max-width:600px;display:block;margin:8px auto" font-family="'Times New Roman',serif">
+      <text x="88" y="105" text-anchor="middle" font-size="30" font-style="italic">P(B|A)</text>
+      <text x="163" y="105" text-anchor="middle" font-size="28">=</text>
+      <text x="330" y="80" text-anchor="middle" font-size="30" font-style="italic">P(A|B) · P(B)</text>
+      <line x1="215" y1="97" x2="445" y2="97" stroke="#2c2620" stroke-width="2"/>
+      <text x="330" y="140" text-anchor="middle" font-size="30" font-style="italic">P(A)</text>
+      <g font-family="'Noto Sans KR',sans-serif" font-size="13" font-weight="700">
+        <text x="268" y="26" text-anchor="middle" fill="#2560c4">조건부 확률 P(A|B)</text>
+        <line x1="268" y1="34" x2="272" y2="56" stroke="#2560c4" stroke-width="1.5"/>
+        <text x="428" y="26" text-anchor="middle" fill="#1f7d43">사전 확률 (Prior)</text>
+        <line x1="415" y1="34" x2="405" y2="56" stroke="#1f7d43" stroke-width="1.5"/>
+        <text x="88" y="178" text-anchor="middle" fill="#c96a1f">사후 확률 (Posterior)</text>
+        <line x1="88" y1="163" x2="88" y2="120" stroke="#c96a1f" stroke-width="1.5"/>
+        <text x="330" y="188" text-anchor="middle" fill="#8a4fd3">증거 (Evidence)</text>
+        <line x1="330" y1="173" x2="330" y2="152" stroke="#8a4fd3" stroke-width="1.5"/>
+      </g>
+    </svg>
+    <table class="t">
+      <tr><th>기호</th><th>이름</th></tr>
+      <tr><td>P(A|B)</td><td>조건부 확률</td></tr>
+      <tr><td>P(B)</td><td>사전 확률(Prior)</td></tr>
+      <tr><td>P(B|A)</td><td>사후 확률(Posterior)</td></tr>
+      <tr><td>P(A)</td><td>증거(Evidence)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🎮 직접 계산해 보기 — 스팸 메일 필터</h3>
+    <p style="font-size:.88rem;margin-bottom:10px">"무료"라는 단어가 들어 있는 메일이 도착했어요. 슬라이더로 확률을 바꿔 보며, 이 메일이 스팸일 <b>사후 확률 P(스팸|무료)</b>가 어떻게 변하는지 관찰하세요.</p>
+    <div class="slider-row"><label>사전 확률(Prior) P(스팸)</label><input type="range" id="bPrior" min="0.05" max="0.95" step="0.05" value="0.30"><span class="val" id="bPriorV"></span></div>
+    <div class="slider-row"><label>조건부 확률 P(무료|스팸)</label><input type="range" id="bLike" min="0.05" max="0.95" step="0.05" value="0.80"><span class="val" id="bLikeV"></span></div>
+    <div class="slider-row"><label>P(무료|정상)</label><input type="range" id="bLikeN" min="0.05" max="0.95" step="0.05" value="0.10"><span class="val" id="bLikeNV"></span></div>
+    <div class="bayes-result">
+      <div id="bayesCalc"></div>
+      <div class="prob-bar"><span id="bayesBar"></span></div>
+      <p style="font-size:.8rem;color:#5b6f92;margin-top:8px">※ 증거(Evidence) P(무료) = P(무료|스팸)·P(스팸) + P(무료|정상)·P(정상) 으로 계산됩니다.</p>
+    </div>
+  </div>
+  </div>
+
+  <h3 class="sub">🟢 앙상블 학습</h3>
+  <p class="hint" style="margin-bottom:10px">여러 모델을 합쳐 더 강한 모델을 만드는 기법. <b>합치는 방식</b>에 따라 배깅·부스팅·스태킹 세 갈래로 나뉩니다 — 카드 아래 구분표로 정리!</p>
+  <div class="cardgrid" id="grid-ens"></div>
+
+  <table class="t" style="margin-top:14px">
+    <tr><th style="width:150px">계열</th><th>합치는 방식</th><th style="width:170px">대표 알고리즘</th><th style="width:170px">실생활 비유</th></tr>
+    <tr>
+      <td><b>배깅</b> (Bagging)<br><span style="font-size:.8rem;color:#8a7a63">병렬 · 동시에</span></td>
+      <td><b>같은 종류</b>의 모델 여러 개를 서로 다른 데이터 조각으로 <b>동시에</b> 학습시키고, 결과를 다수결·평균으로 합침</td>
+      <td>랜덤 포레스트</td>
+      <td>반 전체가 각자 풀고 투표 🗳️</td>
+    </tr>
+    <tr>
+      <td><b>부스팅</b> (Boosting)<br><span style="font-size:.8rem;color:#8a7a63">직렬 · 차례로</span></td>
+      <td>앞 모델이 <b>틀린 문제</b>를 다음 모델이 이어받아 집중 보완하며 <b>차례로</b> 학습</td>
+      <td>Adaboost, <b>XGBoost</b></td>
+      <td>오답 노트로 복습하는 전교 1등 📓</td>
+    </tr>
+    <tr>
+      <td><b>스태킹</b> (Stacking)<br><span style="font-size:.8rem;color:#8a7a63">2단계 · 종합</span></td>
+      <td><b>서로 다른</b> 모델들의 예측값을 모아, 2단계 최종 모델이 그 예측 패턴을 <b>다시 학습</b>해 결론</td>
+      <td><b>Stacking</b></td>
+      <td>우등생 의견을 종합하는 담임 🎓</td>
+    </tr>
+  </table>
+  <p class="hint" style="margin-top:8px">💡 구분 문제 힌트: "동시에 여러 개" = 배깅, "실수를 이어받아 차례로" = 부스팅, "예측값을 다시 학습" = 스태킹!</p>
+
+  <h3 class="sub">🔵 비지도 학습</h3>
+  <p class="hint" style="margin-bottom:10px">정답(레이블) 없이 데이터 스스로 구조를 찾는 학습. <b>군집화</b>(K-Means·DBSCAN)와 <b>차원 축소</b>(PCA)로 나뉘어요.</p>
+  <div class="cardgrid" id="grid-unsup"></div>
+
+  <div class="card" style="margin-top:14px">
+    <div style="font-weight:800;font-size:.95rem;margin-bottom:12px">🍩 같은 '도넛 모양' 데이터, 누가 잘 나눌까? — K-Means vs DBSCAN</div>
+    <div class="two-col">
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.9rem;color:var(--bad);margin-bottom:4px">❌ K-Means (거리 기반)</div>
+        <svg viewBox="0 0 160 150" style="width:100%;max-width:260px">
+          <line x1="80" y1="14" x2="80" y2="136" stroke="#d64545" stroke-width="1.6" stroke-dasharray="5,4"/>
+          <g fill="#3a7de8"><circle cx="46" cy="104" r="4.5"/><circle cx="32" cy="70" r="4.5"/><circle cx="46" cy="36" r="4.5"/><circle cx="72" cy="66" r="4.5"/><circle cx="72" cy="80" r="4.5"/></g>
+          <g fill="#2fa05a"><circle cx="128" cy="70" r="4.5"/><circle cx="114" cy="104" r="4.5"/><circle cx="114" cy="36" r="4.5"/><circle cx="88" cy="66" r="4.5"/><circle cx="88" cy="80" r="4.5"/><circle cx="80" cy="22" r="4.5"/><circle cx="80" cy="118" r="4.5"/></g>
+          <text x="80" y="148" text-anchor="middle" font-size="10" fill="#8a7a63" font-weight="700">직선으로 뚝 잘라 실패</text>
+        </svg>
+      </div>
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.9rem;color:var(--ens-deep);margin-bottom:4px">✅ DBSCAN (밀도 기반)</div>
+        <svg viewBox="0 0 160 150" style="width:100%;max-width:260px">
+          <g fill="#3a7de8"><circle cx="80" cy="22" r="4.5"/><circle cx="114" cy="36" r="4.5"/><circle cx="128" cy="70" r="4.5"/><circle cx="114" cy="104" r="4.5"/><circle cx="80" cy="118" r="4.5"/><circle cx="46" cy="104" r="4.5"/><circle cx="32" cy="70" r="4.5"/><circle cx="46" cy="36" r="4.5"/></g>
+          <g fill="#2fa05a"><circle cx="72" cy="66" r="4.5"/><circle cx="88" cy="66" r="4.5"/><circle cx="72" cy="80" r="4.5"/><circle cx="88" cy="80" r="4.5"/></g>
+          <g stroke="#d64545" stroke-width="2.4" stroke-linecap="round"><line x1="140" y1="126" x2="148" y2="134"/><line x1="148" y1="126" x2="140" y2="134"/></g>
+          <text x="80" y="148" text-anchor="middle" font-size="10" fill="#8a7a63" font-weight="700">바깥 고리 / 안쪽 뭉치 완벽 분리</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:5px solid var(--unsup);background:var(--unsup-bg);font-size:.92rem;margin-top:14px">
+    <b style="color:var(--unsup-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    데이터가 동글동글 예쁘게 뭉쳐있을 땐 <b>K-Means</b>, 뱀처럼 길게 휘어있거나 노이즈가 많을 땐 <b>DBSCAN</b>, 변수가 너무 많아 머리가 아플 땐 <b>PCA</b>로 먼저 압축하기!
+  </div>
+</section>
+
+<section id="scaling">
+  <h2 class="sec ens">③ 데이터 다듬기 — 스케일링</h2>
+  <p class="hint">계산을 보다 쉽게 수행하기 위해, 서로 다른 변수의 값 범위를 일정하게 맞춰 주는 방식을 <b>스케일링</b>이라 합니다. (변수 개수를 줄이는 PCA의 '차원 축소'와는 다른 개념이에요.) 대표적인 방법은 아래와 같아요.</p>
+  <table class="t">
+    <tr><th style="width:170px">방법</th><th>설명</th></tr>
+    <tr><td><b>StandardScaler()</b></td><td>데이터를 정규분포(평균 0, 표준편차 1) 형태로 변환</td></tr>
+    <tr><td><b>MinMaxScaler()</b></td><td>데이터를 기본값 [0,1] 사이 숫자로 변환 (옵션 지정 시 [-1,1] 등)</td></tr>
+    <tr><td><b>RobustScaler()</b></td><td>중앙값(Median), IQR(상위25%-하위25%)을 사용해 변환</td></tr>
+  </table>
+
+  <h3 class="sub">📊 눈으로 보는 스케일러 — 표본 데이터 [10, 20, 30, 40, 50, 200] (200은 이상치!)</h3>
+  <div class="card">
+    <div class="sc-btns">
+      <button class="on" data-sc="standard" onclick="pickScaler(this)">StandardScaler</button>
+      <button data-sc="minmax" onclick="pickScaler(this)">MinMaxScaler</button>
+      <button data-sc="robust" onclick="pickScaler(this)">RobustScaler</button>
+    </div>
+    <canvas id="scCanvas" width="900" height="320"></canvas>
+    <p id="scDesc" class="hint" style="margin-top:10px"></p>
+  </div>
+
+  <h3 class="sub">💻 스케일러 코드 (줄 클릭 → 해설) <span class="tag warn">⚠ 오타가 숨어 있어요 — 버그 찾기 2번!</span></h3>
+  <div class="codebox"><div class="bar"><span>scaler.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-scaler"></pre></div>
+  <div class="note-panel" id="note-scaler">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="dlintro">
+  <h2 class="sec dl">④ 딥러닝 입문 — 퍼셉트론부터 신경망 종류까지</h2>
+  <div class="dlsub" id="perceptron">
+  <h3 class="subsec">1. 뇌를 흉내 낸 퍼셉트론 &amp; 순전파·역전파</h3>
+  <div class="card">
+    <p style="font-size:.9rem;margin-bottom:6px"><b>퍼셉트론:</b> 인간의 뉴런을 모방한 인공신경망을 구성하는 기본 단위. 편향은 가중합 Σ(wx)을 구한 다음 더해짐</p>
+    <p style="font-size:.85rem;color:#7a6c58">구조: 입력(x₁..xₙ) → 각 가중치(w₁..wₙ) → Σ(합산, +편향 b) → 계단함수(step) → out(t)</p>
+    <div class="pctl">
+      <button class="act fwd" id="btnFwd" onclick="runForward()">▶ 순전파 실행</button>
+      <button class="act bwd" id="btnBwd" onclick="runBackward()">◀ 역전파 실행</button>
+      <button class="act neutral" onclick="resetPerceptron()">↺ 초기화</button>
+    </div>
+    <p id="pstatus">버튼을 눌러 데이터의 흐름을 관찰하세요.</p>
+    <svg class="psvg" id="psvg" viewBox="0 0 620 300" style="width:100%;max-width:640px">
+      <!-- edges -->
+      <line id="e1" class="edge" x1="95" y1="70"  x2="255" y2="150"/>
+      <line id="e2" class="edge" x1="95" y1="150" x2="255" y2="150"/>
+      <line id="e3" class="edge" x1="95" y1="230" x2="255" y2="150"/>
+      <line id="eb" class="edge" x1="280" y1="55" x2="280" y2="120" stroke-dasharray="5,4"/>
+      <line id="e4" class="edge" x1="310" y1="150" x2="390" y2="150"/>
+      <line id="e5" class="edge" x1="480" y1="150" x2="545" y2="150"/>
+      <!-- input nodes -->
+      <circle id="nx1" class="node" cx="70" cy="70"  r="26"/>
+      <circle id="nx2" class="node" cx="70" cy="150" r="26"/>
+      <circle id="nx3" class="node" cx="70" cy="230" r="26"/>
+      <text x="70" y="75"  text-anchor="middle">x₁</text>
+      <text x="70" y="155" text-anchor="middle">x₂</text>
+      <text x="70" y="235" text-anchor="middle">xₙ</text>
+      <!-- weight labels -->
+      <text id="w1" class="wlab" x="160" y="95">w₁</text>
+      <text id="w2" class="wlab" x="160" y="143">w₂</text>
+      <text id="w3" class="wlab" x="160" y="205">wₙ</text>
+      <!-- bias -->
+      <circle id="nb" class="node" cx="280" cy="38" r="20"/>
+      <text x="280" y="44" text-anchor="middle" font-size="13">b</text>
+      <text x="322" y="70" font-size="11" fill="#8a7a63">편향(가중합 뒤에 더함)</text>
+      <!-- sum node -->
+      <circle id="nsum" class="node" cx="282" cy="150" r="30"/>
+      <text x="282" y="158" text-anchor="middle" font-size="20">Σ</text>
+      <!-- activation -->
+      <rect id="nact" class="node" x="392" y="120" width="88" height="60" rx="12"/>
+      <text x="436" y="145" text-anchor="middle" font-size="12">계단함수</text>
+      <text x="436" y="163" text-anchor="middle" font-size="11" fill="#8a7a63">(step)</text>
+      <!-- output -->
+      <circle id="nout" class="node" cx="575" cy="150" r="28"/>
+      <text x="575" y="156" text-anchor="middle" font-size="13">out(t)</text>
+      <!-- error label (backprop) -->
+      <text id="errlab" x="575" y="205" text-anchor="middle" font-size="12" fill="#d64545" opacity="0">오차 = 정답 − 예측</text>
+    </svg>
+    <div class="two-col" style="margin-top:14px">
+      <div style="background:var(--dl-bg);border-radius:10px;padding:12px 14px;font-size:.87rem">
+        <b style="color:var(--dl-deep)">순전파</b> — 입력한 데이터에 가중치(w)를 곱하고 편향(b)을 더한 뒤(y = wx + b), 활성화 함수를 거쳐 최종 결괏값을 계산하는 과정
+      </div>
+      <div style="background:#fdecec;border-radius:10px;padding:12px 14px;font-size:.87rem">
+        <b style="color:var(--bad)">역전파</b> — 실제 정답과 모델의 예측값의 차이인 오차를 계산하고, 오차를 줄이기 위해 앞의 층으로 돌아가며 가중치와 편향을 수정하는 과정
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:14px">
+      <div style="text-align:center"><svg id="fwdNet" viewBox="0 0 300 170" style="width:100%;max-width:320px"></svg></div>
+      <div style="text-align:center"><svg id="bwdNet" viewBox="0 0 300 170" style="width:100%;max-width:320px"></svg></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="dlsub" id="terms">
+  <h3 class="subsec">2. 신경망 낱말 사전 — 핵심 용어</h3>
+  <table class="t">
+    <tr><th style="width:110px">용어</th><th>정의</th></tr>
+    <tr><td><b>퍼셉트론</b></td><td>인간의 뉴런을 모방한 인공신경망을 구성하는 기본 단위. 편향은 가중합 Σ(wx)을 구한 다음 더해짐</td></tr>
+    <tr><td><b>인공신경망</b></td><td>다층 퍼셉트론으로 1개 이상의 은닉층이 연결된 신경망</td></tr>
+    <tr><td><b>딥러닝</b></td><td>인공신경망을 여러 층으로 깊게(Deep) 쌓아 데이터를 학습하는 머신러닝의 분야</td></tr>
+    <tr><td><b>은닉층</b></td><td>인공 신경망의 여러 층 중에서 입력층과 출력층 사이에 있는 층</td></tr>
+    <tr><td><b>가중치</b></td><td>입력값이 결과에 미치는 중요도(영향력)를 결정하는 수치</td></tr>
+    <tr><td><b>편향</b></td><td>입력값과 관련없이 퍼셉트론이 얼마나 쉽게 활성화(출력 신호를 보낼지)될지 조절하는 값. 편향이 크면 쉽게 활성화, 작거나 음수면 활성화되기 어려움</td></tr>
+    <tr><td><b>순전파</b></td><td>입력한 데이터에 가중치(w)를 곱하고 편향(b)을 더한 뒤(y = wx + b), 활성화 함수를 거쳐 최종 결괏값을 계산하는 과정</td></tr>
+    <tr><td><b>역전파</b></td><td>실제 정답과 모델의 예측값의 차이인 오차를 계산하고, 오차를 줄이기 위해 앞의 층으로 돌아가며 가중치와 편향을 수정하는 과정</td></tr>
+  </table>
+  <div class="card" style="text-align:center">
+    <p style="font-size:.9rem;margin-bottom:8px"><b>인공신경망 구조:</b> Input(3 노드) → Hidden(4 노드, 서로 완전연결) → Output(2 노드)</p>
+    <svg viewBox="0 0 420 220" style="width:100%;max-width:440px" id="annsvg"></svg>
+  </div>
+  </div>
+
+  <div class="dlsub" id="activation">
+  <h3 class="subsec">3. 켤까 말까? 활성화 함수</h3>
+
+  <div class="card" style="border-top:5px solid var(--dl);font-size:.92rem">
+    <b style="color:var(--dl-deep)">활성화 함수란?</b> 인공신경망(Artificial Neural Network)에서 노드의 입력값을 변환하여 다음 층으로 전달할지, 그리고 어떤 크기로 전달할지 결정하는 수학적 함수
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="border-top:5px solid var(--sup)">
+      <h4 style="color:var(--sup-deep);margin-bottom:8px">🔚 출력층용</h4>
+      <table class="t">
+        <tr><th>함수</th><th>사용 상황</th></tr>
+        <tr><td><b>없음/선형(Linear)</b></td><td>회귀(예측) 분석 시 출력층에 사용</td></tr>
+        <tr><td><b>시그모이드(Sigmoid)</b></td><td>둘 중 하나의 정답을 선택하는 이진 분류</td></tr>
+        <tr><td><b>소프트맥스(Softmax)</b></td><td>3개 이상의 선택지 중 하나의 정답을 선택하는 다중 클래스 분류</td></tr>
+      </table>
+    </div>
+    <div class="card" style="border-top:5px solid var(--dl)">
+      <h4 style="color:var(--dl-deep);margin-bottom:8px">🔒 은닉층용</h4>
+      <table class="t">
+        <tr><th>함수</th><th>설명</th></tr>
+        <tr><td><b>계단 함수</b></td><td>가중합에 편향을 더한 값이 0보다 크면 1, 아니면 0 (초기 퍼셉트론 구조)</td></tr>
+        <tr><td><b>ReLU</b></td><td>은닉층에서 자주 사용되며 입력값이 양수면 그대로, 0 이하면 0으로 출력</td></tr>
+        <tr><td><b>Tanh</b></td><td>하이퍼볼릭 탄젠트. 출력값이 -1 ~ 1 사이이며 데이터의 중심을 0으로 맞춤</td></tr>
+        <tr><td><b>Leaky ReLU</b></td><td>ReLU에서 0을 출력한 노드의 비활성화 문제를 막기 위해 씀. 0 미만의 음수 입력값에 아주 작은 수(α)를 곱해 아주 작은 음수를 출력함</td></tr>
+        <tr><td><b>ELU</b></td><td>입력값이 0 이상이면 그대로 출력, 0 미만이면 α(eˣ−1) 값 출력</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom:10px">🎮 곡선을 직접 움직여 보세요 (체크박스로 함수 켜고 끄기 + 슬라이더로 x 이동)</h4>
+    <div class="fn-toggles" id="fnToggles"></div>
+    <canvas id="actCanvas" width="900" height="420"></canvas>
+    <input type="range" class="xslider" id="xSlider" min="-4" max="4" step="0.05" value="1">
+    <div style="font-size:.85rem;margin-bottom:8px">현재 입력 x = <b id="xVal">1.00</b></div>
+    <div class="fn-values" id="fnValues"></div>
+    <p class="hint" style="margin-top:10px">※ 그래프의 Leaky ReLU는 눈에 잘 보이도록 α=0.1로 그렸어요. (코드 예제에서는 보통 α=0.01) 회귀 출력층에서 쓰는 선형(Linear) 함수도 체크박스로 켜 볼 수 있어요.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom:8px">🤔 Softmax는 왜 위 그래프에 없을까?</h4>
+    <p style="font-size:.88rem;margin-bottom:10px">Softmax는 입력 하나가 아니라 <b>여러 개의 출력값(z)을 동시에</b> 받아, 전체 합이 1이 되는 확률로 바꿔 주는 함수예요. 그래서 단일 곡선으로는 그릴 수 없습니다. 아래에서 클래스 3개의 출력값을 직접 조절해 보세요 — 세 확률의 합은 항상 100%!</p>
+    <div class="slider-row"><label>클래스 A의 출력 z₁</label><input type="range" id="smz1" min="-5" max="5" step="0.1" value="2"><span class="val" id="smzV1"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar1" style="line-height:22px;background:var(--sup)"></span></div>
+    <div class="slider-row"><label>클래스 B의 출력 z₂</label><input type="range" id="smz2" min="-5" max="5" step="0.1" value="1"><span class="val" id="smzV2"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar2" style="line-height:22px;background:var(--ens)"></span></div>
+    <div class="slider-row"><label>클래스 C의 출력 z₃</label><input type="range" id="smz3" min="-5" max="5" step="0.1" value="0"><span class="val" id="smzV3"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar3" style="line-height:22px;background:var(--dl)"></span></div>
+    <p class="hint" style="margin-top:10px">가장 큰 출력값을 가진 클래스가 가장 높은 확률을 갖게 되고, 모델은 그 클래스를 정답으로 선택합니다. 이것이 "3개 이상의 선택지 중 하나의 정답을 선택하는 다중 클래스 분류"에 Softmax를 쓰는 이유예요.</p>
+  </div>
+  </div>
+
+  <div class="dlsub" id="anntypes">
+  <h3 class="subsec">4. 신경망 종류 — CNN·RNN·LSTM… <span class="tag warn">암기 불필요, 이해만!</span></h3>
+  <table class="t">
+    <tr><th style="width:150px">종류</th><th style="width:230px">이런 친구예요 (비유)</th><th>어떤 신경망? &amp; 대표 예시</th></tr>
+    <tr>
+      <td><b>ANN</b><br><span style="font-size:.8rem;color:#8a7a63">인공 신경망</span></td>
+      <td>🧱 뇌세포 신경망 모방의 <b>기초 공사</b></td>
+      <td>인간의 뉴런을 흉내 낸 가장 기본적인 형태. <b>모든 딥러닝의 조상님.</b><br><span style="color:#8a7a63;font-size:.85rem">🎯 표 데이터 예측, 기초 분류</span></td>
+    </tr>
+    <tr>
+      <td><b>CNN</b><br><span style="font-size:.8rem;color:#8a7a63">합성곱 신경망</span></td>
+      <td>🔍 돋보기 들고 그림의 <b>힌트(특징) 찾기</b></td>
+      <td>이미지의 공간적 특징을 훑으며 <b>부분 패턴을 추출</b>하는 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 이미지 인식, 얼굴 인식, 자율주행 카메라</span></td>
+    </tr>
+    <tr>
+      <td><b>RNN</b><br><span style="font-size:.8rem;color:#8a7a63">순환 신경망</span></td>
+      <td>🐠 뒤돌아서면 까먹는 <b>금붕어의 이어달리기</b></td>
+      <td>순서 있는 데이터 전담 — 단, 길어지면 앞 내용을 까먹는 <b>장기 의존성 문제</b>가 있음.<br><span style="color:#8a7a63;font-size:.85rem">🎯 짧은 문장 번역, 간단한 음성 인식</span></td>
+    </tr>
+    <tr style="background:var(--dl-bg)">
+      <td><b>LSTM</b><br><span style="font-size:.8rem;color:#8a7a63">장단기 메모리</span></td>
+      <td>📔 중요한 기억만 다이어리에 적는 <b>기억력 천재</b></td>
+      <td><b>'망각 게이트'</b>로 중요한 과거는 기억, 쓸데없는 건 삭제 — RNN 건망증의 해결사.<br><span style="color:#8a7a63;font-size:.85rem">🎯 긴 글 번역, 주가 예측, 챗봇</span></td>
+    </tr>
+    <tr>
+      <td><b>GAN</b><br><span style="font-size:.8rem;color:#8a7a63">생성적 적대 신경망</span></td>
+      <td>👮 위조지폐범 vs 베테랑 경찰의 <b>쫓고 쫓기는 눈치 게임</b></td>
+      <td>가짜를 만드는 <b>생성자</b> vs 진짜를 가리는 <b>판별자</b>의 경쟁으로 학습하는 창작 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 딥페이크, 화질 복원, 가상 인간</span></td>
+    </tr>
+    <tr>
+      <td><b>GNN</b><br><span style="font-size:.8rem;color:#8a7a63">그래프 신경망</span></td>
+      <td>🕸️ 인스타그램 복잡한 <b>인맥 관계도 추적기</b></td>
+      <td>점(노드)과 선(엣지)으로 얽힌 <b>그물망 구조</b>를 분석하는 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 SNS 친구·콘텐츠 추천, 신약 개발</span></td>
+    </tr>
+    <tr>
+      <td><b>Transformer</b><br><span style="font-size:.8rem;color:#8a7a63">트랜스포머</span></td>
+      <td>🖍️ 정답의 핵심 단어에 <b>형광펜 쫙 치기</b> (Attention)</td>
+      <td>단어들의 관계를 <b>동시에(Attention)</b> 계산해 문맥을 통째로 파악 — <b>LLM의 핵심 심장</b>.<br><span style="color:#8a7a63;font-size:.85rem">🎯 ChatGPT, 생성형 AI 서비스</span></td>
+    </tr>
+  </table>
+
+  <div class="card" style="border-top:5px solid var(--dl);background:var(--dl-bg);font-size:.92rem;margin-top:14px">
+    <b style="color:var(--dl-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    "눈(이미지)이 필요할 땐 <b>CNN</b>, 긴 말과 글(텍스트)을 기억할 땐 <b>LSTM</b>과 <b>Transformer</b>, 가짜를 진짜처럼 만들 땐 <b>GAN</b>을 기억하렴!"
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🎯 매칭 게임 — 설명에 맞는 신경망 고르기</h3>
+    <div class="match-q" id="annQ"></div>
+    <div class="chiprow" id="annChips"></div>
+    <div class="bug-msg" id="annMsg"></div>
+    <button class="act neutral" style="margin-top:6px" onclick="initAnnGame()">🔀 다시 하기</button>
+  </div>
+  </div>
+</section>
+
+<section id="hyper">
+  <h2 class="sec ens">⑤ 하이퍼파라미터 — 모델의 성능 조절 손잡이</h2>
+  <table class="t" style="margin-bottom:16px">
+    <tr><th style="width:220px">구분</th><th>정의</th></tr>
+    <tr><td><b>하이퍼파라미터</b> (by 개발자)</td><td>모델의 학습 과정 외부에서 사용자(개발자)가 설정하는 값</td></tr>
+    <tr><td><b>파라미터</b> (by 모델)</td><td>모델이 학습하면서 스스로 변화시키는 값 (가중치, 편향 등)</td></tr>
+  </table>
+  <p class="hint">💡 카드를 클릭해 정의와 예시 값을 확인하세요.</p>
+  <div class="cardgrid" id="grid-hyper"></div>
+  <div class="card" style="margin-top:16px;font-size:.88rem">
+    <b>📌 손실 함수 관련 용어</b><br>
+    · MSE = 평균 제곱 오차 (오차의 제곱값 평균)<br>
+    · MAE = 평균 절대 오차 (오차의 절댓값 평균)
+  </div>
+
+  <h3 class="sub">📝 검증 데이터(Validation Data) — 하이퍼파라미터의 '모의고사'</h3>
+  <div class="card">
+    <p style="font-size:.92rem;margin-bottom:12px">
+      공부에 비유하면 데이터셋은 세 가지로 나뉩니다. <b>교과서·문제집으로 공부(훈련)</b>하고,
+      <b>모의고사로 공부 방법을 점검(검증)</b>한 뒤, <b>수능으로 진짜 실력을 평가(테스트)</b>하죠.
+      하이퍼파라미터(학습률, 레이어 수, epochs…)는 말하자면 <mark>'공부 방법'</mark>이고,
+      검증 데이터는 <mark>그 공부 방법이 올바른지 중간 점검하는 모의고사</mark>입니다.
+    </p>
+
+    <!-- 데이터 분할 비율 도해 (순수 CSS) -->
+    <div style="display:flex;border-radius:10px;overflow:hidden;margin:4px 0 6px;font-size:.82rem;font-weight:700;color:#fff;text-align:center;line-height:1.4">
+      <div style="flex:6;background:var(--sup);padding:10px 4px">훈련 Train<br><span style="font-weight:500;font-size:.78rem;opacity:.9">교과서·문제집 (예: 60%)</span></div>
+      <div style="flex:2;background:var(--ens);padding:10px 4px">검증 Val<br><span style="font-weight:500;font-size:.78rem;opacity:.9">모의고사 (20%)</span></div>
+      <div style="flex:2;background:var(--dl);padding:10px 4px">테스트 Test<br><span style="font-weight:500;font-size:.78rem;opacity:.9">수능 (20%)</span></div>
+    </div>
+    <p class="hint" style="margin-bottom:14px">※ 비율은 예시예요. 케라스에서는 <b>validation_split=0.2</b>처럼 훈련 데이터의 일부를 떼어 검증에 씁니다.</p>
+
+    <table class="t">
+      <tr><th style="width:150px">구분</th><th style="width:130px">실생활 비유</th><th>역할</th></tr>
+      <tr><td><b style="color:var(--sup-deep)">훈련 데이터<br>(Train Data)</b></td><td>교과서와 문제집</td><td>모델의 <b>가중치(Weight)와 편향(Bias)</b>을 실제로 학습시키는 데이터</td></tr>
+      <tr><td><b style="color:var(--ens-deep)">검증 데이터<br>(Validation Data)</b></td><td>학원 모의고사</td><td>학습 <b>도중</b> 중간 점검을 통해 최적의 <b>하이퍼파라미터</b>(학습률, 레이어 수 등)를 결정하는 데이터</td></tr>
+      <tr><td><b style="color:var(--dl-deep)">테스트 데이터<br>(Test Data)</b></td><td>최종 수능 시험</td><td>모든 학습과 튜닝이 <b>끝난 후</b>, 모델의 진짜 실력(<b>일반화 성능</b>)을 최종 평가하는 데이터</td></tr>
+    </table>
+
+    <div style="background:#fdecec;border-radius:10px;padding:12px 16px;font-size:.88rem;margin-top:12px">
+      <b style="color:var(--bad)">🚨 왜 훈련 데이터로 하이퍼파라미터를 정하면 안 될까? — 과적합(Overfitting)</b><br>
+      훈련 데이터 점수만 보고 공부 방법을 고르면, 모델은 <b>문제집을 통째로 외워버리는</b> 길을 택합니다.
+      문제집(훈련)은 100점인데 처음 보는 시험(테스트)은 엉망이 되는 것 — 이것이 과적합이에요.
+      검증 데이터는 모델이 단순 암기가 아니라 <mark>원리를 이해(일반화)하고 있는지 감시하는 기준</mark>이 됩니다.
+      모의고사 점수가 떨어지기 시작하면 "아, 지금 외우고 있구나"를 알아채는 거죠.
+    </div>
+
+    <p class="hint" style="margin-top:10px">💡 아래 컴파일/학습 코드의 <b>validation_split=0.2</b>가 이 '모의고사'를 만드는 부분이에요. 위 플립카드 사전에서도 확인해 보세요!</p>
+  </div>
+
+  <h3 class="sub">🏹 체험존 — AI 양궁 선수 육성 시뮬레이션: 몇 번 훈련시킬까?</h3>
+  <div class="card">
+    <p style="font-size:.92rem;margin-bottom:12px">
+      여러분은 AI 양궁 선수의 <b>코치</b>입니다. <b>훈련 횟수(Epoch)</b>를 조절해 선수를 키운 뒤,
+      <b>🏡 연습장(훈련 데이터)</b>과 <b>🌪️ 실전 대회(테스트 데이터)</b> 성적을 비교해 보세요.
+      <mark>많이 훈련시킬수록 무조건 좋은 게 아닙니다!</mark>
+    </p>
+
+    <div class="slider-row" style="max-width:420px">
+      <label><b>훈련 횟수 (Epoch)</b></label>
+      <input type="range" id="ofEpoch" min="1" max="3" step="1" value="2" oninput="ofUpdate()">
+      <span class="val" id="ofEpochV"></span>
+    </div>
+    <div class="of-ticks"><span>1 · 훈련 부족</span><span>2 · 적당히</span><span>3 · 지나치게</span></div>
+
+    <div id="ofDesc" style="border-radius:10px;padding:12px 16px;font-size:.9rem;line-height:1.6"></div>
+
+    <div class="two-col" style="margin-top:14px">
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.92rem;margin-bottom:6px">🏡 연습장 <span style="color:#8a7a63;font-weight:500">(Train Data)</span></div>
+        <svg id="ofTrainSvg" viewBox="0 0 220 200" style="width:100%;max-width:300px"></svg>
+        <div id="ofTrainScore" style="font-weight:800;font-size:.95rem;margin-top:4px"></div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.92rem;margin-bottom:6px">🌪️ 실전 대회 <span style="color:#8a7a63;font-weight:500">(Test Data — 처음 보는 환경!)</span></div>
+        <svg id="ofTestSvg" viewBox="0 0 220 200" style="width:100%;max-width:300px"></svg>
+        <div id="ofTestScore" style="font-weight:800;font-size:.95rem;margin-top:4px"></div>
+      </div>
+    </div>
+
+    <div class="pctl" style="margin-top:10px;justify-content:center">
+      <button class="act neutral" onclick="ofUpdate()">🎯 다시 쏘기</button>
+    </div>
+    <p class="hint" style="margin-top:8px">연습장 점수(훈련 정확도)와 실전 점수(테스트 정확도)의 <b>차이가 벌어질수록</b> 과적합입니다. 위 검증 데이터(모의고사)가 바로 이 차이를 학습 도중에 미리 알려주는 장치예요.</p>
+  </div>
+
+  <h3 class="sub">💻 컴파일/학습 코드 (줄 클릭 → 해설)</h3>
+  <div class="codebox"><div class="bar"><span>compile_fit.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-compile"></pre></div>
+  <div class="note-panel" id="note-compile">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="code">
+  <h2 class="sec sup">⑥ 코드 한 줄씩 읽기</h2>
+  <p class="hint">💡 코드의 각 줄을 클릭하면 아래 패널에 해설이 나타납니다.</p>
+
+  <h3 class="sub">📈 선형 회귀 (예측) <span class="tag warn">⚠ 오타 포함 — 버그 찾기에서 확인!</span></h3>
+  <div class="codebox"><div class="bar"><span>linear_regression.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-linreg"></pre></div>
+  <div class="note-panel" id="note-linreg">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🎯 로지스틱 회귀 (분류) <span class="tag warn">⚠ 같은 오타 포함</span></h3>
+  <div class="codebox"><div class="bar"><span>classification.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-clf"></pre></div>
+  <div class="note-panel" id="note-clf">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🧠 케라스 예제 A — 다중 분류 신경망</h3>
+  <div class="codebox"><div class="bar"><span>keras_multiclass.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-kerasA"></pre></div>
+  <div class="note-panel" id="note-kerasA">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🧠 케라스 예제 B — 회귀 신경망</h3>
+  <div class="codebox"><div class="bar"><span>keras_regression.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-kerasB"></pre></div>
+  <div class="note-panel" id="note-kerasB">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="bughunt">
+  <h2 class="sec dl">⑦ 버그 찾기 모드 🐞</h2>
+  <p class="hint">💡 아래 코드에는 시험에 자주 나오는 실수를 일부러 숨겨 뒀어요! 잘못된 줄을 클릭한 뒤, 올바른 수정을 골라 보세요.</p>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🐞 버그 1 — 데이터 분할 코드</h3>
+    <div class="codebox"><div class="bar"><span>bug_hunt_1.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="bug1-code"></pre></div>
+    <div class="bug-msg" id="bug1-msg"></div>
+    <div class="fix-choices" id="bug1-fix"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🐞 버그 2 — 스케일러 코드</h3>
+    <div class="codebox"><div class="bar"><span>bug_hunt_2.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="bug2-code"></pre></div>
+    <div class="bug-msg" id="bug2-msg"></div>
+    <div class="fix-choices" id="bug2-fix"></div>
+  </div>
+</section>
+
+<section id="codequiz">
+  <h2 class="sec unsup">⑧ 코드 읽기 퀴즈 (2세트)</h2>
+  <div class="card" style="background:var(--unsup-bg);font-size:.9rem;box-shadow:none;border:1px solid #cfe0f7">
+    💬 <b>왜 코드 해석 연습을 할까?</b> 머신러닝이나 딥러닝을 위해 활성화 함수의 수학적 원리를 깊게 이해할 필요는 없어요. 또한 요즘 시대에 모든 소스 코드를 직접 작성할 필요도 없죠. 하지만 소스 코드를 읽고 그 의미를 파악하고, 문제 해결 절차가 합당한지 확인하는 <b>코드 리뷰(Code Review)</b>가 중요합니다.
+  </div>
+  <p class="hint">💡 시험에 나오는 유형! 코드를 읽고 스스로 답을 고른 뒤 정답을 확인하세요.</p>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">세트 1 — 이 신경망 코드를 해석하라!</h3>
+    <div class="codebox"><div class="bar"><span>quiz_model.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre style="padding:12px 16px"><span class="cl blank">model = Sequential([</span><span class="cl blank">    Dense(64), tf.keras.layers.LeakyReLU(alpha=0.01),</span><span class="cl blank">    Dense(32, activation='relu'),</span><span class="cl blank">    Dense(16, activation='tanh'),</span><span class="cl blank">    Dense(1, activation='sigmoid')</span><span class="cl blank">])</span></pre></div>
+    <div id="quizSetC"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">세트 2 — 이 컴파일/학습 코드를 해석하라!</h3>
+    <div class="codebox"><div class="bar"><span>quiz_compile.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre style="padding:12px 16px"><span class="cl blank">model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])</span><span class="cl blank">history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)</span></pre></div>
+    <div id="quizSetB"></div>
+  </div>
+</section>
+
+<section id="project">
+  <h2 class="sec sup">⑨ AI 프로젝트 만들기 (6단계)</h2>
+  <p class="hint">💡 각 단계를 클릭하면 수행 내용과 예시가 펼쳐집니다. 예시는 "기후변화 기온 예측 프로젝트"입니다.</p>
+  <div id="projTimeline"></div>
+</section>
+
+<section id="finalquiz">
+  <h2 class="sec dl">⑩ 실력 점검 — 자가진단 퀴즈 (18문항)</h2>
+  <p class="hint">💡 모든 문항에 답한 뒤 "채점하기"를 누르세요. 점수는 저장되지 않으니 부담 없이 도전! 채점 후 <b>"결과 요약 복사"</b>를 눌러 선생님께 제출할 수 있어요. (위 표지의 학번·이름을 입력해 두세요!)</p>
+  <div id="finalQuizBox"></div>
+  <div style="text-align:center;margin-top:18px">
+    <button class="act fwd" onclick="gradeFinal()">✅ 채점하기</button>
+  </div>
+  <div class="bug-msg" id="gradeWarn" style="max-width:680px;margin:10px auto 0"></div>
+  <div id="quizResult">
+    <div id="scoreTitle">나의 점수</div>
+    <div class="score"><span id="scoreNum">0</span> / 18</div>
+    <div id="resultMeta" style="font-size:.88rem;color:#7a6c58;margin:4px 0 2px"></div>
+    <div id="scoreMsg" style="margin:8px 0 14px;font-weight:700"></div>
+    <div id="wrongReview" style="text-align:left;max-width:680px;margin:0 auto 16px;background:#fff;border-radius:10px;padding:14px 16px;font-size:.9rem"></div>
+    <button class="act fwd" onclick="copyResult(this)">📋 결과 요약 복사 (제출용)</button>
+    <button class="act neutral" onclick="resetFinal()">🔄 다시 풀기</button>
+  </div>
+</section>
+
+<section id="vault">
+  <h2 class="sec dl">⑪ 보너스 — 심화 도전 문제</h2>
+  <p class="hint">기본 개념을 넘어, 실제 현업에서 부딪히는 통찰형 문제예요. 답을 먼저 고민한 뒤 펼쳐 보세요.</p>
+
+  <div class="card" style="background:var(--dl-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q1. 훈련 정확도는 99%인데 검증 정확도가 65%로 뚝 떨어졌다. 무슨 일이 일어난 걸까?</p>
+    <p style="font-size:.9rem">👉 <b>과적합</b>. 모델이 훈련 데이터를 통째로 암기해 일반화에 실패한 상태. 에폭을 줄이거나 드롭아웃·규제를 추가한다. (양궁 시뮬의 Epoch 3 상태!)</p>
+  </div>
+  <div class="card" style="background:var(--ens-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q2. "여러 모델의 예측값을 다시 새 데이터로 삼아 2단계 모델이 학습"하는 앙상블 기법은?</p>
+    <p style="font-size:.9rem">👉 <b>스태킹(Stacking)</b>. 배깅(동시)·부스팅(이어받기)과 달리 예측 패턴 자체를 한 번 더 학습한다.</p>
+  </div>
+  <div class="card" style="background:var(--sup-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q3. 다중 클래스 분류의 출력층 활성화 함수와, 그 확률들의 합은?</p>
+    <p style="font-size:.9rem">👉 <b>소프트맥스(Softmax)</b>, 확률의 합은 항상 <b>1(100%)</b>. 이진 분류라면 시그모이드를 쓴다.</p>
+  </div>
+  <div class="card" style="background:var(--unsup-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q4. 어떤 암 진단 AI가 <b>정확도(accuracy) 99%</b>를 기록했다. 병원장은 기뻐했지만, 개발자는 오히려 얼굴이 굳었다. 왜일까?</p>
+    <p style="font-size:.9rem">👉 <b>정확도의 함정(불균형 데이터)</b>. 전체 환자 중 실제 암 환자가 1%뿐이라면, 모든 사람을 무조건 '정상'이라고 찍는 엉터리 모델도 정확도 99%가 나온다. 정작 살려야 할 암 환자를 전부 놓치는(재현율=0) 최악의 모델일 수 있는 것. 그래서 정확도 하나만 보면 안 되고, <b>정밀도(Precision)·재현율(Recall)</b>을 함께 봐야 한다. — "무엇을 맞혔나"보다 "무엇을 놓쳤나"가 더 중요할 때가 있다.</p>
+  </div>
+  <div class="card" style="background:var(--dl-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q5. 훈련 정확도 100%, 테스트 정확도도 100%였던 모델을 실제 서비스에 배포했더니 성능이 형편없었다. 과적합도 아닌데, 무엇을 놓친 걸까?</p>
+    <p style="font-size:.9rem">👉 <b>데이터 편향 &amp; 분포 이동(Distribution Shift)</b>. 훈련·테스트를 같은 데이터에서 나눴다면, 그 데이터 자체가 현실을 대표하지 못할 때 둘 다 높은 점수가 나와도 소용없다. 예컨대 낮 시간대 사진만으로 학습한 자율주행 AI는 밤·비 오는 날 무너진다. 테스트 점수는 <b>"수집한 데이터와 비슷한 상황"</b>에서의 실력일 뿐 — 좋은 모델보다 <b>현실을 닮은 좋은 데이터</b>가 먼저다.</p>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  머신러닝과 딥러닝 특강 부교재 · 인터랙티브 학습 페이지 · 정보 교과 시험 대비용<br>
+  <span class="foot-credit">made by <b>jungbucks</b> ·
+    <a href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer">📸 Insta @jungbucks</a> ·
+    <a href="https://blog.naver.com/kachu_t" target="_blank" rel="noopener noreferrer">📝 Blog</a>
+  </span>
+</footer>
+
+<!-- ══ 데이터 (콘텐츠 수정은 이 구간 파일만) ══ -->
+<script>
+/* [데이터] 알고리즘 탐색 카드 — SVGS: 미니 도해(viewBox 120x80), ALGO_CARDS: 그리드별 카드 {cls,svg,name,one,def}. 카드 추가 시 두 곳 모두. */
+
+/* ================================================================
+   1. 알고리즘 플립카드
+================================================================ */
+const SVGS = {
+  /* ── 지도학습 · 예측(회귀) ── */
+  linreg:`<svg viewBox="0 0 120 80" width="110"><defs><linearGradient id="lrG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#e8863a"/><stop offset="1" stop-color="#c96a1f"/></linearGradient></defs><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="16" y1="64" x2="108" y2="16" stroke="url(#lrG)" stroke-width="3" stroke-linecap="round"/><g fill="#e8863a" stroke="#fff" stroke-width="1"><circle cx="26" cy="60" r="3.4"/><circle cx="42" cy="54" r="3.4"/><circle cx="58" cy="46" r="3.4"/><circle cx="74" cy="36" r="3.4"/><circle cx="90" cy="26" r="3.4"/><circle cx="102" cy="20" r="3.4"/></g></svg>`,
+  polyreg:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><path d="M16 50 Q 36 14, 56 42 T 106 24" fill="none" stroke="#c96a1f" stroke-width="3" stroke-linecap="round"/><g fill="#e8863a" stroke="#fff" stroke-width="1"><circle cx="20" cy="50" r="3.2"/><circle cx="34" cy="24" r="3.2"/><circle cx="48" cy="40" r="3.2"/><circle cx="62" cy="42" r="3.2"/><circle cx="76" cy="32" r="3.2"/><circle cx="90" cy="30" r="3.2"/><circle cx="104" cy="22" r="3.2"/></g><text x="66" y="62" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">휘어지는 곡선 자</text></svg>`,
+  ridge:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><polyline points="18,52 30,20 42,56 54,22 66,54 78,26 90,50 104,30" fill="none" stroke="#d64545" stroke-width="1.6" stroke-dasharray="3,2" opacity=".85"/><path d="M18 50 Q 60 32, 104 30" fill="none" stroke="#2fa05a" stroke-width="3" stroke-linecap="round"/><g fill="#8a7a63" stroke="#fff" stroke-width=".8"><circle cx="30" cy="36" r="2.6"/><circle cx="54" cy="36" r="2.6"/><circle cx="78" cy="36" r="2.6"/></g><text x="30" y="16" font-size="7" fill="#d64545" font-weight="700">과적합</text><text x="86" y="24" font-size="7" fill="#2fa05a" font-weight="700">규제✓</text></svg>`,
+
+  /* ── 지도학습 · 분류 ── */
+  knn:`<svg viewBox="0 0 120 80" width="110"><circle cx="60" cy="40" r="33" fill="#fdf3e7" stroke="#e8c9a0" stroke-width="1.2" stroke-dasharray="4,3"/><circle cx="60" cy="40" r="18" fill="#fbe3c8" stroke="#c96a1f" stroke-width="1.6" stroke-dasharray="4,3"/><g fill="#d64545"><path d="M50 36 L55 27 L60 36 Z"/><path d="M64 48 L69 39 L74 48 Z"/></g><g fill="#3a7de8"><rect x="66" y="25" width="8" height="8" rx="1.5"/><rect x="30" y="21" width="8" height="8" rx="1.5"/><rect x="82" y="54" width="8" height="8" rx="1.5"/></g><circle cx="60" cy="40" r="6" fill="#2fa05a" stroke="#fff" stroke-width="1.5"/><text x="60" y="43" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">?</text><text x="80" y="15" font-size="7.5" fill="#c96a1f" font-weight="700">k=3</text></svg>`,
+  tree:`<svg viewBox="0 0 120 80" width="110"><g stroke="#c9a06a" stroke-width="2"><line x1="60" y1="20" x2="34" y2="40"/><line x1="60" y1="20" x2="86" y2="40"/><line x1="34" y1="54" x2="22" y2="66"/><line x1="34" y1="54" x2="46" y2="66"/></g><rect x="46" y="6" width="28" height="15" rx="7" fill="#c96a1f"/><text x="60" y="16.5" text-anchor="middle" font-size="7.5" fill="#fff" font-weight="700">질문?</text><rect x="20" y="40" width="28" height="14" rx="7" fill="#fdf3e7" stroke="#c96a1f" stroke-width="1.3"/><rect x="72" y="40" width="28" height="14" rx="7" fill="#e8f7ee" stroke="#2fa05a" stroke-width="1.3"/><text x="40" y="34" font-size="7" fill="#2fa05a" font-weight="700">예</text><text x="76" y="34" font-size="7" fill="#d64545" font-weight="700">아니오</text><circle cx="22" cy="70" r="4.5" fill="#e8863a"/><circle cx="46" cy="70" r="4.5" fill="#3a7de8"/></svg>`,
+  logi:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="8" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="38" x2="112" y2="38" stroke="#e8c9a0" stroke-width="1" stroke-dasharray="3,3"/><path d="M16 64 C 52 64, 56 12, 106 12" fill="none" stroke="#c96a1f" stroke-width="3" stroke-linecap="round"/><text x="19" y="18" font-size="7.5" fill="#8a7a63">1</text><text x="19" y="66" font-size="7.5" fill="#8a7a63">0</text><text x="62" y="32" font-size="7.5" fill="#c96a1f" font-weight="700">확률</text></svg>`,
+  svm:`<svg viewBox="0 0 120 80" width="110"><polygon points="14,74 30,80 118,20 102,14" fill="#fbe3c8" opacity=".55"/><line x1="22" y1="76" x2="110" y2="16" stroke="#c96a1f" stroke-width="2.5"/><line x1="14" y1="72" x2="102" y2="12" stroke="#e8863a" stroke-width="1.2" stroke-dasharray="4,3"/><line x1="30" y1="80" x2="118" y2="20" stroke="#e8863a" stroke-width="1.2" stroke-dasharray="4,3"/><g fill="#3a7de8" stroke="#fff" stroke-width=".8"><circle cx="26" cy="26" r="4"/><circle cx="42" cy="16" r="4"/><circle cx="30" cy="44" r="4"/></g><g fill="#8a4fd3" stroke="#fff" stroke-width=".8"><circle cx="82" cy="60" r="4"/><circle cx="96" cy="50" r="4"/><circle cx="72" cy="72" r="4"/></g><text x="86" y="77" font-size="7" fill="#8a7a63" font-weight="700">마진 최대화</text></svg>`,
+  bayes:`<svg viewBox="0 0 120 80" width="110"><rect x="10" y="14" width="100" height="36" rx="10" fill="#fdf3e7" stroke="#c96a1f" stroke-width="1.5"/><text x="60" y="30" text-anchor="middle" font-size="11" font-style="italic" fill="#c96a1f" font-weight="700">P(B|A)</text><text x="60" y="44" text-anchor="middle" font-size="8" font-style="italic" fill="#8a7a63">= P(A|B)·P(B) / P(A)</text><text x="60" y="66" text-anchor="middle" font-size="8" fill="#8a7a63" font-weight="700">📧 조건부 확률로 분류</text></svg>`,
+
+  /* ── 앙상블 ── */
+  rf:`<svg viewBox="0 0 120 80" width="110"><rect x="36" y="2" width="48" height="12" rx="4" fill="#e8f7ee" stroke="#1f7d43"/><text x="60" y="11" text-anchor="middle" font-size="6.5" fill="#1f7d43">Training Dataset</text><g stroke="#b7a88f" stroke-width="1"><line x1="52" y1="14" x2="22" y2="26"/><line x1="60" y1="14" x2="60" y2="26"/><line x1="68" y1="14" x2="98" y2="26"/></g><g stroke="#8a7a63" stroke-width="1"><line x1="20" y1="34" x2="12" y2="44"/><line x1="20" y1="34" x2="28" y2="44"/><line x1="60" y1="34" x2="52" y2="44"/><line x1="60" y1="34" x2="68" y2="44"/><line x1="100" y1="34" x2="92" y2="44"/><line x1="100" y1="34" x2="108" y2="44"/></g><g fill="#b7b3ad"><circle cx="20" cy="31" r="5"/><circle cx="60" cy="31" r="5"/><circle cx="100" cy="31" r="5"/></g><g fill="#2ab3a6"><circle cx="12" cy="46" r="4"/><circle cx="28" cy="46" r="4"/><circle cx="52" cy="46" r="4"/><circle cx="68" cy="46" r="4"/><circle cx="92" cy="46" r="4"/><circle cx="108" cy="46" r="4"/></g><g stroke="#1f7d43" stroke-width="1.2"><line x1="20" y1="52" x2="50" y2="63"/><line x1="60" y1="52" x2="60" y2="62"/><line x1="100" y1="52" x2="70" y2="63"/></g><rect x="40" y="63" width="40" height="14" rx="6" fill="#2fa05a"/><text x="60" y="73" text-anchor="middle" font-size="7.5" fill="#fff" font-weight="700">Result (다수결/평균)</text></svg>`,
+  ada:`<svg viewBox="0 0 120 80" width="110"><defs><marker id="arw" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a7a63"/></marker></defs><rect x="2" y="10" width="32" height="34" rx="3" fill="#fff" stroke="#c9bda6"/><line x1="18" y1="12" x2="18" y2="42" stroke="#8a7a63" stroke-dasharray="3,2"/><g fill="#d64545"><circle cx="8" cy="18" r="2.5"/><circle cx="12" cy="30" r="2.5"/><circle cx="9" cy="38" r="2.5"/></g><g fill="#2fa05a"><circle cx="25" cy="16" r="2.5"/><circle cx="29" cy="27" r="2.5"/><circle cx="24" cy="37" r="2.5"/><circle cx="13" cy="22" r="2.5"/></g><circle cx="13" cy="22" r="5" fill="none" stroke="#d64545" stroke-width="1.2"/><line x1="36" y1="27" x2="42" y2="27" stroke="#8a7a63" marker-end="url(#arw)"/><rect x="44" y="10" width="32" height="34" rx="3" fill="#fff" stroke="#c9bda6"/><line x1="60" y1="12" x2="60" y2="42" stroke="#8a7a63" stroke-dasharray="3,2"/><g fill="#d64545"><circle cx="50" cy="18" r="2.5"/><circle cx="54" cy="30" r="2.5"/><circle cx="51" cy="38" r="2.5"/></g><g fill="#2fa05a"><circle cx="67" cy="16" r="2.5"/><circle cx="71" cy="27" r="2.5"/><circle cx="66" cy="37" r="2.5"/></g><circle cx="55" cy="22" r="4" fill="#2fa05a"/><circle cx="55" cy="22" r="6" fill="none" stroke="#c96a1f" stroke-width="1.5"/><line x1="78" y1="27" x2="84" y2="27" stroke="#8a7a63" marker-end="url(#arw)"/><rect x="86" y="10" width="32" height="34" rx="3" fill="#fff" stroke="#1f7d43"/><polygon points="87,11 117,11 87,43" fill="#fdecec"/><polygon points="117,11 117,43 87,43" fill="#e8f7ee"/><line x1="87" y1="43" x2="117" y2="11" stroke="#1f7d43" stroke-dasharray="3,2"/><g fill="#d64545"><circle cx="93" cy="17" r="2.5"/><circle cx="98" cy="22" r="2.5"/></g><g fill="#2fa05a"><circle cx="106" cy="35" r="2.5"/><circle cx="111" cy="28" r="2.5"/></g><text x="18" y="53" text-anchor="middle" font-size="6.5" fill="#8a7a63">Weak #1</text><text x="60" y="53" text-anchor="middle" font-size="6.5" fill="#8a7a63">Weak #2</text><text x="102" y="53" text-anchor="middle" font-size="6.5" fill="#1f7d43">Strong learner</text><text x="60" y="70" text-anchor="middle" font-size="8" fill="#d64545">틀린 데이터에 가중치↑ → 직렬 학습</text></svg>`,
+  xgb:`<svg viewBox="0 0 120 80" width="110"><defs><marker id="arwx" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1f7d43"/></marker></defs><polygon points="98,2 90,16 96,16 88,30" fill="#f59e0b"/><g stroke="#c9bda6" fill="#fff"><rect x="4" y="16" width="26" height="24" rx="4"/><rect x="46" y="16" width="26" height="24" rx="4"/><rect x="88" y="34" width="26" height="24" rx="4" stroke="#1f7d43"/></g><g stroke="#8a7a63" stroke-width="1.3"><line x1="17" y1="22" x2="11" y2="32"/><line x1="17" y1="22" x2="23" y2="32"/><line x1="59" y1="22" x2="53" y2="32"/><line x1="59" y1="22" x2="65" y2="32"/><line x1="101" y1="40" x2="95" y2="50"/><line x1="101" y1="40" x2="107" y2="50"/></g><g fill="#d64545"><circle cx="17" cy="21" r="3"/><circle cx="11" cy="34" r="2.5"/></g><g fill="#e8863a"><circle cx="59" cy="21" r="3"/><circle cx="53" cy="34" r="2.5"/><circle cx="23" cy="34" r="2.5"/></g><g fill="#2fa05a"><circle cx="101" cy="39" r="3"/><circle cx="95" cy="52" r="2.5"/><circle cx="107" cy="52" r="2.5"/><circle cx="65" cy="34" r="2.5"/></g><line x1="32" y1="28" x2="42" y2="28" stroke="#1f7d43" stroke-width="1.5" marker-end="url(#arwx)"/><line x1="74" y1="30" x2="84" y2="40" stroke="#1f7d43" stroke-width="1.5" marker-end="url(#arwx)"/><g fill="#2ab3a6"><rect x="6" y="62" width="20" height="5" rx="2"/><rect x="30" y="62" width="20" height="5" rx="2"/><rect x="54" y="62" width="20" height="5" rx="2"/><rect x="78" y="62" width="20" height="5" rx="2"/></g><text x="60" y="78" text-anchor="middle" font-size="8" fill="#1f7d43" font-weight="700">오차 정밀 계산 + CPU 병렬 ⚡</text></svg>`,
+  stack:`<svg viewBox="0 0 120 80" width="110"><rect x="38" y="4" width="44" height="18" rx="6" fill="#fdf3e7" stroke="#c96a1f" stroke-width="1.5"/><text x="60" y="16.5" text-anchor="middle" font-size="8" fill="#c96a1f" font-weight="800">최종 모델 🎓</text><g stroke="#b7a88f" stroke-width="1.3"><line x1="24" y1="44" x2="52" y2="24"/><line x1="60" y1="44" x2="60" y2="24"/><line x1="96" y1="44" x2="68" y2="24"/></g><g><circle cx="24" cy="52" r="10" fill="#e9f1fd" stroke="#3a7de8" stroke-width="1.8"/><circle cx="60" cy="52" r="10" fill="#e8f7ee" stroke="#2fa05a" stroke-width="1.8"/><circle cx="96" cy="52" r="10" fill="#f3ecfc" stroke="#8a4fd3" stroke-width="1.8"/></g><text x="24" y="55.5" text-anchor="middle" font-size="7" fill="#2560c4" font-weight="700">kNN</text><text x="60" y="55.5" text-anchor="middle" font-size="7" fill="#1f7d43" font-weight="700">SVM</text><text x="96" y="55.5" text-anchor="middle" font-size="7" fill="#6c35b0" font-weight="700">RF</text><text x="60" y="74" text-anchor="middle" font-size="8" fill="#8a7a63">1단계 예측값 → 2단계가 다시 학습</text></svg>`,
+
+  /* ── 비지도 ── */
+  kmeans:`<svg viewBox="0 0 120 80" width="110"><g fill="#3a7de8"><circle cx="25" cy="25" r="4"/><circle cx="35" cy="18" r="4"/><circle cx="30" cy="34" r="4"/></g><g fill="#2fa05a"><circle cx="85" cy="22" r="4"/><circle cx="95" cy="30" r="4"/><circle cx="88" cy="38" r="4"/></g><g fill="#e8863a"><circle cx="55" cy="62" r="4"/><circle cx="65" cy="68" r="4"/><circle cx="48" cy="70" r="4"/></g><path d="M30 26 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#3a7de8" stroke-dasharray="3,3"/><path d="M89 30 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#2fa05a" stroke-dasharray="3,3"/><path d="M56 66 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#e8863a" stroke-dasharray="3,3"/><text x="60" y="10" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">k개로 뭉치기</text></svg>`,
+  dbscan:`<svg viewBox="0 0 120 80" width="110"><g fill="#3a7de8" stroke="#fff" stroke-width=".7"><circle cx="22" cy="46" r="3.2"/><circle cx="30" cy="35" r="3.2"/><circle cx="42" cy="27" r="3.2"/><circle cx="56" cy="23" r="3.2"/><circle cx="70" cy="25" r="3.2"/><circle cx="80" cy="32" r="3.2"/></g><g fill="#2fa05a" stroke="#fff" stroke-width=".7"><circle cx="44" cy="54" r="3.2"/><circle cx="58" cy="50" r="3.2"/><circle cx="72" cy="47" r="3.2"/><circle cx="86" cy="44" r="3.2"/><circle cx="96" cy="52" r="3.2"/><circle cx="100" cy="40" r="3.2"/></g><g stroke="#d64545" stroke-width="2.2" stroke-linecap="round"><line x1="20" y1="12" x2="28" y2="20"/><line x1="28" y1="12" x2="20" y2="20"/></g><text x="33" y="19" font-size="7" fill="#d64545" font-weight="700">노이즈</text><text x="60" y="74" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">밀도로 초승달도 분리</text></svg>`,
+  pca:`<svg viewBox="0 0 120 80" width="110"><defs><marker id="pcaA" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c96a1f"/></marker></defs><ellipse cx="54" cy="42" rx="34" ry="14" fill="#e9f1fd" stroke="#bcd4f5" transform="rotate(-28 54 42)"/><g fill="#3a7de8" stroke="#fff" stroke-width=".7"><circle cx="34" cy="52" r="2.6"/><circle cx="44" cy="47" r="2.6"/><circle cx="54" cy="42" r="2.6"/><circle cx="64" cy="37" r="2.6"/><circle cx="74" cy="32" r="2.6"/><circle cx="46" cy="52" r="2.6"/><circle cx="62" cy="45" r="2.6"/></g><line x1="30" y1="56" x2="80" y2="28" stroke="#c96a1f" stroke-width="2.5" marker-end="url(#pcaA)"/><line x1="54" y1="42" x2="45" y2="30" stroke="#e8863a" stroke-width="1.8" marker-end="url(#pcaA)"/><text x="84" y="24" font-size="8" fill="#c96a1f" font-weight="800">PC1</text><text x="60" y="72" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">여러 변수 → 핵심 축 압축</text></svg>`
+};
+
+const ALGO_CARDS = {
+  "grid-pred":[
+    {cls:"c-sup",svg:"linreg",name:"선형 회귀",one:"점들을 가장 잘 관통하는 직선 긋기! 📈",def:"데이터를 가장 잘 나타내는 직선(또는 평면)을 그려 미래의 숫자를 예측하는 가장 기본적인 회귀"},
+    {cls:"c-sup",svg:"polyreg",name:"다항 회귀",one:"빳빳한 자 대신 휘어지는 곡선 자로! 〰️",def:"세상의 데이터는 직선으로만 움직이지 않는다! 데이터가 위아래로 요동치거나 휘어질 때, 최고차항을 올려 곡선 형태로 추세를 예측하는 선형 모델의 확장"},
+    {cls:"c-sup",svg:"ridge",name:"Ridge / Lasso (규제 모델)",one:"과적합에 벌점 주는 족집게 선생님 🚨",def:"기출문제만 달달 외워 응용을 못 푸는 학생(과적합)처럼 모델이 특정 데이터에만 과도하게 fit되는 것을 막으려, 복잡한 수식에 수학적 패널티(규제)를 부여해 범용 예측 능력을 키우는 방어형 선형 모델"}
+  ],
+  "grid-clf":[
+    {cls:"c-sup",svg:"knn",name:"k-최근접 이웃 (kNN)",one:"가까운 이웃들에게 물어봐!",def:"새로운 데이터가 들어오면 가장 가까운 이웃들이 누군지 확인해 다수결로 종류 결정"},
+    {cls:"c-sup",svg:"tree",name:"의사 결정 트리",one:"스무고개처럼 질문으로 갈라지기",def:"질문을 던져 예/아니오로 답을 찾아가며 가지가 뻗어나가듯 데이터를 분류"},
+    {cls:"c-sup",svg:"logi",name:"로지스틱 회귀",one:"S자 곡선으로 확률 계산",def:"시그모이드 함수를 활용해 데이터가 특정 집단에 속할 확률(0~1 사이)을 계산하여 데이터를 분류"},
+    {cls:"c-sup",svg:"svm",name:"서포트 벡터 머신 (SVM)",one:"두 집단 사이 여백(마진)을 최대로!",def:"서로 다른 두 집단을 구분하는 최적의 경계선(3차원 이상은 초평면)을 만들어 마진(여백)을 최대화하며 데이터를 분류"},
+    {cls:"c-sup",svg:"bayes",name:"나이브 베이즈",one:"조건부 확률로 판단",def:"조건부 확률을 활용해 데이터가 특정 집단에 속할 확률을 계산하여 분류"}
+  ],
+  "grid-ens":[
+    {cls:"c-ens",svg:"rf",name:"랜덤 포레스트",one:"트리 여러 그루의 다수결 (병렬)",def:"수많은 의사 결정 트리를 학습시키고, 출력된 결괏값을 다수결이나 평균으로 합쳐 결정 (배깅 방식, 병렬)"},
+    {cls:"c-ens",svg:"ada",name:"Adaboost",one:"틀린 문제를 집중 공략 (직렬)",def:"이전 모델이 틀린 문제에 오답 가중치를 주고, 다음 모델이 집중적으로 학습하게 함 (부스팅 방식, 직렬)"},
+    {cls:"c-ens",svg:"xgb",name:"XGBoost",one:"오답 노트 초고속 복습 — 부스팅의 최종 진화형",def:"앞 모델의 실수를 이어받아 고치되, 정답과의 격차(오차)를 정밀하게 계산하고 여러 CPU 병렬 연산으로 속도를 극한까지 끌어올린 부스팅의 끝판왕. 표 데이터 예측 대회 상위권을 휩쓰는 치트키!"},
+    {cls:"c-ens",svg:"stack",name:"Stacking (스태킹)",one:"우등생들의 답을 종합하는 담임 선생님",def:"서로 다른 모델(kNN·SVM·랜덤 포레스트)이 1단계에서 예측하고, 그 예측값들을 '새 데이터' 삼아 2단계 최종 모델(주로 로지스틱 회귀)이 다시 학습해 결론. 예측 패턴까지 한 번 더 배우는 조별 과제 끝판왕!"}
+  ],
+  "grid-unsup":[
+    {cls:"c-unsup",svg:"kmeans",name:"K-Means",one:"정답 없이 거리로 뭉치 찾기 (k 지정)",def:"정답이 없는 상태에서 데이터 사이의 거리를 계산해 사람이 정한 k개의 군집으로 나눈다. 동글동글 뭉친 데이터에 강함"},
+    {cls:"c-unsup",svg:"dbscan",name:"DBSCAN",one:"소문 듣고 옹기종기 모여든 맛집 대기 줄 🍜",def:"군집 개수 k를 미리 정하지 않아도 데이터가 빽빽한 밀도를 따라 스스로 그룹을 형성. K-Means가 못 나누는 초승달·뱀 모양도 완벽히 분리하고, 어디에도 안 속한 외톨이는 이상치(노이즈)로 알아서 걸러내는 똑똑한 녀석!"},
+    {cls:"c-unsup",svg:"pca",name:"PCA (차원 축소)",one:"3D 피규어를 잘 나오는 각도로 2D 사진 📸",def:"원래 정보(분산)를 최대한 손실 없이 유지하면서 10·20개 넘는 복잡한 변수(차원)를 2·3차원으로 압축. 그래프 시각화와 연산 속도를 대폭 올려주는 치트키!"}
+  ]
+};
+</script>
+<script>
+/* [데이터] 코드 워크스루 — WALKTHROUGHS[키].lines = [코드줄, 해설] 쌍. 빈 줄은 ["",""]. */
+/* ================================================================
+   2. 코드 워크스루
+================================================================ */
+const WALKTHROUGHS = {
+  linreg:{noteId:"note-linreg",lines:[
+    ["import numpy as np","수치 계산 라이브러리 numpy를 np라는 이름으로 불러옵니다."],
+    ["from sklearn.model_selection import train_test_split","데이터를 훈련용/테스트용으로 나눠 주는 함수 train_test_split을 불러옵니다."],
+    ["from sklearn.linear_model import LinearRegression  # 선형회귀","선형 회귀 모델을 불러옵니다. 데이터를 가장 잘 나타내는 직선(또는 평면)을 그려 미래의 숫자를 예측하는 알고리즘이에요."],
+    ["",""],
+    ["# 1. 데이터 준비 (공부 시간 x, 시험 점수 y)","x는 독립변수(공부 시간), y는 종속변수(시험 점수)입니다."],
+    ["X = np.array([[1],[2],[3],[4],[5],[6],[7],[8],[9],[10]])","공부 시간 데이터 10개. 독립변수 X는 2차원 배열 형태로 준비합니다."],
+    ["y = np.array([15,25,35,42,50,62,75,82,91,98])","각 공부 시간에 대응하는 시험 점수(정답 레이블) 10개입니다."],
+    ["",""],
+    ["# 2. 데이터 분할 (학습용 80%, 테스트용 20%)","전체 데이터를 훈련용 80%, 테스트용 20%로 나눕니다."],
+    ["X_train, X_test, X_train, X_test = train_test_split(X, y, test_size=0.2, random_state=42)","⚠️ <b>이 줄, 뭔가 이상하지 않나요?</b> 일부러 숨겨 둔 오타예요. '버그 찾기' 섹션(⑦)에서 직접 고쳐 보세요! random_state=42는 실행할 때마다 같은 방식으로 나뉘도록 고정하는 값입니다."],
+    ["# test_size=0.2는 20%를 테스트용으로 떼어놓겠다는 의미. 보통 0.2~0.3으로 정함","test_size=0.2는 20%를 테스트용으로 떼어놓겠다는 의미. 보통 0.2~0.3으로 정합니다."],
+    ["",""],
+    ["# 3. 모델 선택 및 학습","이제 알고리즘(모델)을 고르고 학습시킬 차례!"],
+    ["model = LinearRegression()","선형 회귀 모델 객체를 만듭니다."],
+    ["model.fit(X_train, y_train)","fit() = 학습! 훈련 데이터 조합(X_train, y_train)으로 모델을 학습시킵니다."]
+  ]},
+  clf:{noteId:"note-clf",lines:[
+    ["import numpy as np","수치 계산 라이브러리 numpy를 불러옵니다."],
+    ["from sklearn.model_selection import train_test_split","데이터 분할 함수를 불러옵니다."],
+    ["from sklearn.linear_model import LogisticRegression  # 로지스틱회귀","로지스틱 회귀 모델. 시그모이드 함수를 활용해 데이터가 특정 집단에 속할 확률(0~1 사이)을 계산하여 데이터를 분류합니다."],
+    ["",""],
+    ["# 1. 데이터 준비 (특성 x: [공부 시간, 출석률], 레이블 y: 합격 여부 1 또는 0)","이번엔 특성이 2개(공부 시간, 출석률)이고, 정답은 합격(1)/불합격(0)인 <b>분류</b> 문제입니다."],
+    ["X = np.array([[1,20],[2,30],[3,40],[4,70],[5,60],[6,80],[7,90],[8,85],[9,95],[10,100]])","학생 10명의 [공부 시간, 출석률] 데이터. x는 독립변수입니다."],
+    ["y = np.array([0,0,0,0,1,1,1,1,1,1])","합격 여부 레이블. y는 종속변수입니다."],
+    ["",""],
+    ["# 2. 데이터 분할 (학습용 80%, 테스트용 20%)","훈련 데이터 조합은 X_train, y_train. 테스트 데이터 조합은 X_test, y_test입니다."],
+    ["X_train, X_test, X_train, X_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)","⚠️ 선형 회귀 코드와 <b>같은 오타</b>가 여기도 있어요! '버그 찾기' 섹션(⑦)에서 확인하세요. 그리고 이번엔 <b>stratify=y</b>라는 새 인자가 보이죠? 아랫줄 해설을 클릭!"],
+    ["# stratify=y : y(정답)의 클래스 비율을 훈련/테스트에 그대로 유지 (층화 추출)","<b>stratify=y</b> — 전체 데이터의 합격:불합격 비율이 6:4라면, 훈련 데이터와 테스트 데이터도 <b>각각 6:4가 되도록</b> 나눠 줍니다(층화 추출). 그냥 무작위로 나누면 운 나쁘게 테스트 데이터에 불합격만 몰릴 수 있는데, 그걸 막아 줘요. 데이터가 적거나 클래스가 불균형한 <b>분류</b> 문제에서 특히 중요합니다! (y가 연속된 숫자인 회귀에서는 쓰지 않아요 — 그래서 위의 선형 회귀 코드에는 없습니다.)"],
+    ["",""],
+    ["# 3. 모델 선택 및 학습 (분류를 위해 LogisticRegression 사용)","예측이 아닌 분류 문제이므로 LinearRegression 대신 LogisticRegression을 씁니다."],
+    ["model = LogisticRegression()","로지스틱 회귀 모델 객체 생성."],
+    ["model.fit(X_train, y_train)  # train 데이터들로 학습","train 데이터들로 학습합니다."]
+  ]},
+  kerasA:{noteId:"note-kerasA",lines:[
+    ["import tensorflow as tf","딥러닝 라이브러리 텐서플로를 불러옵니다."],
+    ["from tensorflow.keras.models import Sequential","층을 순서대로 쌓는 Sequential 모델을 불러옵니다."],
+    ["from tensorflow.keras.layers import Flatten, Dense","Flatten(차원 변환)과 Dense(완전연결층)를 불러옵니다."],
+    ["",""],
+    ["model = Sequential([","층을 위에서 아래로 차례차례 쌓기 시작!"],
+    ["    Flatten(input_shape=(28, 28)),      # 28x28 이미지를 1차원 데이터로 변환","① 28×28 이미지를 1차원 데이터로 변환합니다."],
+    ["    Dense(128, activation='relu'),      # 은닉층","② 128개 노드의 은닉층. 활성화 함수는 ReLU(양수면 그대로, 0 이하면 0)."],
+    ["    Dense(10, activation='softmax')     # 출력층","③ 10개 노드의 출력층 + Softmax → 10개 클래스 중 하나를 고르는 <b>다중 클래스 분류</b>임을 알 수 있어요!"],
+    ["])","모델 완성!"]
+  ]},
+  kerasB:{noteId:"note-kerasB",lines:[
+    ["model = Sequential([","층 쌓기 시작."],
+    ["    Dense(64, activation='relu'),   # 은닉층","① 64개 노드의 은닉층, ReLU 사용."],
+    ["    Dense(32, activation='tanh'),   # 은닉층","② 32개 노드의 은닉층, Tanh(출력 -1~1) 사용."],
+    ["    Dense(1)                        # 출력층, 활성화 함수 없음","③ 노드 1개 출력층, <b>활성화 함수 없음(선형)</b> → 숫자를 그대로 내보내는 <b>회귀(예측) 문제</b>입니다!"],
+    ["])","모델 완성!"]
+  ]},
+  scaler:{noteId:"note-scaler",lines:[
+    ["scaler = MixMaxScaler()","① 개발자는 MinMaxScaler를 스케일러로 결정… 그런데 ⚠️ 철자가 이상하죠? 시험 단골 함정 오타예요! '버그 찾기' ④-2번에서 고쳐 보세요."],
+    ["X_train = scaler.fit_transform(X_train)","② 훈련 데이터(X_train) 기준으로 스케일링 기준을 만들어(fit) 변환(transform)합니다."],
+    ["X_test = scaler.transform(X_test)","③ 테스트 데이터는 이미 학습한 스케일링 기준으로 변환만 합니다. (새로 fit하지 않아요!)"]
+  ]},
+  compile:{noteId:"note-compile",lines:[
+    ["model.compile(optimizer='adam', loss='mse', metrics=['mae'])","adam 최적화, mse 손실함수, mae 평가지표 → 손실이 MSE이므로 <b>회귀 문제</b>임을 알 수 있어요."],
+    ["history = model.fit(X_train, y_train, epochs=20, batch_size=64, validation_split=0.2)","훈련 데이터를 20회 반복학습(epochs=20), 한 번에 64개씩 처리(batch_size=64), 훈련 데이터의 20%는 검증 데이터로 사용(validation_split=0.2)."],
+    ["model.evaluate(X_test, y_test)","학습이 끝난 뒤 테스트 데이터로 모델 성능을 평가합니다."]
+  ]}
+};
+</script>
+<script>
+/* [데이터] 버그 찾기 — BUGS[] {codeId,msgId,fixId,bugLine,lines,fixes,why}. */
+/* ================================================================
+   3. 버그 찾기
+================================================================ */
+const BUGS=[
+  {codeId:"bug1-code",msgId:"bug1-msg",fixId:"bug1-fix",bugLine:1,
+   lines:["# 2. 데이터 분할 (학습용 80%, 테스트용 20%)",
+          "X_train, X_test, X_train, X_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+          "model = LinearRegression()",
+          "model.fit(X_train, y_train)"],
+   fixes:[
+     {t:"X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",ok:true},
+     {t:"X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.2, random_state=42)",ok:false},
+     {t:"X_train, y_train, X_test, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",ok:false}],
+   why:"train_test_split은 <b>X_train, X_test, y_train, y_test</b> 순서로 4개의 값을 돌려줍니다. 위 코드는 X_train과 X_test라는 같은 이름을 두 번 써서 y(정답) 데이터가 사라져 버려요! 훈련 데이터 조합은 X_train·y_train, 테스트 데이터 조합은 X_test·y_test라는 것을 기억하세요."},
+  {codeId:"bug2-code",msgId:"bug2-msg",fixId:"bug2-fix",bugLine:0,
+   lines:["scaler = MixMaxScaler()",
+          "X_train = scaler.fit_transform(X_train)",
+          "X_test = scaler.transform(X_test)"],
+   fixes:[
+     {t:"scaler = MinMaxScaler()",ok:true},
+     {t:"scaler = MaxMinScaler()",ok:false},
+     {t:"scaler = MixMinScaler()",ok:false}],
+   why:"사이킷런의 실제 클래스 이름은 <b>MinMaxScaler()</b>입니다. 데이터를 기본값 [0,1] 사이 숫자로 변환하는 스케일러예요(feature_range 옵션을 주면 [-1,1] 등으로도 가능). Min(최솟값)과 Max(최댓값)를 이용한다고 기억하면 철자를 헷갈리지 않아요!"}
+];
+</script>
+<script>
+/* [데이터] 하이퍼파라미터 플립카드 — HYPER[] {name,one,def,ex}. */
+/* ================================================================
+   7. 하이퍼파라미터 플립카드
+================================================================ */
+const HYPER=[
+  {name:"optimizer",one:"어떻게 최적화할까?",def:"모델 학습을 위한 최적화 알고리즘. adam, sgd 등이 있으며 adam이 대표적. 역전파에서 가중치·편향 수정에 사용됨.",ex:"optimizer='adam'"},
+  {name:"loss",one:"예측이 얼마나 틀렸나?",def:"손실 함수. 예측값과 실제값의 차이를 계산. 분류: binary_crossentropy(이진) / categorical_crossentropy(다중). 회귀: MSE, MAE.",ex:"loss='mse'"},
+  {name:"metrics",one:"사람이 보는 성적표",def:"인간이 성능을 평가하는 지표(학습에는 관여하지 않음). 분류: accuracy, 회귀: MSE, MAE.",ex:"metrics=['accuracy']"},
+  {name:"epochs",one:"전체 반복 학습 횟수",def:"전체 훈련 데이터를 반복 학습시키는 횟수.",ex:"epochs=20"},
+  {name:"batch_size",one:"한 번에 몇 개씩?",def:"한 번에 모델이 처리하는 훈련 데이터 개수.",ex:"batch_size=64"},
+  {name:"validation_split",one:"검증용으로 얼마나 떼어둘까?",def:"훈련 데이터 중 검증 데이터(모의고사)로 분류하는 비율. 검증 데이터의 역할은 아래 '모의고사' 설명 참고!",ex:"validation_split=0.2"}
+];
+</script>
+<script>
+/* [데이터] 퀴즈 전부 — QUIZ_C/QUIZ_B(해석 퀴즈), FINAL(자가진단 18문항 {q,opts,a,exp}), FINAL_SEC(오답노트 섹션 매핑 — 문항 추가 시 여기도!). */
+/* ================================================================
+   8. 코드 해석 퀴즈 2세트
+================================================================ */
+const QUIZ_C=[
+  {q:"1. 이 모델의 은닉층 개수는?",opts:["2개","3개","4개"],a:1,exp:"은닉층은 Dense(64), Dense(32), Dense(16)의 3개입니다. 마지막 Dense(1)은 출력층이에요."},
+  {q:"2. 1번 은닉층에서 사용된 활성화 함수와 α 값은?",opts:["ReLU, α=0.1","Leaky ReLU, α=0.01","ELU, α=1"],a:1,exp:"Dense(64) 뒤에 tf.keras.layers.LeakyReLU(alpha=0.01)이 붙어 있으므로 Leaky ReLU, α=0.01입니다."},
+  {q:"3. 3번 은닉층의 노드 개수는?",opts:["32개","16개","1개"],a:1,exp:"세 번째 은닉층은 Dense(16, activation='tanh')이므로 노드는 16개입니다."},
+  {q:"4. 이 모델은 어떤 문제를 해결하는가?",opts:["회귀(예측)","다중 클래스 분류","이진 분류"],a:2,exp:"출력층이 노드 1개 + sigmoid이므로 둘 중 하나를 고르는 이진 분류입니다."}
+];
+const QUIZ_B=[
+  {q:"1. 사용된 최적화 알고리즘은?",opts:["adam","sgd","relu"],a:1,exp:"optimizer='sgd'로 설정되어 있습니다."},
+  {q:"2. 사용된 손실 함수는?",opts:["mse","categorical_crossentropy","binary_crossentropy"],a:2,exp:"loss='binary_crossentropy' — 이진 분류용 손실 함수입니다."},
+  {q:"3. 전체 훈련 데이터의 반복 학습 횟수는?",opts:["32회","50회","20회"],a:1,exp:"epochs=50이므로 전체 훈련 데이터를 50회 반복 학습합니다. (batch_size=32와 헷갈리지 마세요!)"},
+  {q:"4. 이 코드가 해결하는 문제 유형은?",opts:["이진 분류","회귀(예측)","군집화"],a:0,exp:"binary_crossentropy(이진 분류용 손실) + accuracy(분류용 지표) 조합이므로 이진 분류입니다."}
+];
+
+/* ================================================================
+   10. 마무리 자가진단 퀴즈 (10문항)
+================================================================ */
+const FINAL=[
+  {q:"1. 새로운 데이터가 들어오면 가장 가까운 이웃들이 누군지 확인해 다수결로 종류를 결정하는 알고리즘은?",
+   opts:["의사 결정 트리","k-최근접 이웃 (kNN)","나이브 베이즈","K-Means"],a:1,
+   exp:"'가장 가까운 이웃 + 다수결' 키워드 → kNN입니다."},
+  {q:"2. 시그모이드 함수를 활용해 데이터가 특정 집단에 속할 확률(0~1 사이)을 계산하여 분류하는 알고리즘은?",
+   opts:["선형 회귀","로지스틱 회귀","SVM","랜덤 포레스트"],a:1,
+   exp:"'시그모이드 + 0~1 확률' 키워드 → 로지스틱 회귀입니다. 이름에 '회귀'가 있지만 분류 알고리즘이에요!"},
+  {q:"3. 두 집단을 구분하는 최적의 경계선을 만들어 마진(여백)을 최대화하며 분류하는 알고리즘은?",
+   opts:["서포트 벡터 머신 (SVM)","나이브 베이즈","kNN","Adaboost"],a:0,
+   exp:"'경계선(초평면) + 마진 최대화' → SVM입니다."},
+  {q:"4. 수많은 의사 결정 트리의 결과를 다수결이나 평균으로 합치는 배깅 방식(병렬)의 앙상블 알고리즘은?",
+   opts:["Adaboost","랜덤 포레스트","K-Means","로지스틱 회귀"],a:1,
+   exp:"'많은 트리 + 다수결/평균 + 배깅(병렬)' → 랜덤 포레스트. Adaboost는 부스팅(직렬)입니다."},
+  {q:"5. 정답이 없는 상태에서 데이터 사이의 거리를 계산해 군집을 형성하는 알고리즘은?",
+   opts:["K-Means","kNN","SVM","선형 회귀"],a:0,
+   exp:"'정답 없음(비지도) + 거리 + 군집' → K-Means. kNN(지도학습)과 헷갈리지 마세요!"},
+  {q:"6. 3개 이상의 선택지 중 하나의 정답을 선택하는 다중 클래스 분류에서 출력층에 사용하는 활성화 함수는?",
+   opts:["시그모이드(Sigmoid)","ReLU","소프트맥스(Softmax)","Tanh"],a:2,
+   exp:"다중 클래스 분류의 출력층 → Softmax. 이진 분류는 Sigmoid, 회귀는 활성화 함수 없음(선형)!"},
+  {q:"7. 입력값이 양수면 그대로, 0 이하면 0을 출력하며 은닉층에서 자주 사용하는 활성화 함수는?",
+   opts:["계단 함수","ReLU","ELU","Leaky ReLU"],a:1,
+   exp:"'양수면 그대로, 0 이하면 0' → ReLU입니다."},
+  {q:"8. 전체 훈련 데이터를 반복 학습시키는 횟수를 정하는 하이퍼파라미터는?",
+   opts:["batch_size","validation_split","epochs","metrics"],a:2,
+   exp:"반복 학습 횟수 → epochs. batch_size는 한 번에 처리하는 데이터 개수입니다."},
+  {q:"9. 오차를 계산하고, 오차를 줄이기 위해 앞의 층으로 돌아가며 가중치와 편향을 수정하는 과정은?",
+   opts:["순전파","역전파","스케일링","군집화"],a:1,
+   exp:"'오차 + 앞의 층으로 돌아가며 수정' → 역전파(Backpropagation)입니다."},
+  {q:"10. 생성자와 판별자가 서로 경쟁하며 진짜 같은 가짜 데이터를 만드는 신경망은?",
+   opts:["CNN","RNN","GAN","GNN"],a:2,
+   exp:"'생성자 vs 판별자 경쟁' → GAN(생성적 적대 신경망). 딥페이크·이미지 생성에 쓰여요."},
+  {q:"11. 데이터를 정규분포(평균 0, 표준편차 1) 형태로 변환하는 스케일러는?",
+   opts:["MinMaxScaler","StandardScaler","RobustScaler","MixMaxScaler"],a:1,
+   exp:"'평균 0, 표준편차 1(정규분포)' → StandardScaler. MinMax는 [0,1], Robust는 중앙값·IQR입니다. (MixMaxScaler는 존재하지 않는 오타예요 — 버그 찾기에서 봤죠?)"},
+  {q:"12. train_test_split에서 y(정답)의 클래스 비율을 훈련/테스트 데이터에 그대로 유지해 주는 인자는?",
+   opts:["random_state=42","test_size=0.2","stratify=y","shuffle=True"],a:2,
+   exp:"stratify=y(층화 추출)! 합격:불합격이 6:4면 훈련·테스트도 각각 6:4로 나눠 줍니다. random_state는 분할 방식 고정, test_size는 테스트 비율이에요."},
+  {q:"13. 베이즈 공식에서 데이터를 관찰한 후 갱신된 확률, 즉 P(B|A)의 이름은?",
+   opts:["사전 확률(Prior)","조건부 확률 P(A|B)","사후 확률(Posterior)","증거(Evidence)"],a:2,
+   exp:"관찰 '후(post)'에 갱신된 확률 → 사후 확률(Posterior). 관찰 전 믿음이 사전 확률, P(A|B)가 조건부 확률, 분모 P(A)가 증거입니다."},
+  {q:"14. 머신러닝 문제 해결 7단계에서 '훈련/테스트 데이터 분할' 바로 다음에 오는 단계는?",
+   opts:["모델 학습","데이터 스케일링","성능 평가","데이터 수집"],a:1,
+   exp:"분할 → 스케일링 → 모델 학습 → 평가 순서입니다. 분할보다 스케일링을 먼저 하면 테스트 데이터 정보가 훈련에 새어 들어가요(데이터 누수)!"},
+  {q:"15. 스케일링할 때 테스트 데이터(X_test)에는 fit_transform이 아니라 transform만 쓰는 이유는?",
+   opts:["테스트 데이터가 더 작아서","훈련 데이터로 만든 스케일링 기준을 그대로 적용해야 해서","transform이 더 빨라서","테스트 데이터는 스케일링하면 안 돼서"],a:1,
+   exp:"기준(fit)은 훈련 데이터로만 만들고, 테스트 데이터는 그 기준으로 변환(transform)만 합니다. 테스트 데이터에 다시 fit하면 시험 문제를 미리 보는 것과 같아요!"},
+  {q:"16. 기출문제만 달달 외운 학생처럼 특정 데이터에만 과도하게 맞춰지는 과적합을 막기 위해, 복잡한 수식에 수학적 패널티(규제)를 부여하는 회귀 모델은?",
+   opts:["다항 회귀","Ridge / Lasso (규제 모델)","로지스틱 회귀","K-Means"],a:1,
+   exp:"'과적합 방지 + 수학적 패널티(규제)' → Ridge/Lasso. 다항 회귀는 직선을 곡선으로 확장한 모델이고, 로지스틱 회귀는 이름과 달리 분류용이에요."},
+  {q:"17. 군집 개수 k를 미리 정하지 않아도 데이터가 빽빽한 밀도를 따라 스스로 그룹을 만들며, 초승달 모양도 분리하고 외톨이는 노이즈(이상치)로 걸러내는 알고리즘은?",
+   opts:["K-Means","DBSCAN","PCA","kNN"],a:1,
+   exp:"'밀도 기반 + k 불필요 + 노이즈 제거' → DBSCAN. K-Means는 k를 정해야 하고 동글동글한 군집에 강해요. kNN은 지도학습(분류)이라 헷갈리지 마세요!"},
+  {q:"18. 정보(분산)를 최대한 유지하면서 수십 개의 복잡한 변수(차원)를 2·3차원으로 압축해 시각화와 연산 속도를 높이는 비지도 학습 기법은?",
+   opts:["PCA (차원 축소)","DBSCAN","랜덤 포레스트","SVM"],a:0,
+   exp:"'차원 축소 + 분산 유지 + 시각화' → PCA. 군집을 나누는 게 아니라 변수(차원) 개수 자체를 줄이는 거예요."}
+];
+/* 원본 문항 index → 복습 섹션 매핑 (오답 노트용) */
+const FINAL_SEC={0:["algos","② 알고리즘 도감"],1:["algos","② 알고리즘 도감"],2:["algos","② 알고리즘 도감"],3:["algos","② 알고리즘 도감"],4:["algos","② 알고리즘 도감"],5:["activation","④ 딥러닝 입문 · 활성화 함수"],6:["activation","④ 딥러닝 입문 · 활성화 함수"],7:["hyper","⑤ 하이퍼파라미터"],8:["perceptron","④ 딥러닝 입문 · 퍼셉트론"],9:["anntypes","④ 딥러닝 입문 · 신경망 종류"],10:["scaling","③ 데이터 다듬기(스케일링)"],11:["code","⑥ 코드 읽기"],12:["bayes","② 알고리즘 · 베이즈 체험존"],13:["steps7","① 문제 해결 7단계"],14:["scaling","③ 데이터 다듬기(스케일링)"],15:["algos","② 알고리즘 도감"],16:["algos","② 알고리즘 도감"],17:["algos","② 알고리즘 도감"]};
+</script>
+<script>
+/* [데이터] AI 프로젝트 6단계 — PROJ[] {name,tasks,ex}, PROJ_COLORS. */
+/* ================================================================
+   9. AI 프로젝트 스테퍼
+================================================================ */
+const PROJ=[
+  {name:"1. 문제 정의",
+   tasks:["인공지능으로 해결할 수 있는 문제 탐색","문제 상황과 관련한 자료 수집","프로젝트 주제 선정","프로젝트 수행 계획 수립"],
+   ex:"기후변화로 인한 우리나라의 기온 변화를 인공지능으로 예측하여 우리나라도 기후변화 위기에 직면해 있다는 것을 알린다."},
+  {name:"2. 데이터 수집",
+   tasks:["데이터 탐색","충분한 양과 질의 데이터 수집","데이터의 신뢰도 검토"],
+   ex:"기상청에서 제공하는 우리나라의 기온 데이터를 수집한다. 캐글에서 세계 기온 데이터를 수집한다."},
+  {name:"3. 데이터 전처리 및 핵심 속성 추출",
+   tasks:["탐색적 데이터 분석 수행을 통한 데이터 특성 파악","핵심 속성 추출","훈련/테스트 데이터 분리","결측치 및 이상치 처리","문제 해결에 적합한 형태로 전처리"],
+   ex:"일 최고기온·평균기온·최저기온 분포 시각화 후 핵심 속성 선정. 결측치는 주변 10년치 평균으로 대체. 2010년까지 훈련, 2011년부터 테스트 데이터로 사용."},
+  {name:"4. 모델 정의 및 학습",
+   tasks:["기계학습 유형 선정","기계학습 알고리즘 선정"],
+   ex:"기온 예측은 회귀 예측이므로 단순 선형회귀, 다중 선형회귀, 딥러닝 모델을 후보로 선정."},
+  {name:"5. 모델 성능 평가",
+   tasks:["모델 성능 평가","평가 결과를 반영한 모델 개선"],
+   ex:"2011년부터 현재까지의 테스트 데이터로 MSE, MAE 측정(훈련에 쓴 2010년까지는 평가에서 제외 — 데이터 누수 방지). 하이퍼파라미터 수정 후 재학습."},
+  {name:"6. 모델 활용 및 공유",
+   tasks:["모델 활용","모델 공유"],
+   ex:"2030/2050/2100년 기온 예측 결과로 기후변화 심각성 자료 작성 및 공유."}
+];
+/* PDF 9쪽 스타일: 단계별 색상 + 화살표 세로 타임라인 */
+const PROJ_COLORS=["#e2574c","#f08a3c","#7cb342","#26a69a","#29b6f6","#3f6fd6"];
+</script>
+<script>
+/* [데이터] 문제 해결 7단계 — STEP7[] (순서 = 정답. 본문 ① 목록과 문구 일치 필수!). */
+/* ================================================================
+   12. 7단계 순서 맞추기 게임
+================================================================ */
+const STEP7=["데이터 수집 및 불러오기","데이터 전처리 및 탐색적 데이터 분석","데이터를 훈련 데이터와 테스트 데이터로 분할 (train_test_split)","데이터 스케일링을 통해 Train 데이터의 값의 범위를 조정 (Scaler 활용)","다양한 머신러닝 알고리즘 및 인공신경망을 적용해 훈련 데이터로 모델 학습","테스트 데이터로 학습한 모델의 성능을 평가하고 개선","가장 성능이 좋은 모델을 실제 환경에 적용"];
+</script>
+<script>
+/* [데이터] 신경망 매칭 게임 — ANN_MATCH[] {n,d}. 본문 ⑦ 표와 문구 동기화 유지! */
+/* ================================================================
+   13. 신경망 종류 매칭 게임
+================================================================ */
+const ANN_MATCH=[
+  {n:"ANN",d:"인간의 뉴런을 흉내 낸 가장 기본적인 형태 — 모든 딥러닝의 조상님 (표 데이터 예측, 기초 분류)"},
+  {n:"CNN",d:"돋보기처럼 이미지의 공간적 특징을 훑으며 부분 패턴을 추출 (얼굴 인식, 자율주행 카메라)"},
+  {n:"RNN",d:"순서 있는 데이터를 처리하지만 길어지면 앞 내용을 까먹는 건망증(장기 의존성 문제)이 있음 (짧은 문장 번역)"},
+  {n:"LSTM",d:"'망각 게이트'로 중요한 과거는 끝까지 기억, 쓸데없는 건 삭제 — 건망증 걸린 신경망의 구원자 (긴 글 번역, 주가 예측)"},
+  {n:"GAN",d:"위조지폐범(생성자)과 경찰(판별자)이 경쟁하며 진짜 같은 가짜를 만듦 (딥페이크, 가상 인간)"},
+  {n:"GNN",d:"점(노드)과 선(엣지)으로 얽힌 그물망 구조를 분석 (SNS 추천, 신약 개발 분자 구조)"},
+  {n:"Transformer",d:"단어들의 관계(Attention)를 동시에 계산해 문맥을 통째로 파악 — LLM의 핵심 심장 (ChatGPT)"}
+];
+</script>
+<script>
+/* [데이터] 과적합 양궁 시뮬 — OF_STATES{1,2,3} {label,bg,fg,desc,train,test}, OF_EPOCH_NAME. */
+/* ================================================================
+   20. 과적합 양궁 시뮬레이션 (⑤ 하이퍼파라미터 섹션 체험존)
+================================================================ */
+const OF_STATES={
+  1:{label:'❌ 과소적합 (Underfitting)',bg:'#f0e9db',fg:'#7a6c58',
+     desc:'<b>훈련 부족:</b> 교과서를 1페이지만 읽고 시험 보러 간 상태입니다. 연습장에서도, 실전에서도 화살이 과녁을 사방으로 빗나갑니다.',
+     train:'wild',test:'wild'},
+  2:{label:'✨ 최적적합 (Good Fit)',bg:'var(--ens-bg)',fg:'var(--ens-deep)',
+     desc:'<b>학습 완료:</b> 원리를 완벽히 이해했습니다! 바람의 영향을 계산할 줄 알아서 연습장과 처음 보는 실전 대회 모두 안정적으로 10점 근처에 명중합니다.',
+     train:'good',test:'good'},
+  3:{label:'🚨 과대적합 (Overfitting)',bg:'#fdecec',fg:'var(--bad)',
+     desc:'<b>암기 과잉:</b> 연습장 3번 사로의 바람, 미세한 먼지 위치까지 통째로 외웠습니다! 연습장에선 신(神)이지만, 바람이 조금만 바뀐 실전에선 화살이 관중석으로 날아갑니다.',
+     train:'perfect',test:'disaster'},
+};
+const OF_EPOCH_NAME={1:'1 (부족)',2:'2 (적당)',3:'3 (과다)'};
+</script>
+<!-- ══ 엔진 (로드 순서 변경 금지) ══ -->
+<script>
+/* [공용] 유틸 */
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+</script>
+<script>
+function makeFlip(item){
+  const d=document.createElement('div');
+  d.className='flip '+item.cls;
+  d.innerHTML=`<div class="in">
+    <div class="face front">${SVGS[item.svg]||''}<div class="name">${item.name}</div><div class="one">${item.one}</div><span class="tap">클릭해서 뒤집기 ↻</span></div>
+    <div class="face back"><div class="name">${item.name}</div><div class="def">${item.def}</div><span class="tap">↻ 다시 뒤집기</span></div>
+  </div>`;
+  d.onclick=()=>d.classList.toggle('on');
+  return d;
+}
+Object.entries(ALGO_CARDS).forEach(([gid,items])=>{
+  const g=document.getElementById(gid);
+  items.forEach(it=>g.appendChild(makeFlip(it)));
+});
+</script>
+<script>
+function renderWalkthrough(preId,key){
+  const pre=document.getElementById(preId);
+  const wt=WALKTHROUGHS[key];
+  const note=document.getElementById(wt.noteId);
+  wt.lines.forEach(([code,exp])=>{
+    const s=document.createElement('span');
+    s.className='cl'+(code===''?' blank':'');
+    s.textContent=code===''?' ':code;
+    if(code!==''){
+      s.onclick=()=>{
+        pre.querySelectorAll('.cl').forEach(x=>x.classList.remove('sel'));
+        s.classList.add('sel');
+        note.innerHTML='💬 '+exp;
+      };
+    }
+    pre.appendChild(s);
+  });
+}
+renderWalkthrough('code-linreg','linreg');
+renderWalkthrough('code-clf','clf');
+renderWalkthrough('code-kerasA','kerasA');
+renderWalkthrough('code-kerasB','kerasB');
+renderWalkthrough('code-scaler','scaler');
+renderWalkthrough('code-compile','compile');
+</script>
+<script>
+BUGS.forEach(bug=>{
+  const pre=document.getElementById(bug.codeId);
+  const msg=document.getElementById(bug.msgId);
+  const fixBox=document.getElementById(bug.fixId);
+  let solved=false;
+  bug.lines.forEach((code,i)=>{
+    const s=document.createElement('span');
+    s.className='cl';
+    s.textContent=code;
+    s.onclick=()=>{
+      if(solved)return;
+      if(i===bug.bugLine){
+        s.classList.add('sel');
+        msg.className='bug-msg show ok';
+        msg.innerHTML='🎯 <b>정확해요! 바로 이 줄이 버그예요.</b> 그럼 어떻게 고쳐야 할까요? 아래에서 골라 보세요.';
+        fixBox.classList.add('show');
+      }else{
+        msg.className='bug-msg show no';
+        msg.innerHTML='🤔 이 줄은 정상이에요. 변수 이름이나 철자를 자세히 살펴보세요!';
+        s.classList.add('shake');
+        setTimeout(()=>s.classList.remove('shake'),400);
+      }
+    };
+    pre.appendChild(s);
+  });
+  bug.fixes.forEach(f=>{
+    const b=document.createElement('button');
+    b.textContent=f.t;
+    b.onclick=()=>{
+      if(solved)return;
+      if(f.ok){
+        solved=true;
+        b.classList.add('right');
+        msg.className='bug-msg show ok';
+        msg.innerHTML='✅ <b>완벽한 수정!</b> '+bug.why;
+      }else{
+        b.classList.add('wrong');
+        msg.className='bug-msg show no';
+        msg.innerHTML='❌ 아쉬워요, 다시 한번 생각해 보세요. (힌트: 순서와 철자!)';
+      }
+    };
+    fixBox.appendChild(b);
+  });
+});
+</script>
+<script>
+/* ================================================================
+   4. 퍼셉트론 애니메이션
+================================================================ */
+const P_FWD_SEQ=[["nx1","nx2","nx3"],["e1","e2","e3","w1","w2","w3"],["nsum","eb","nb"],["e4"],["nact"],["e5"],["nout"]];
+const P_FWD_MSG=["① 입력값 x₁, x₂, xₙ이 들어옵니다.","② 각 입력에 가중치 w를 곱합니다. (wx)","③ Σ에서 모두 합산하고, 편향 b를 더합니다. → Σ(wx)+b","④ 가중합이 활성화 함수로 전달됩니다.","⑤ 계단함수(step): 0보다 크면 1, 아니면 0!","⑥ 최종 결과가 출력으로 전달됩니다.","✅ 순전파 완료! y = wx + b → 활성화 함수 → 출력"];
+const P_BWD_SEQ=[["nout","errlab"],["e5"],["nact"],["e4"],["nsum","eb","nb"],["e1","e2","e3","w1","w2","w3"],[]];
+const P_BWD_MSG=["① 출력에서 오차(정답 − 예측)를 계산합니다.","② 오차가 뒤에서 앞으로 전달되기 시작!","③ 활성화 함수를 거꾸로 통과합니다.","④ 합산 단계로 거슬러 올라갑니다.","⑤ 편향(b)을 수정합니다.","⑥ 각 가중치(w)를 오차가 줄어드는 방향으로 수정!","✅ 역전파 완료! 가중치·편향이 업데이트되었습니다."];
+let pTimer=[];
+
+function clearPerceptron(){
+  pTimer.forEach(t=>clearTimeout(t));pTimer=[];
+  document.querySelectorAll('#psvg .node,#psvg .edge').forEach(el=>el.classList.remove('hot','err'));
+  document.querySelectorAll('#psvg .wlab').forEach(el=>el.classList.remove('upd'));
+  document.getElementById('errlab').setAttribute('opacity','0');
+}
+function resetPerceptron(){
+  clearPerceptron();
+  document.getElementById('pstatus').textContent='버튼을 눌러 데이터의 흐름을 관찰하세요.';
+  document.getElementById('btnFwd').disabled=false;
+  document.getElementById('btnBwd').disabled=false;
+}
+function playSeq(seq,msgs,cls,done){
+  clearPerceptron();
+  document.getElementById('btnFwd').disabled=true;
+  document.getElementById('btnBwd').disabled=true;
+  seq.forEach((ids,step)=>{
+    pTimer.push(setTimeout(()=>{
+      ids.forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el)return;
+        if(id==='errlab'){el.setAttribute('opacity','1');return;}
+        if(el.classList.contains('wlab')){el.classList.add(cls==='err'?'upd':'hot');return;}
+        el.classList.add(cls);
+      });
+      document.getElementById('pstatus').textContent=msgs[step];
+      if(step===seq.length-1){
+        pTimer.push(setTimeout(()=>{
+          document.getElementById('btnFwd').disabled=false;
+          document.getElementById('btnBwd').disabled=false;
+        },400));
+      }
+    },step*900));
+  });
+}
+function runForward(){playSeq(P_FWD_SEQ,P_FWD_MSG,'hot');}
+function runBackward(){playSeq(P_BWD_SEQ,P_BWD_MSG,'err');}
+
+/* ---- ANN 3-4-2 구조 그림 ---- */
+(function(){
+  const svg=document.getElementById('annsvg');
+  const L=[{x:60,n:3,c:'#e8863a'},{x:210,n:4,c:'#8a4fd3'},{x:360,n:2,c:'#3a7de8'}];
+  const pos=L.map(l=>{
+    const ys=[];const gap=180/(l.n+1);
+    for(let i=1;i<=l.n;i++)ys.push(20+gap*i);
+    return ys;
+  });
+  let html='';
+  for(let a=0;a<2;a++){
+    pos[a].forEach(y1=>pos[a+1].forEach(y2=>{
+      html+=`<line x1="${L[a].x}" y1="${y1}" x2="${L[a+1].x}" y2="${y2}" stroke="#d9cdb8" stroke-width="1.2"/>`;
+    }));
+  }
+  L.forEach((l,i)=>{
+    pos[i].forEach(y=>{html+=`<circle cx="${l.x}" cy="${y}" r="14" fill="#fbd9a8" stroke="#d98a3d" stroke-width="2.5"/>`;});
+  });
+  html+=`<text x="60" y="212" text-anchor="middle" font-size="12" fill="#c96a1f" font-weight="700">Input (3)</text>`;
+  html+=`<text x="210" y="212" text-anchor="middle" font-size="12" fill="#6c35b0" font-weight="700">Hidden (4)</text>`;
+  html+=`<text x="360" y="212" text-anchor="middle" font-size="12" fill="#2560c4" font-weight="700">Output (2)</text>`;
+  svg.innerHTML=html;
+})();
+</script>
+<script>
+/* ================================================================
+   5. 스케일러 비교
+================================================================ */
+const SC_DATA=[10,20,30,40,50,200];
+const SC_INFO={
+  standard:{name:"StandardScaler",desc:"평균을 0, 표준편차를 1로 맞춥니다. 이상치(200)가 평균·표준편차를 끌어당겨서 나머지 값들이 한쪽에 몰리는 것을 볼 수 있어요.",
+    fn:d=>{const m=d.reduce((a,b)=>a+b)/d.length;const sd=Math.sqrt(d.reduce((a,b)=>a+(b-m)**2,0)/d.length);return d.map(x=>(x-m)/sd);}},
+  minmax:{name:"MinMaxScaler",desc:"최솟값을 0, 최댓값을 1로 맞춥니다. 이상치(200)가 1이 되면서 나머지 값들이 0 근처에 눌려 붙는 것을 볼 수 있어요.",
+    fn:d=>{const mn=Math.min(...d),mx=Math.max(...d);return d.map(x=>(x-mn)/(mx-mn));}},
+  robust:{name:"RobustScaler",desc:"중앙값(Median)과 IQR(상위25%−하위25%)을 사용합니다. 이상치의 영향을 덜 받아 10~50 값들이 비교적 고르게 퍼져 있는 것을 볼 수 있어요.",
+    fn:d=>{const s=[...d].sort((a,b)=>a-b);const q=(p)=>{const i=(s.length-1)*p;const lo=Math.floor(i),hi=Math.ceil(i);return s[lo]+(s[hi]-s[lo])*(i-lo);};const med=q(.5),iqr=q(.75)-q(.25);return d.map(x=>(x-med)/iqr);}}
+};
+let curScaler='standard';
+function pickScaler(btn){
+  document.querySelectorAll('.sc-btns button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  curScaler=btn.dataset.sc;
+  drawScaler();
+}
+function drawScaler(){
+  const cv=document.getElementById('scCanvas'),ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const info=SC_INFO[curScaler];
+  const out=info.fn(SC_DATA);
+  document.getElementById('scDesc').textContent='📌 '+info.name+': '+info.desc+' (변환값: '+out.map(v=>v.toFixed(2)).join(', ')+')';
+  function drawGroup(x0,w,vals,title,color){
+    const maxAbs=Math.max(...vals.map(Math.abs),0.001);
+    const plotH=H-90,zero=vals.some(v=>v<0)?40+plotH*(maxAbs/(2*maxAbs)):40+plotH-10;
+    const scale=vals.some(v=>v<0)?(plotH/2-14)/maxAbs:(plotH-20)/maxAbs;
+    ctx.strokeStyle='#ddd';ctx.beginPath();ctx.moveTo(x0,zero);ctx.lineTo(x0+w,zero);ctx.stroke();
+    const bw=w/vals.length*0.55,gap=w/vals.length;
+    vals.forEach((v,i)=>{
+      const bx=x0+gap*i+gap*0.22;
+      const bh=v*scale;
+      ctx.fillStyle=(SC_DATA[i]===200)?'#d64545':color;
+      if(bh>=0)ctx.fillRect(bx,zero-bh,bw,Math.max(bh,1.5));
+      else ctx.fillRect(bx,zero,bw,-bh);
+      ctx.fillStyle='#6b5f50';ctx.font='11px sans-serif';ctx.textAlign='center';
+      ctx.fillText((Math.abs(v)>=10?v.toFixed(0):v.toFixed(2)),bx+bw/2,(bh>=0?zero-bh-6:zero-bh+14));
+    });
+    ctx.fillStyle='#2c2620';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText(title,x0+w/2,H-14);
+  }
+  drawGroup(30,W/2-60,SC_DATA,'변환 전 (원본)','#c9bda6');
+  drawGroup(W/2+30,W/2-60,out,'변환 후 ('+info.name+')','#2fa05a');
+}
+drawScaler();
+</script>
+<script>
+/* ================================================================
+   6. 활성화 함수 플레이그라운드
+================================================================ */
+const FNS=[
+  {key:'linear', name:'선형(Linear)', color:'#1fa8a0', on:false, f:x=>x},
+  {key:'step', name:'계단 함수', color:'#8a7a63', on:false, f:x=>x>=0?1:0},
+  {key:'sigmoid', name:'Sigmoid', color:'#e8863a', on:true, f:x=>1/(1+Math.exp(-x))},
+  {key:'tanh', name:'Tanh', color:'#3a7de8', on:true, f:x=>Math.tanh(x)},
+  {key:'relu', name:'ReLU', color:'#2fa05a', on:true, f:x=>Math.max(0,x)},
+  {key:'lrelu', name:'Leaky ReLU (α=0.1)', color:'#8a4fd3', on:false, f:x=>x>0?x:0.1*x},
+  {key:'elu', name:'ELU (α=1)', color:'#d64545', on:false, f:x=>x>=0?x:(Math.exp(x)-1)}
+];
+const AX={xmin:-4,xmax:4,ymin:-2,ymax:4};
+function tX(x,W){return (x-AX.xmin)/(AX.xmax-AX.xmin)*(W-50)+35;}
+function tY(y,H){return H-30-(y-AX.ymin)/(AX.ymax-AX.ymin)*(H-50);}
+
+const togBox=document.getElementById('fnToggles');
+FNS.forEach(fn=>{
+  const lab=document.createElement('label');
+  lab.style.borderColor=fn.color;
+  lab.innerHTML=`<input type="checkbox" ${fn.on?'checked':''}> <span style="color:${fn.color}">${fn.name}</span>`;
+  lab.querySelector('input').onchange=e=>{fn.on=e.target.checked;drawAct();};
+  togBox.appendChild(lab);
+});
+
+function drawAct(){
+  const cv=document.getElementById('actCanvas'),ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='#f0ebe0';ctx.lineWidth=1;
+  for(let gx=Math.ceil(AX.xmin);gx<=AX.xmax;gx++){ctx.beginPath();ctx.moveTo(tX(gx,W),tY(AX.ymin,H));ctx.lineTo(tX(gx,W),tY(AX.ymax,H));ctx.stroke();}
+  for(let gy=Math.ceil(AX.ymin);gy<=AX.ymax;gy++){ctx.beginPath();ctx.moveTo(tX(AX.xmin,W),tY(gy,H));ctx.lineTo(tX(AX.xmax,W),tY(gy,H));ctx.stroke();}
+  // axes
+  ctx.strokeStyle='#b7a88f';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(tX(AX.xmin,W),tY(0,H));ctx.lineTo(tX(AX.xmax,W),tY(0,H));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(tX(0,W),tY(AX.ymin,H));ctx.lineTo(tX(0,W),tY(AX.ymax,H));ctx.stroke();
+  ctx.fillStyle='#8a7a63';ctx.font='11px sans-serif';ctx.textAlign='center';
+  for(let gx=Math.ceil(AX.xmin);gx<=AX.xmax;gx++){if(gx!==0)ctx.fillText(gx,tX(gx,W),tY(0,H)+16);}
+  for(let gy=Math.ceil(AX.ymin);gy<=AX.ymax;gy++){if(gy!==0)ctx.fillText(gy,tX(0,W)-14,tY(gy,H)+4);}
+  // curves
+  const xNow=parseFloat(document.getElementById('xSlider').value);
+  FNS.forEach(fn=>{
+    if(!fn.on)return;
+    ctx.strokeStyle=fn.color;ctx.lineWidth=2.5;ctx.beginPath();
+    let started=false;
+    for(let px=0;px<=400;px++){
+      const x=AX.xmin+(AX.xmax-AX.xmin)*px/400;
+      let y=fn.f(x);
+      if(y>AX.ymax+0.5||y<AX.ymin-0.5){started=false;continue;}
+      const cx=tX(x,W),cy=tY(y,H);
+      if(!started){ctx.moveTo(cx,cy);started=true;}else ctx.lineTo(cx,cy);
+    }
+    ctx.stroke();
+    // dot at xNow
+    const yv=fn.f(xNow);
+    if(yv<=AX.ymax&&yv>=AX.ymin){
+      ctx.fillStyle=fn.color;
+      ctx.beginPath();ctx.arc(tX(xNow,W),tY(yv,H),6,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    }
+  });
+  // vertical marker
+  ctx.strokeStyle='rgba(138,79,211,.35)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(tX(xNow,W),tY(AX.ymin,H));ctx.lineTo(tX(xNow,W),tY(AX.ymax,H));ctx.stroke();
+  ctx.setLineDash([]);
+  // value chips
+  const vb=document.getElementById('fnValues');
+  vb.innerHTML='';
+  FNS.forEach(fn=>{
+    if(!fn.on)return;
+    const sp=document.createElement('span');
+    sp.style.color=fn.color;sp.style.borderColor=fn.color;
+    sp.textContent=`${fn.name}: f(${xNow.toFixed(2)}) = ${fn.f(xNow).toFixed(3)}`;
+    vb.appendChild(sp);
+  });
+}
+document.getElementById('xSlider').oninput=e=>{
+  document.getElementById('xVal').textContent=parseFloat(e.target.value).toFixed(2);
+  drawAct();
+};
+drawAct();
+</script>
+<script>
+const gh=document.getElementById('grid-hyper');
+HYPER.forEach(h=>{
+  const d=document.createElement('div');
+  d.className='flip c-ens';
+  d.innerHTML=`<div class="in">
+    <div class="face front"><div style="font-size:2rem">⚙️</div><div class="name" style="font-family:Consolas,monospace">${h.name}</div><div class="one">${h.one}</div><span class="tap">클릭해서 뒤집기 ↻</span></div>
+    <div class="face back"><div class="name" style="font-family:Consolas,monospace">${h.name}</div><div class="def">${h.def}<br><br><b>예시:</b> <code style="background:#e8f7ee;padding:2px 6px;border-radius:5px">${h.ex}</code></div><span class="tap">↻</span></div>
+  </div>`;
+  d.onclick=()=>d.classList.toggle('on');
+  gh.appendChild(d);
+});
+</script>
+<script>
+function renderMiniQuiz(boxId,items,prefix){
+  const box=document.getElementById(boxId);
+  items.forEach((it,qi)=>{
+    const d=document.createElement('div');
+    d.className='q-item';
+    let oh='';
+    it.opts.forEach((o,oi)=>{
+      oh+=`<label><input type="radio" name="${prefix}${qi}" value="${oi}"> ${o}</label>`;
+    });
+    d.innerHTML=`<div class="qt">${it.q}</div><div class="q-opts">${oh}</div>
+      <button class="reveal-btn">정답 확인</button>
+      <div class="q-exp">✅ <b>정답: ${it.opts[it.a]}</b><br>${it.exp}</div>`;
+    d.querySelector('.reveal-btn').onclick=()=>{
+      const sel=d.querySelector('input:checked');
+      d.querySelectorAll('.q-opts label').forEach((lab,oi)=>{
+        lab.classList.remove('right','wrong');
+        if(oi===it.a)lab.classList.add('right');
+        else if(sel&&parseInt(sel.value)===oi)lab.classList.add('wrong');
+      });
+      d.querySelector('.q-exp').classList.add('show');
+    };
+    box.appendChild(d);
+  });
+}
+renderMiniQuiz('quizSetC',QUIZ_C,'qc');
+renderMiniQuiz('quizSetB',QUIZ_B,'qb');
+</script>
+<script>
+const projTl=document.getElementById('projTimeline');
+PROJ.forEach((p,i)=>{
+  const c=PROJ_COLORS[i];
+  const st=document.createElement('div');
+  st.className='pstage'+(i===0?' open':'');
+  st.innerHTML=`<button style="background:${c}"><span>${p.name}</span><span class="chev">▼</span></button>
+    <div class="pbody" style="border-left-color:${c}">
+      <b style="font-size:.88rem;color:${c}">수행 내용</b>
+      <ul>${p.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
+      <div class="ex" style="background:${c}18"><b style="color:${c}">수행 예시 🌡</b><br>${p.ex}</div>
+    </div>`;
+  st.querySelector('button').onclick=()=>st.classList.toggle('open');
+  projTl.appendChild(st);
+  if(i<PROJ.length-1){
+    const cn=document.createElement('div');
+    cn.className='pconn';cn.style.borderTopColor=c;
+    projTl.appendChild(cn);
+  }
+});
+</script>
+<script>
+let FINAL_STATE=[],gradeWarned=false,lastResult=null;
+function renderFinal(){
+  const box=document.getElementById('finalQuizBox');
+  box.innerHTML='';
+  gradeWarned=false;lastResult=null;
+  const warn=document.getElementById('gradeWarn');
+  warn.className='bug-msg';warn.innerHTML='';
+  /* 문항 순서 + 보기 순서 모두 셔플 */
+  FINAL_STATE=shuffleArr(FINAL.map((it,idx)=>({it,idx,order:shuffleArr(it.opts.map((_,oi)=>oi))})));
+  FINAL_STATE.forEach((st,qi)=>{
+    const {it,order}=st;
+    const d=document.createElement('div');
+    d.className='q-item';
+    let oh='';
+    order.forEach(origIdx=>{
+      oh+=`<label><input type="radio" name="fq${qi}" value="${origIdx}"> ${it.opts[origIdx]}</label>`;
+    });
+    d.innerHTML=`<div class="qt">${qi+1}. ${it.q.replace(/^\d+\.\s*/,'')}</div><div class="q-opts">${oh}</div>
+      <div class="q-exp">✅ <b>정답: ${it.opts[it.a]}</b><br>${it.exp}</div>`;
+    box.appendChild(d);
+  });
+}
+function gradeFinal(){
+  const items=document.querySelectorAll('#finalQuizBox .q-item');
+  const warn=document.getElementById('gradeWarn');
+  const unanswered=[];
+  items.forEach((d,qi)=>{if(!d.querySelector('input:checked'))unanswered.push(qi+1);});
+  if(unanswered.length>0&&!gradeWarned){
+    gradeWarned=true;
+    warn.className='bug-msg show no';
+    warn.innerHTML=`⚠️ <b>${unanswered.length}개 문항(${unanswered.join(', ')}번)이 아직 미답변이에요.</b> 미답변은 오답 처리됩니다. 그래도 채점하려면 "채점하기"를 한 번 더 누르세요.`;
+    return;
+  }
+  warn.className='bug-msg';warn.innerHTML='';
+  let score=0;const wrongs=[];
+  items.forEach((d,qi)=>{
+    const st=FINAL_STATE[qi],it=st.it;
+    const sel=d.querySelector('input:checked');
+    d.querySelectorAll('.q-opts label').forEach((lab,oi)=>{
+      lab.classList.remove('right','wrong');
+      const origIdx=st.order[oi];
+      if(origIdx===it.a)lab.classList.add('right');
+      else if(sel&&parseInt(sel.value)===origIdx)lab.classList.add('wrong');
+    });
+    d.querySelector('.q-exp').classList.add('show');
+    if(sel&&parseInt(sel.value)===it.a)score++;
+    else wrongs.push(st);
+  });
+  const total=FINAL.length;
+  document.getElementById('scoreNum').textContent=score;
+  const nm=document.getElementById('stuName').value.trim();
+  const sid=document.getElementById('stuId').value.trim();
+  document.getElementById('scoreTitle').textContent=nm?nm+'님의 점수':'나의 점수';
+  /* 결과 메타(학번·이름·일시) — 제출용 요약에 포함 */
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  const when=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('resultMeta').textContent=(sid||nm)
+    ? [sid?'학번 '+sid:'',nm?'이름 '+nm:''].filter(Boolean).join(' · ')+' · '+when
+    : when+' — 맨 위 표지에 학번·이름을 입력하면 제출 요약에 포함돼요';
+  const msg=document.getElementById('scoreMsg');
+  if(score===total)msg.textContent='🏆 완벽해요! 시험 준비 끝!';
+  else if(score>=total*0.8)msg.textContent='🎉 훌륭해요! 틀린 문제만 다시 확인하세요.';
+  else if(score>=total*0.5)msg.textContent='💪 절반 이상! 해설을 읽고 다시 도전해 보세요.';
+  else msg.textContent='📚 카드와 표를 한 번 더 복습한 뒤 다시 풀어 봐요!';
+  /* 오답 노트: 틀린 개념 → 복습 섹션 링크 */
+  const rv=document.getElementById('wrongReview');
+  if(wrongs.length===0){
+    rv.innerHTML='🌟 <b>오답 없음!</b> 모든 개념을 정확히 알고 있어요.';
+  }else{
+    rv.innerHTML='📝 <b>오답 노트 — 아래 섹션으로 이동해 복습하세요:</b><ul style="padding-left:20px;margin-top:6px">'+
+      wrongs.map(st=>{
+        const [sid,sname]=FINAL_SEC[st.idx];
+        return `<li style="margin:4px 0">핵심 개념 <b>${st.it.opts[st.it.a]}</b> → <a href="#${sid}" style="color:var(--unsup-deep);font-weight:700">${sname}</a></li>`;
+      }).join('')+'</ul>';
+  }
+  /* 제출용 요약 저장 (복사 버튼에서 사용) */
+  lastResult={score,total,when,wrongNames:wrongs.map(st=>st.it.opts[st.it.a])};
+  const r=document.getElementById('quizResult');
+  r.style.display='block';
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+/* ---- 결과 요약 복사 (활동지 제출용) ---- */
+function copyResult(btn){
+  if(!lastResult)return;
+  const sid=document.getElementById('stuId').value.trim()||'(미입력)';
+  const nm=document.getElementById('stuName').value.trim()||'(미입력)';
+  const txt=[
+    '[머신러닝·딥러닝 특강 자가진단 결과]',
+    '학번: '+sid+' / 이름: '+nm,
+    '점수: '+lastResult.score+' / '+lastResult.total,
+    '일시: '+lastResult.when,
+    lastResult.wrongNames.length
+      ? '복습할 개념: '+lastResult.wrongNames.join(', ')
+      : '복습할 개념: 없음 (전부 정답 🌟)'
+  ].join('\n');
+  const orig='📋 결과 요약 복사 (제출용)';
+  const done=ok=>{btn.textContent=ok?'✅ 복사 완료! 붙여넣어 제출하세요':'❌ 복사 실패 — 다시 시도해 주세요';setTimeout(()=>{btn.textContent=orig;},2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)
+    navigator.clipboard.writeText(txt).then(()=>done(true),()=>done(copyFallbackTa(txt)));
+  else done(copyFallbackTa(txt));
+}
+function copyFallbackTa(t){
+  const ta=document.createElement('textarea');
+  ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  ta.remove();return ok;
+}
+function resetFinal(){
+  renderFinal();
+  document.getElementById('quizResult').style.display='none';
+  document.getElementById('finalquiz').scrollIntoView({behavior:'smooth'});
+}
+renderFinal();
+</script>
+<script>
+/* ================================================================
+   11. 나이브 베이즈 스팸 필터 계산기
+================================================================ */
+function updateBayes(){
+  const pS=parseFloat(document.getElementById('bPrior').value);
+  const pWS=parseFloat(document.getElementById('bLike').value);
+  const pWN=parseFloat(document.getElementById('bLikeN').value);
+  document.getElementById('bPriorV').textContent=pS.toFixed(2);
+  document.getElementById('bLikeV').textContent=pWS.toFixed(2);
+  document.getElementById('bLikeNV').textContent=pWN.toFixed(2);
+  const ev=pWS*pS+pWN*(1-pS);
+  const post=ev>0?pWS*pS/ev:0;
+  document.getElementById('bayesCalc').innerHTML=
+    `<b>사후 확률(Posterior)</b> P(스팸|무료) = P(무료|스팸)·P(스팸) / P(무료)<br>
+     = (${pWS.toFixed(2)} × ${pS.toFixed(2)}) / ${ev.toFixed(3)} = <b style="font-size:1.15rem;color:var(--unsup-deep)">${(post*100).toFixed(1)}%</b>`;
+  const bar=document.getElementById('bayesBar');
+  bar.style.width=(post*100).toFixed(1)+'%';
+  bar.textContent=(post*100).toFixed(1)+'%';
+}
+['bPrior','bLike','bLikeN'].forEach(id=>document.getElementById(id).oninput=updateBayes);
+updateBayes();
+</script>
+<script>
+let stepPicked=[];
+function initStepGame(){
+  stepPicked=[];
+  const pool=document.getElementById('stepPool');
+  const ans=document.getElementById('stepAnswer');
+  const msg=document.getElementById('stepMsg');
+  ans.innerHTML='';msg.className='bug-msg';msg.innerHTML='';
+  pool.innerHTML='';
+  shuffleArr(STEP7.map((t,i)=>({t,i}))).forEach(o=>{
+    const b=document.createElement('button');
+    b.textContent=o.t;
+    b.onclick=()=>{
+      if(b.disabled)return;
+      b.disabled=true;
+      stepPicked.push(o.i);
+      const li=document.createElement('li');
+      li.textContent=o.t;
+      ans.appendChild(li);
+      if(stepPicked.length===STEP7.length)checkStepGame();
+    };
+    pool.appendChild(b);
+  });
+}
+function checkStepGame(){
+  const ans=document.getElementById('stepAnswer');
+  let ok=0;
+  [...ans.children].forEach((li,pos)=>{
+    if(stepPicked[pos]===pos){li.classList.add('good');ok++;}
+    else{li.classList.add('bad');li.textContent+=`  →  정답: ${STEP7[pos]}`;}
+  });
+  const msg=document.getElementById('stepMsg');
+  msg.className='bug-msg show '+(ok===STEP7.length?'ok':'no');
+  msg.innerHTML=ok===STEP7.length?'🏆 <b>완벽해요!</b> 7단계 순서를 정확히 외웠네요.':`📌 <b>${ok}/7개 위치가 정확해요.</b> 빨간 항목의 정답을 확인하고 "다시 섞기"로 재도전하세요!`;
+}
+initStepGame();
+</script>
+<script>
+let annOrder=[],annCur=0,annMiss=0;
+function initAnnGame(){
+  annOrder=shuffleArr(ANN_MATCH.map((_,i)=>i));annCur=0;annMiss=0;
+  const chips=document.getElementById('annChips');
+  chips.innerHTML='';
+  ANN_MATCH.forEach((m,i)=>{
+    const b=document.createElement('button');
+    b.textContent=m.n;
+    b.onclick=()=>pickAnn(b,i);
+    chips.appendChild(b);
+  });
+  const msg=document.getElementById('annMsg');
+  msg.className='bug-msg';msg.innerHTML='';
+  showAnnQ();
+}
+function showAnnQ(){
+  const q=document.getElementById('annQ');
+  if(annCur>=ANN_MATCH.length){
+    q.innerHTML='🎉 <b>매칭 완료!</b> 틀린 횟수: '+annMiss+'회'+(annMiss===0?' — 완벽해요!':' — 위의 표를 다시 읽고 재도전해 보세요.');
+    return;
+  }
+  q.innerHTML=`<b>Q${annCur+1}/${ANN_MATCH.length}.</b> ${ANN_MATCH[annOrder[annCur]].d}`;
+}
+function pickAnn(btn,i){
+  if(btn.classList.contains('done')||annCur>=ANN_MATCH.length)return;
+  if(i===annOrder[annCur]){
+    btn.classList.add('done');
+    annCur++;
+    showAnnQ();
+  }else{
+    annMiss++;
+    btn.classList.add('flash');
+    setTimeout(()=>btn.classList.remove('flash'),400);
+    const msg=document.getElementById('annMsg');
+    msg.className='bug-msg show no';
+    msg.innerHTML='❌ 아니에요! 설명 속 키워드를 다시 보세요.';
+    setTimeout(()=>{msg.className='bug-msg';},1200);
+  }
+}
+initAnnGame();
+</script>
+<script>
+/* ================================================================
+   14. Softmax 체험 데모
+================================================================ */
+function updateSoftmax(){
+  const z=[1,2,3].map(i=>parseFloat(document.getElementById('smz'+i).value));
+  z.forEach((v,i)=>document.getElementById('smzV'+(i+1)).textContent=v.toFixed(1));
+  const ex=z.map(v=>Math.exp(v));
+  const s=ex.reduce((a,b)=>a+b);
+  ex.forEach((e,i)=>{
+    const p=e/s;
+    const bar=document.getElementById('smxBar'+(i+1));
+    bar.style.width=(p*100).toFixed(1)+'%';
+    bar.textContent=(p*100).toFixed(1)+'%';
+  });
+}
+[1,2,3].forEach(i=>document.getElementById('smz'+i).oninput=updateSoftmax);
+updateSoftmax();
+</script>
+<script>
+/* ================================================================
+   16. kNN 체험존 — k 값 토글
+================================================================ */
+function setKnn(k){
+  const c3=document.getElementById('knnC3'),c5=document.getElementById('knnC5'),dot=document.getElementById('knnDot');
+  const b3=document.getElementById('knnK3'),b5=document.getElementById('knnK5'),msg=document.getElementById('knnMsg');
+  if(k===3){
+    c3.setAttribute('opacity','1');c5.setAttribute('opacity','.22');
+    dot.setAttribute('fill','#d64545');
+    b3.className='act fwd';b5.className='act neutral';
+    msg.innerHTML='<b>k=3</b> : 가장 가까운 이웃 3개는 🔺2개, 🟦1개 → 다수결로 <b style="color:#d64545">🔺 빨강 삼각형</b>으로 분류!';
+  }else{
+    c5.setAttribute('opacity','1');c3.setAttribute('opacity','.28');
+    dot.setAttribute('fill','#3a7de8');
+    b3.className='act neutral';b5.className='act fwd';
+    msg.innerHTML='<b>k=5</b> : 이웃 5개로 넓히면 🔺2개, 🟦3개 → 다수결로 <b style="color:#3a7de8">🟦 파랑 사각형</b>으로 분류!<br>같은 데이터라도 <b>k 값에 따라 결과가 달라질 수 있어요.</b>';
+  }
+}
+setKnn(3);
+</script>
+<script>
+/* ================================================================
+   17. 의사 결정 트리 스무고개 (예시 트리)
+================================================================ */
+const DTREE={q:"날개가 있나요?",yes:{q:"날 수 있나요?",yes:{leaf:"매 🦅"},no:{leaf:"펭귄 🐧"}},no:{q:"지느러미가 있나요?",yes:{leaf:"돌고래 🐬"},no:{leaf:"곰 🐻"}}};
+let dtNode=DTREE,dtTrail=[];
+function dtRender(){
+  const q=document.getElementById('dtQ'),btns=document.getElementById('dtBtns'),path=document.getElementById('dtPath');
+  path.textContent=dtTrail.length?('내려온 가지: '+dtTrail.join(' → ')):'';
+  if(dtNode.leaf){
+    q.innerHTML='🎉 분류 결과: <b>'+dtNode.leaf+'</b> — 질문(가지)을 따라 내려와 분류 완료! 이것이 의사 결정 트리의 원리예요.';
+    btns.innerHTML='<button class="act neutral" onclick="dtReset()">↺ 처음부터 다시</button>';
+    return;
+  }
+  q.innerHTML='❓ <b>'+dtNode.q+'</b>';
+  btns.innerHTML='<button class="act fwd" onclick="dtAnswer(true)">예</button><button class="act bwd" onclick="dtAnswer(false)">아니오</button>';
+}
+function dtAnswer(y){dtTrail.push(dtNode.q.replace('?','')+'('+(y?'예':'아니오')+')');dtNode=y?dtNode.yes:dtNode.no;dtRender();}
+function dtReset(){dtNode=DTREE;dtTrail=[];dtRender();}
+dtRender();
+</script>
+<script>
+/* ================================================================
+   18. 순전파/역전파 오버레이 도식 (PDF 3쪽 스타일)
+================================================================ */
+function drawMiniNet(id,dir){
+  const L=[{x:45,n:3},{x:150,n:4},{x:255,n:2}];
+  const pos=L.map(l=>{const ys=[];const gap=130/(l.n+1);for(let i=1;i<=l.n;i++)ys.push(5+gap*i);return ys;});
+  let h='';
+  for(let a=0;a<2;a++)pos[a].forEach(y1=>pos[a+1].forEach(y2=>h+=`<line x1="${L[a].x}" y1="${y1}" x2="${L[a+1].x}" y2="${y2}" stroke="#ddd3c2" stroke-width="1"/>`));
+  L.forEach((l,i)=>pos[i].forEach(y=>h+=`<circle cx="${l.x}" cy="${y}" r="11" fill="#fff" stroke="#c9bda6" stroke-width="2"/>`));
+  const col=dir==='fwd'?'#9a9a9a':'#d3b892';
+  const lab=dir==='fwd'?'순전파':'역전파';
+  h+=dir==='fwd'
+    ?`<path d="M30 70 L240 70 L240 58 L275 75 L240 92 L240 80 L30 80 Z" fill="${col}" opacity=".8"/>`
+    :`<path d="M270 70 L60 70 L60 58 L25 75 L60 92 L60 80 L270 80 Z" fill="${col}" opacity=".8"/>`;
+  h+=`<text x="150" y="80" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${lab}</text>`;
+  h+=`<text x="45" y="160" text-anchor="middle" font-size="11" fill="#8a7a63">입력층</text><text x="150" y="160" text-anchor="middle" font-size="11" fill="#8a7a63">은닉층</text><text x="255" y="160" text-anchor="middle" font-size="11" fill="#8a7a63">출력층</text>`;
+  document.getElementById(id).innerHTML=h;
+}
+drawMiniNet('fwdNet','fwd');
+drawMiniNet('bwdNet','bwd');
+</script>
+<script>
+/* 화살 좌표 생성 — 과녁 중심 (110,100) */
+function ofArrows(kind){
+  const pts=[];
+  for(let i=0;i<7;i++){
+    let r;
+    if(kind==='wild')          r=26+Math.random()*66;   // 사방으로 빗나감
+    else if(kind==='good')     r=3+Math.random()*15;    // 10점 근처
+    else if(kind==='perfect')  r=Math.random()*4;       // 전부 정중앙
+    else /* disaster */        r=82+Math.random()*24;   // 과녁 밖 관중석
+    const a=Math.random()*Math.PI*2;
+    const x=Math.min(212,Math.max(8,110+Math.cos(a)*r));
+    const y=Math.min(192,Math.max(8,100+Math.sin(a)*r*0.88));
+    pts.push({x,y,r});
+  }
+  return pts;
+}
+/* 링 반지름 → 점수 (10/9/7/5/3/0) */
+function ofScore(r){return r<=7?10:r<=18?9:r<=34?7:r<=52?5:r<=70?3:0;}
+
+function ofTargetSvg(pts,kind){
+  const rings=[
+    [70,'#f9fafb','#d9cdb8'],[52,'#bfdbfe','#93c5fd'],
+    [34,'#fecaca','#fca5a5'],[18,'#fde68a','#fbbf24'],[7,'#f59e0b','#d97706'],
+  ];
+  let s=rings.map(([r,f,st])=>`<circle cx="110" cy="100" r="${r}" fill="${f}" stroke="${st}" stroke-width="1.5"/>`).join('');
+  if(kind==='disaster'){
+    s+=`<text x="16" y="22" font-size="15">👥</text><text x="192" y="22" font-size="15">👥</text>`+
+       `<text x="16" y="192" font-size="15">👥</text><text x="192" y="192" font-size="15">👥</text>`+
+       `<text x="110" y="16" text-anchor="middle" font-size="10" fill="#d64545" font-weight="700">⚠ 관중석 주의!</text>`;
+  }
+  s+=pts.map((p,i)=>
+    `<g class="of-a" style="animation-delay:${i*90}ms">`+
+      `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#2c2620" stroke="#fff" stroke-width="1.8"/>`+
+      `<circle cx="${p.x-1.5}" cy="${p.y-1.5}" r="1.2" fill="#fff" opacity=".8"/>`+
+    `</g>`).join('');
+  return s;
+}
+
+function ofScoreLine(pts){
+  const avg=pts.reduce((s,p)=>s+ofScore(p.r),0)/pts.length;
+  const face=avg>=8.5?'🏆':avg>=6?'🙂':avg>=2.5?'😅':'😱';
+  return {avg,html:`평균 <span style="font-size:1.1rem">${avg.toFixed(1)}</span>점 ${face}`};
+}
+
+function ofUpdate(){
+  const ep=parseInt(document.getElementById('ofEpoch').value,10);
+  const st=OF_STATES[ep];
+  document.getElementById('ofEpochV').textContent=OF_EPOCH_NAME[ep];
+  const box=document.getElementById('ofDesc');
+  box.style.background=st.bg;
+  box.innerHTML=`<span class="of-badge" style="background:rgba(255,255,255,.75);color:${st.fg}">${st.label}</span><br>${st.desc}`;
+  box.style.color='#2c2620';
+
+  const tr=ofArrows(st.train), te=ofArrows(st.test);
+  document.getElementById('ofTrainSvg').innerHTML=ofTargetSvg(tr,st.train);
+  document.getElementById('ofTestSvg').innerHTML=ofTargetSvg(te,st.test);
+  const trS=ofScoreLine(tr), teS=ofScoreLine(te);
+  const trEl=document.getElementById('ofTrainScore'), teEl=document.getElementById('ofTestScore');
+  trEl.innerHTML=trS.html+(st.train==='perfect'?' <span style="font-size:.8rem;color:var(--ok)">(전부 정중앙!)</span>':'');
+  teEl.innerHTML=teS.html+(st.test==='disaster'?' <span style="font-size:.8rem;color:var(--bad)">(관중석으로…)</span>':'');
+  trEl.style.color=trS.avg>=6?'var(--ens-deep)':'#7a6c58';
+  teEl.style.color=teS.avg>=6?'var(--ens-deep)':(teS.avg<2.5?'var(--bad)':'#7a6c58');
+}
+ofUpdate();
+</script>
+<script>
+/* ================================================================
+   페이지 접근 관문 (교사 공유용 비밀번호)
+   ⚠️ 솔직한 설계 메모: 이 관문은 "가벼운 공유 잠금"이지 보안이 아니다.
+      프론트엔드 검증은 F12로 우회되고(해시 비교문에 중단점), 페이지 콘텐츠는
+      해제 전에도 이미 DOM/소스 안에 있어 꺼내 볼 수 있다. 저장한 해시도 원문이
+      짧으면 오프라인 사전공격에 수 초면 역산된다. 진짜 비밀 자료를 넣지 말 것.
+      교사끼리 링크 공유 시 아무나 못 열게 하는 '문지기' 용도로만 쓴다.
+================================================================ */
+(function () {
+  // 비밀번호 원문은 소스에 두지 않는다 — SHA-256 해시만 저장해 비교(원문은 교사가 구두/메모로 전달).
+  const PW_HASH = '881bcf2656d83234af5eceec43ab7ff2d04dff4637ec962bbf4ae4913b147723';
+  const SESSION_KEY = 'mll_gate_ok';   // 세션 내 재입력 방지(새로고침해도 이 탭에선 유지)
+
+  async function sha256Hex(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function unlock(save) {
+    if (save) { try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) {} }
+    document.body.classList.remove('gated');
+    const gate = document.getElementById('pageGate');
+    if (gate) {
+      gate.classList.add('hidden');
+      // 스크린리더/포커스: 본문 첫 요소로 이동
+      const nav = document.querySelector('nav a');
+      if (nav) nav.focus();
+    }
+  }
+
+  window.gateTry = async function () {
+    const input = document.getElementById('gatePw');
+    const msg = document.getElementById('gateMsg');
+    const pw = (input.value || '').trim();
+    if (!pw) { msg.className = 'vault-msg err'; msg.textContent = '비밀번호를 입력해 주세요.'; return; }
+    let hex;
+    try {
+      hex = await sha256Hex(pw);
+    } catch (e) {
+      msg.className = 'vault-msg err';
+      msg.textContent = '이 브라우저에서는 검증을 지원하지 않아요. 최신 브라우저로 열어 주세요.';
+      return;
+    }
+    if (hex === PW_HASH) {
+      msg.className = 'vault-msg ok';
+      msg.textContent = '✅ 환영합니다! 자료를 여는 중…';
+      setTimeout(() => unlock(true), 300);
+    } else {
+      msg.className = 'vault-msg err';
+      msg.textContent = '❌ 비밀번호가 올바르지 않습니다. 다시 확인해 보세요!';
+      input.select();
+    }
+  };
+
+  // 로드 시: 이미 이 세션에서 통과했으면 관문 건너뛰기, 아니면 입력창 포커스
+  document.addEventListener('DOMContentLoaded', function () {
+    let ok = false;
+    try { ok = sessionStorage.getItem(SESSION_KEY) === '1'; } catch (e) {}
+    if (ok) { unlock(false); return; }
+    const input = document.getElementById('gatePw');
+    if (input) input.focus();
+  });
+
+  /* ── F12 '과속방지턱' (벽 아님) ──
+     솔직히: devtools를 완벽히 막는 프론트 코드는 없다. debugger 무한루프는 정상
+     사용자·접근성 도구를 망가뜨리므로 쓰지 않는다. 여기서는 흔한 훔쳐보기 단축키·
+     우클릭에 위트 있는 안내만 띄우는 가벼운 억제만 한다(학습 페이지라 소스 열람을
+     적대시하지 않는다 — 이 페이지 곳곳이 오히려 코드 읽기를 가르친다). */
+  function gateToast(text) {
+    let el = document.getElementById('gateToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'gateToast';
+      el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);' +
+        'background:#2c2620;color:#fff;padding:10px 18px;border-radius:10px;font-size:.9rem;' +
+        'font-weight:700;z-index:10000;box-shadow:0 4px 16px rgba(0,0,0,.3);opacity:0;transition:opacity .2s;';
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.style.opacity = '1';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.opacity = '0'; }, 2200);
+  }
+  document.addEventListener('keydown', function (e) {
+    const blocked =
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes((e.key || '').toUpperCase())) ||
+      (e.ctrlKey && (e.key || '').toUpperCase() === 'U');
+    if (blocked) {
+      e.preventDefault();
+      gateToast('🥷 소스를 뜯어보려는군요? 이 잠금은 원래 F12로 뚫려요 — 정직 모드!');
+    }
+  });
+})();
+</script>
+<script>
+/* [공용] 네비 스크롤스파이 + 스크롤 페이드인 — 반드시 마지막 로드 */
+/* ================================================================
+   15. 내비게이션 스크롤스파이
+================================================================ */
+(function(){
+  const ids=[...document.querySelectorAll('section[id]')].map(s=>s.id);
+  const links={};
+  document.querySelectorAll('nav a[href^="#"]').forEach(a=>links[a.getAttribute('href').slice(1)]=a);
+  function spy(){
+    let cur=null;
+    for(const id of ids){
+      const el=document.getElementById(id);
+      if(el&&el.getBoundingClientRect().top<=110)cur=id;
+    }
+    Object.values(links).forEach(a=>a.classList.remove('cur'));
+    if(cur&&links[cur])links[cur].classList.add('cur');
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+  spy();
+})();
+
+/* ================================================================
+   19. 스크롤 진입 페이드인
+================================================================ */
+(function(){
+  if(!('IntersectionObserver' in window))return;
+  const els=document.querySelectorAll('.wrap section > div, .wrap section > table');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}
+  }),{threshold:.05});
+  els.forEach(el=>{el.classList.add('fade-el');io.observe(el);});
+})();
+</script>
+</body>
+</html>

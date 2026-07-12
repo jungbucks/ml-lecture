@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>머신러닝과 딥러닝 특강 — 인터랙티브 부교재</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="gated">
+
+<!-- ══ 페이지 접근 관문 (교사 공유용 비밀번호) — 해제 전 전체 화면을 덮음 ══ -->
+<div id="pageGate" role="dialog" aria-modal="true" aria-label="비밀번호 입력">
+  <div class="gate-card">
+    <div style="font-size:3rem;line-height:1">🔒</div>
+    <h1 style="font-size:1.5rem;font-weight:800;margin:8px 0 4px">머신러닝·딥러닝 특강 자료</h1>
+    <p style="color:#7a6c58;font-size:.95rem;margin-bottom:4px">이 자료는 비밀번호를 아는 <b style="color:var(--dl-deep)">능력자</b>만 볼 수 있습니다.</p>
+    <p class="hint" style="margin-bottom:18px">🔑 이 자료를 공유받을 때 <b>선생님께 안내받은 비밀번호</b>를 입력하세요.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <input type="password" id="gatePw" class="vault-input" placeholder="비밀번호 입력"
+             autocomplete="off" autofocus onkeydown="if(event.key==='Enter')gateTry()">
+      <button class="act fwd" onclick="gateTry()">🔓 입장</button>
+    </div>
+    <div id="gateMsg" class="vault-msg"></div>
+    <div class="gate-credit">
+      made by <b>jungbucks</b><br>
+      <a href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer">📸 Insta @jungbucks</a>
+      <a href="https://blog.naver.com/kachu_t" target="_blank" rel="noopener noreferrer">📝 Blog</a>
+    </div>
+  </div>
+</div>
+
+<nav><div class="inner">
+  <span class="brand">
+    <span class="logo">🤖 ML/DL 특강</span>
+    <a class="brand-insta" href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer" title="제작자 인스타그램">📸 @jungbucks</a>
+  </span>
+  <a href="#steps7">문제 푸는 순서</a>
+  <a href="#algos">알고리즘 도감</a>
+  <a href="#scaling">데이터 다듬기</a>
+  <a href="#dlintro">딥러닝 입문</a>
+  <a href="#hyper">하이퍼파라미터</a>
+  <a href="#code">코드 읽기</a>
+  <a href="#bughunt">버그 찾기</a>
+  <a href="#codequiz">코드 퀴즈</a>
+  <a href="#project">AI 프로젝트</a>
+  <a href="#finalquiz">실력 점검</a>
+  <a href="#vault">보너스 자료</a>
+</div></nav>
+
+<header class="hero">
+  <h1>머신러닝과 딥러닝 특강 <span style="color:var(--dl-deep)">인터랙티브 부교재</span></h1>
+  <p>카드를 뒤집고, 코드를 클릭하고, 버그를 찾으며 시험을 준비해 봅시다!</p>
+  <div class="badges">
+    <span class="badge sup">지도학습</span>
+    <span class="badge unsup">비지도학습</span>
+    <span class="badge ens">앙상블학습</span>
+    <span class="badge dl">딥러닝</span>
+  </div>
+  <div class="idrow">
+    <label>학번 <input type="text" id="stuId" maxlength="12" placeholder="10101"></label>
+    <label>이름 <input type="text" id="stuName" maxlength="10" placeholder="홍길동"></label>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section id="steps7">
+  <h2 class="sec sup">① AI가 문제 푸는 순서 — 문제 해결 7단계</h2>
+  <div class="card">
+    <ol style="padding-left:24px;font-size:.92rem;display:flex;flex-direction:column;gap:8px">
+      <li>데이터 수집 및 불러오기</li>
+      <li>데이터 전처리 및 탐색적 데이터 분석</li>
+      <li>데이터를 훈련 데이터와 테스트 데이터로 분할 (train_test_split)</li>
+      <li>데이터 스케일링을 통해 Train 데이터의 값의 범위를 조정 (Scaler 활용)</li>
+      <li>다양한 머신러닝 알고리즘 및 인공신경망을 적용해 훈련 데이터로 모델 학습</li>
+      <li>테스트 데이터로 학습한 모델의 성능을 평가하고 개선</li>
+      <li>가장 성능이 좋은 모델을 실제 환경에 적용</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🧩 순서 맞추기 게임</h3>
+    <p class="hint" style="margin-bottom:8px">섞여 있는 단계들을 1단계부터 순서대로 클릭하세요. 7개를 모두 고르면 자동으로 채점됩니다.</p>
+    <div class="pool" id="stepPool"></div>
+    <b style="font-size:.88rem">내가 만든 순서</b>
+    <ol class="order-answer" id="stepAnswer"></ol>
+    <div class="bug-msg" id="stepMsg"></div>
+    <button class="act neutral" style="margin-top:10px" onclick="initStepGame()">🔀 다시 섞기</button>
+  </div>
+</section>
+
+<section id="algos">
+  <h2 class="sec sup">② 머신러닝 알고리즘 도감</h2>
+  <p class="hint">💡 카드를 클릭하면 뒤집혀서 정확한 정의가 나옵니다. 앞면의 직관 → 뒷면의 정의 순서로 암기하세요.</p>
+
+  <h3 class="sub">🟠 지도학습 — 예측 (회귀)</h3>
+  <p class="hint" style="margin-bottom:10px">숫자(연속값)를 맞히는 회귀. 직선(선형)부터 곡선(다항), 과적합을 막는 규제 모델까지 <b>같은 회귀 가족</b>이에요.</p>
+  <div class="cardgrid" id="grid-pred"></div>
+
+  <h3 class="sub">🟠 지도학습 — 분류</h3>
+  <div class="cardgrid" id="grid-clf"></div>
+
+  <h3 class="sub">🟠 체험존 ① — kNN: k 값에 따라 답이 바뀐다!</h3>
+  <div class="card">
+    <div class="two-col">
+      <div style="text-align:center">
+        <svg id="knnSvg" viewBox="0 0 240 200" style="width:100%;max-width:300px">
+          <circle id="knnC5" cx="120" cy="100" r="92" fill="none" stroke="#8a7a63" stroke-width="2.5" stroke-dasharray="7,5" opacity=".22"/>
+          <circle id="knnC3" cx="120" cy="100" r="55" fill="none" stroke="#c96a1f" stroke-width="2.5" stroke-dasharray="7,5" opacity="1"/>
+          <path d="M87 78 L95 63 L103 78 Z" fill="#d64545"/>
+          <path d="M142 88 L150 73 L158 88 Z" fill="#d64545"/>
+          <rect x="132" y="127" width="15" height="15" fill="#3a7de8"/>
+          <rect x="48" y="40" width="15" height="15" fill="#3a7de8"/>
+          <rect x="172" y="132" width="15" height="15" fill="#3a7de8"/>
+          <circle id="knnDot" cx="120" cy="100" r="10" fill="#d64545"/>
+          <text x="120" y="105" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">?</text>
+          <text x="166" y="52" font-size="12" fill="#c96a1f" font-weight="700">k=3</text>
+          <text x="194" y="24" font-size="12" fill="#8a7a63" font-weight="700">k=5</text>
+        </svg>
+      </div>
+      <div>
+        <p style="font-size:.9rem;margin-bottom:10px">가운데 점(<b>?</b>)은 아직 종류를 모르는 새 데이터예요. 가장 가까운 이웃 <b>k</b>개에게 물어봅시다. k 값을 바꿔 보세요!</p>
+        <div class="pctl">
+          <button class="act fwd" id="knnK3" onclick="setKnn(3)">k = 3</button>
+          <button class="act neutral" id="knnK5" onclick="setKnn(5)">k = 5</button>
+        </div>
+        <div id="knnMsg" style="margin-top:6px;font-size:.9rem;padding:10px 14px;border-radius:10px;background:var(--sup-bg)"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">🟠 체험존 ② — 의사 결정 트리: 스무고개로 동물 찾기</h3>
+  <div class="card">
+    <p class="hint" style="margin:0 0 10px">간단한 예시 트리예요. 질문에 답하며 가지를 따라 내려가 보세요. (매·펭귄·돌고래·곰 중 하나!)</p>
+    <div class="match-q" id="dtQ" style="background:var(--sup-bg)"></div>
+    <div class="pctl" id="dtBtns" style="margin-top:10px"></div>
+    <div id="dtPath" style="font-size:.85rem;color:#8a7a63;margin-top:6px"></div>
+  </div>
+
+  <h3 class="sub">🟠 체험존 ③ — 나이브 베이즈: 스팸 메일 필터 🎯</h3>
+  <p class="hint" style="margin:0 0 10px">나이브 베이즈(위 분류 카드)는 <b>조건부 확률</b>로 판단해요. 아래에서 스팸 필터가 확률을 어떻게 계산하는지 직접 만져 보세요.</p>
+  <div id="bayes">
+  <div class="card">
+    <svg viewBox="0 0 560 200" style="width:100%;max-width:600px;display:block;margin:8px auto" font-family="'Times New Roman',serif">
+      <text x="88" y="105" text-anchor="middle" font-size="30" font-style="italic">P(B|A)</text>
+      <text x="163" y="105" text-anchor="middle" font-size="28">=</text>
+      <text x="330" y="80" text-anchor="middle" font-size="30" font-style="italic">P(A|B) · P(B)</text>
+      <line x1="215" y1="97" x2="445" y2="97" stroke="#2c2620" stroke-width="2"/>
+      <text x="330" y="140" text-anchor="middle" font-size="30" font-style="italic">P(A)</text>
+      <g font-family="'Noto Sans KR',sans-serif" font-size="13" font-weight="700">
+        <text x="268" y="26" text-anchor="middle" fill="#2560c4">조건부 확률 P(A|B)</text>
+        <line x1="268" y1="34" x2="272" y2="56" stroke="#2560c4" stroke-width="1.5"/>
+        <text x="428" y="26" text-anchor="middle" fill="#1f7d43">사전 확률 (Prior)</text>
+        <line x1="415" y1="34" x2="405" y2="56" stroke="#1f7d43" stroke-width="1.5"/>
+        <text x="88" y="178" text-anchor="middle" fill="#c96a1f">사후 확률 (Posterior)</text>
+        <line x1="88" y1="163" x2="88" y2="120" stroke="#c96a1f" stroke-width="1.5"/>
+        <text x="330" y="188" text-anchor="middle" fill="#8a4fd3">증거 (Evidence)</text>
+        <line x1="330" y1="173" x2="330" y2="152" stroke="#8a4fd3" stroke-width="1.5"/>
+      </g>
+    </svg>
+    <table class="t">
+      <tr><th>기호</th><th>이름</th></tr>
+      <tr><td>P(A|B)</td><td>조건부 확률</td></tr>
+      <tr><td>P(B)</td><td>사전 확률(Prior)</td></tr>
+      <tr><td>P(B|A)</td><td>사후 확률(Posterior)</td></tr>
+      <tr><td>P(A)</td><td>증거(Evidence)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🎮 직접 계산해 보기 — 스팸 메일 필터</h3>
+    <p style="font-size:.88rem;margin-bottom:10px">"무료"라는 단어가 들어 있는 메일이 도착했어요. 슬라이더로 확률을 바꿔 보며, 이 메일이 스팸일 <b>사후 확률 P(스팸|무료)</b>가 어떻게 변하는지 관찰하세요.</p>
+    <div class="slider-row"><label>사전 확률(Prior) P(스팸)</label><input type="range" id="bPrior" min="0.05" max="0.95" step="0.05" value="0.30"><span class="val" id="bPriorV"></span></div>
+    <div class="slider-row"><label>조건부 확률 P(무료|스팸)</label><input type="range" id="bLike" min="0.05" max="0.95" step="0.05" value="0.80"><span class="val" id="bLikeV"></span></div>
+    <div class="slider-row"><label>P(무료|정상)</label><input type="range" id="bLikeN" min="0.05" max="0.95" step="0.05" value="0.10"><span class="val" id="bLikeNV"></span></div>
+    <div class="bayes-result">
+      <div id="bayesCalc"></div>
+      <div class="prob-bar"><span id="bayesBar"></span></div>
+      <p style="font-size:.8rem;color:#5b6f92;margin-top:8px">※ 증거(Evidence) P(무료) = P(무료|스팸)·P(스팸) + P(무료|정상)·P(정상) 으로 계산됩니다.</p>
+    </div>
+  </div>
+  </div>
+
+  <h3 class="sub">🟢 앙상블 학습</h3>
+  <p class="hint" style="margin-bottom:10px">여러 모델을 합쳐 더 강한 모델을 만드는 기법. <b>합치는 방식</b>에 따라 배깅·부스팅·스태킹 세 갈래로 나뉩니다 — 카드 아래 구분표로 정리!</p>
+  <div class="cardgrid" id="grid-ens"></div>
+
+  <table class="t" style="margin-top:14px">
+    <tr><th style="width:150px">계열</th><th>합치는 방식</th><th style="width:170px">대표 알고리즘</th><th style="width:170px">실생활 비유</th></tr>
+    <tr>
+      <td><b>배깅</b> (Bagging)<br><span style="font-size:.8rem;color:#8a7a63">병렬 · 동시에</span></td>
+      <td><b>같은 종류</b>의 모델 여러 개를 서로 다른 데이터 조각으로 <b>동시에</b> 학습시키고, 결과를 다수결·평균으로 합침</td>
+      <td>랜덤 포레스트</td>
+      <td>반 전체가 각자 풀고 투표 🗳️</td>
+    </tr>
+    <tr>
+      <td><b>부스팅</b> (Boosting)<br><span style="font-size:.8rem;color:#8a7a63">직렬 · 차례로</span></td>
+      <td>앞 모델이 <b>틀린 문제</b>를 다음 모델이 이어받아 집중 보완하며 <b>차례로</b> 학습</td>
+      <td>Adaboost, <b>XGBoost</b></td>
+      <td>오답 노트로 복습하는 전교 1등 📓</td>
+    </tr>
+    <tr>
+      <td><b>스태킹</b> (Stacking)<br><span style="font-size:.8rem;color:#8a7a63">2단계 · 종합</span></td>
+      <td><b>서로 다른</b> 모델들의 예측값을 모아, 2단계 최종 모델이 그 예측 패턴을 <b>다시 학습</b>해 결론</td>
+      <td><b>Stacking</b></td>
+      <td>우등생 의견을 종합하는 담임 🎓</td>
+    </tr>
+  </table>
+  <p class="hint" style="margin-top:8px">💡 구분 문제 힌트: "동시에 여러 개" = 배깅, "실수를 이어받아 차례로" = 부스팅, "예측값을 다시 학습" = 스태킹!</p>
+
+  <h3 class="sub">🔵 비지도 학습</h3>
+  <p class="hint" style="margin-bottom:10px">정답(레이블) 없이 데이터 스스로 구조를 찾는 학습. <b>군집화</b>(K-Means·DBSCAN)와 <b>차원 축소</b>(PCA)로 나뉘어요.</p>
+  <div class="cardgrid" id="grid-unsup"></div>
+
+  <div class="card" style="margin-top:14px">
+    <div style="font-weight:800;font-size:.95rem;margin-bottom:12px">🍩 같은 '도넛 모양' 데이터, 누가 잘 나눌까? — K-Means vs DBSCAN</div>
+    <div class="two-col">
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.9rem;color:var(--bad);margin-bottom:4px">❌ K-Means (거리 기반)</div>
+        <svg viewBox="0 0 160 150" style="width:100%;max-width:260px">
+          <line x1="80" y1="14" x2="80" y2="136" stroke="#d64545" stroke-width="1.6" stroke-dasharray="5,4"/>
+          <g fill="#3a7de8"><circle cx="46" cy="104" r="4.5"/><circle cx="32" cy="70" r="4.5"/><circle cx="46" cy="36" r="4.5"/><circle cx="72" cy="66" r="4.5"/><circle cx="72" cy="80" r="4.5"/></g>
+          <g fill="#2fa05a"><circle cx="128" cy="70" r="4.5"/><circle cx="114" cy="104" r="4.5"/><circle cx="114" cy="36" r="4.5"/><circle cx="88" cy="66" r="4.5"/><circle cx="88" cy="80" r="4.5"/><circle cx="80" cy="22" r="4.5"/><circle cx="80" cy="118" r="4.5"/></g>
+          <text x="80" y="148" text-anchor="middle" font-size="10" fill="#8a7a63" font-weight="700">직선으로 뚝 잘라 실패</text>
+        </svg>
+      </div>
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.9rem;color:var(--ens-deep);margin-bottom:4px">✅ DBSCAN (밀도 기반)</div>
+        <svg viewBox="0 0 160 150" style="width:100%;max-width:260px">
+          <g fill="#3a7de8"><circle cx="80" cy="22" r="4.5"/><circle cx="114" cy="36" r="4.5"/><circle cx="128" cy="70" r="4.5"/><circle cx="114" cy="104" r="4.5"/><circle cx="80" cy="118" r="4.5"/><circle cx="46" cy="104" r="4.5"/><circle cx="32" cy="70" r="4.5"/><circle cx="46" cy="36" r="4.5"/></g>
+          <g fill="#2fa05a"><circle cx="72" cy="66" r="4.5"/><circle cx="88" cy="66" r="4.5"/><circle cx="72" cy="80" r="4.5"/><circle cx="88" cy="80" r="4.5"/></g>
+          <g stroke="#d64545" stroke-width="2.4" stroke-linecap="round"><line x1="140" y1="126" x2="148" y2="134"/><line x1="148" y1="126" x2="140" y2="134"/></g>
+          <text x="80" y="148" text-anchor="middle" font-size="10" fill="#8a7a63" font-weight="700">바깥 고리 / 안쪽 뭉치 완벽 분리</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:5px solid var(--unsup);background:var(--unsup-bg);font-size:.92rem;margin-top:14px">
+    <b style="color:var(--unsup-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    데이터가 동글동글 예쁘게 뭉쳐있을 땐 <b>K-Means</b>, 뱀처럼 길게 휘어있거나 노이즈가 많을 땐 <b>DBSCAN</b>, 변수가 너무 많아 머리가 아플 땐 <b>PCA</b>로 먼저 압축하기!
+  </div>
+</section>
+
+<section id="scaling">
+  <h2 class="sec ens">③ 데이터 다듬기 — 스케일링</h2>
+  <p class="hint">계산을 보다 쉽게 수행하기 위해, 서로 다른 변수의 값 범위를 일정하게 맞춰 주는 방식을 <b>스케일링</b>이라 합니다. (변수 개수를 줄이는 PCA의 '차원 축소'와는 다른 개념이에요.) 대표적인 방법은 아래와 같아요.</p>
+  <table class="t">
+    <tr><th style="width:170px">방법</th><th>설명</th></tr>
+    <tr><td><b>StandardScaler()</b></td><td>데이터를 정규분포(평균 0, 표준편차 1) 형태로 변환</td></tr>
+    <tr><td><b>MinMaxScaler()</b></td><td>데이터를 기본값 [0,1] 사이 숫자로 변환 (옵션 지정 시 [-1,1] 등)</td></tr>
+    <tr><td><b>RobustScaler()</b></td><td>중앙값(Median), IQR(상위25%-하위25%)을 사용해 변환</td></tr>
+  </table>
+
+  <h3 class="sub">📊 눈으로 보는 스케일러 — 표본 데이터 [10, 20, 30, 40, 50, 200] (200은 이상치!)</h3>
+  <div class="card">
+    <div class="sc-btns">
+      <button class="on" data-sc="standard" onclick="pickScaler(this)">StandardScaler</button>
+      <button data-sc="minmax" onclick="pickScaler(this)">MinMaxScaler</button>
+      <button data-sc="robust" onclick="pickScaler(this)">RobustScaler</button>
+    </div>
+    <canvas id="scCanvas" width="900" height="320"></canvas>
+    <p id="scDesc" class="hint" style="margin-top:10px"></p>
+  </div>
+
+  <h3 class="sub">💻 스케일러 코드 (줄 클릭 → 해설) <span class="tag warn">⚠ 오타가 숨어 있어요 — 버그 찾기 2번!</span></h3>
+  <div class="codebox"><div class="bar"><span>scaler.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-scaler"></pre></div>
+  <div class="note-panel" id="note-scaler">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="dlintro">
+  <h2 class="sec dl">④ 딥러닝 입문 — 퍼셉트론부터 신경망 종류까지</h2>
+  <div class="dlsub" id="perceptron">
+  <h3 class="subsec">1. 뇌를 흉내 낸 퍼셉트론 &amp; 순전파·역전파</h3>
+  <div class="card">
+    <p style="font-size:.9rem;margin-bottom:6px"><b>퍼셉트론:</b> 인간의 뉴런을 모방한 인공신경망을 구성하는 기본 단위. 편향은 가중합 Σ(wx)을 구한 다음 더해짐</p>
+    <p style="font-size:.85rem;color:#7a6c58">구조: 입력(x₁..xₙ) → 각 가중치(w₁..wₙ) → Σ(합산, +편향 b) → 계단함수(step) → out(t)</p>
+    <div class="pctl">
+      <button class="act fwd" id="btnFwd" onclick="runForward()">▶ 순전파 실행</button>
+      <button class="act bwd" id="btnBwd" onclick="runBackward()">◀ 역전파 실행</button>
+      <button class="act neutral" onclick="resetPerceptron()">↺ 초기화</button>
+    </div>
+    <p id="pstatus">버튼을 눌러 데이터의 흐름을 관찰하세요.</p>
+    <svg class="psvg" id="psvg" viewBox="0 0 620 300" style="width:100%;max-width:640px">
+      <!-- edges -->
+      <line id="e1" class="edge" x1="95" y1="70"  x2="255" y2="150"/>
+      <line id="e2" class="edge" x1="95" y1="150" x2="255" y2="150"/>
+      <line id="e3" class="edge" x1="95" y1="230" x2="255" y2="150"/>
+      <line id="eb" class="edge" x1="280" y1="55" x2="280" y2="120" stroke-dasharray="5,4"/>
+      <line id="e4" class="edge" x1="310" y1="150" x2="390" y2="150"/>
+      <line id="e5" class="edge" x1="480" y1="150" x2="545" y2="150"/>
+      <!-- input nodes -->
+      <circle id="nx1" class="node" cx="70" cy="70"  r="26"/>
+      <circle id="nx2" class="node" cx="70" cy="150" r="26"/>
+      <circle id="nx3" class="node" cx="70" cy="230" r="26"/>
+      <text x="70" y="75"  text-anchor="middle">x₁</text>
+      <text x="70" y="155" text-anchor="middle">x₂</text>
+      <text x="70" y="235" text-anchor="middle">xₙ</text>
+      <!-- weight labels -->
+      <text id="w1" class="wlab" x="160" y="95">w₁</text>
+      <text id="w2" class="wlab" x="160" y="143">w₂</text>
+      <text id="w3" class="wlab" x="160" y="205">wₙ</text>
+      <!-- bias -->
+      <circle id="nb" class="node" cx="280" cy="38" r="20"/>
+      <text x="280" y="44" text-anchor="middle" font-size="13">b</text>
+      <text x="322" y="70" font-size="11" fill="#8a7a63">편향(가중합 뒤에 더함)</text>
+      <!-- sum node -->
+      <circle id="nsum" class="node" cx="282" cy="150" r="30"/>
+      <text x="282" y="158" text-anchor="middle" font-size="20">Σ</text>
+      <!-- activation -->
+      <rect id="nact" class="node" x="392" y="120" width="88" height="60" rx="12"/>
+      <text x="436" y="145" text-anchor="middle" font-size="12">계단함수</text>
+      <text x="436" y="163" text-anchor="middle" font-size="11" fill="#8a7a63">(step)</text>
+      <!-- output -->
+      <circle id="nout" class="node" cx="575" cy="150" r="28"/>
+      <text x="575" y="156" text-anchor="middle" font-size="13">out(t)</text>
+      <!-- error label (backprop) -->
+      <text id="errlab" x="575" y="205" text-anchor="middle" font-size="12" fill="#d64545" opacity="0">오차 = 정답 − 예측</text>
+    </svg>
+    <div class="two-col" style="margin-top:14px">
+      <div style="background:var(--dl-bg);border-radius:10px;padding:12px 14px;font-size:.87rem">
+        <b style="color:var(--dl-deep)">순전파</b> — 입력한 데이터에 가중치(w)를 곱하고 편향(b)을 더한 뒤(y = wx + b), 활성화 함수를 거쳐 최종 결괏값을 계산하는 과정
+      </div>
+      <div style="background:#fdecec;border-radius:10px;padding:12px 14px;font-size:.87rem">
+        <b style="color:var(--bad)">역전파</b> — 실제 정답과 모델의 예측값의 차이인 오차를 계산하고, 오차를 줄이기 위해 앞의 층으로 돌아가며 가중치와 편향을 수정하는 과정
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:14px">
+      <div style="text-align:center"><svg id="fwdNet" viewBox="0 0 300 170" style="width:100%;max-width:320px"></svg></div>
+      <div style="text-align:center"><svg id="bwdNet" viewBox="0 0 300 170" style="width:100%;max-width:320px"></svg></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="dlsub" id="terms">
+  <h3 class="subsec">2. 신경망 낱말 사전 — 핵심 용어</h3>
+  <table class="t">
+    <tr><th style="width:110px">용어</th><th>정의</th></tr>
+    <tr><td><b>퍼셉트론</b></td><td>인간의 뉴런을 모방한 인공신경망을 구성하는 기본 단위. 편향은 가중합 Σ(wx)을 구한 다음 더해짐</td></tr>
+    <tr><td><b>인공신경망</b></td><td>다층 퍼셉트론으로 1개 이상의 은닉층이 연결된 신경망</td></tr>
+    <tr><td><b>딥러닝</b></td><td>인공신경망을 여러 층으로 깊게(Deep) 쌓아 데이터를 학습하는 머신러닝의 분야</td></tr>
+    <tr><td><b>은닉층</b></td><td>인공 신경망의 여러 층 중에서 입력층과 출력층 사이에 있는 층</td></tr>
+    <tr><td><b>가중치</b></td><td>입력값이 결과에 미치는 중요도(영향력)를 결정하는 수치</td></tr>
+    <tr><td><b>편향</b></td><td>입력값과 관련없이 퍼셉트론이 얼마나 쉽게 활성화(출력 신호를 보낼지)될지 조절하는 값. 편향이 크면 쉽게 활성화, 작거나 음수면 활성화되기 어려움</td></tr>
+    <tr><td><b>순전파</b></td><td>입력한 데이터에 가중치(w)를 곱하고 편향(b)을 더한 뒤(y = wx + b), 활성화 함수를 거쳐 최종 결괏값을 계산하는 과정</td></tr>
+    <tr><td><b>역전파</b></td><td>실제 정답과 모델의 예측값의 차이인 오차를 계산하고, 오차를 줄이기 위해 앞의 층으로 돌아가며 가중치와 편향을 수정하는 과정</td></tr>
+  </table>
+  <div class="card" style="text-align:center">
+    <p style="font-size:.9rem;margin-bottom:8px"><b>인공신경망 구조:</b> Input(3 노드) → Hidden(4 노드, 서로 완전연결) → Output(2 노드)</p>
+    <svg viewBox="0 0 420 220" style="width:100%;max-width:440px" id="annsvg"></svg>
+  </div>
+  </div>
+
+  <div class="dlsub" id="activation">
+  <h3 class="subsec">3. 켤까 말까? 활성화 함수</h3>
+
+  <div class="card" style="border-top:5px solid var(--dl);font-size:.92rem">
+    <b style="color:var(--dl-deep)">활성화 함수란?</b> 인공신경망(Artificial Neural Network)에서 노드의 입력값을 변환하여 다음 층으로 전달할지, 그리고 어떤 크기로 전달할지 결정하는 수학적 함수
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="border-top:5px solid var(--sup)">
+      <h4 style="color:var(--sup-deep);margin-bottom:8px">🔚 출력층용</h4>
+      <table class="t">
+        <tr><th>함수</th><th>사용 상황</th></tr>
+        <tr><td><b>없음/선형(Linear)</b></td><td>회귀(예측) 분석 시 출력층에 사용</td></tr>
+        <tr><td><b>시그모이드(Sigmoid)</b></td><td>둘 중 하나의 정답을 선택하는 이진 분류</td></tr>
+        <tr><td><b>소프트맥스(Softmax)</b></td><td>3개 이상의 선택지 중 하나의 정답을 선택하는 다중 클래스 분류</td></tr>
+      </table>
+    </div>
+    <div class="card" style="border-top:5px solid var(--dl)">
+      <h4 style="color:var(--dl-deep);margin-bottom:8px">🔒 은닉층용</h4>
+      <table class="t">
+        <tr><th>함수</th><th>설명</th></tr>
+        <tr><td><b>계단 함수</b></td><td>가중합에 편향을 더한 값이 0보다 크면 1, 아니면 0 (초기 퍼셉트론 구조)</td></tr>
+        <tr><td><b>ReLU</b></td><td>은닉층에서 자주 사용되며 입력값이 양수면 그대로, 0 이하면 0으로 출력</td></tr>
+        <tr><td><b>Tanh</b></td><td>하이퍼볼릭 탄젠트. 출력값이 -1 ~ 1 사이이며 데이터의 중심을 0으로 맞춤</td></tr>
+        <tr><td><b>Leaky ReLU</b></td><td>ReLU에서 0을 출력한 노드의 비활성화 문제를 막기 위해 씀. 0 미만의 음수 입력값에 아주 작은 수(α)를 곱해 아주 작은 음수를 출력함</td></tr>
+        <tr><td><b>ELU</b></td><td>입력값이 0 이상이면 그대로 출력, 0 미만이면 α(eˣ−1) 값 출력</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom:10px">🎮 곡선을 직접 움직여 보세요 (체크박스로 함수 켜고 끄기 + 슬라이더로 x 이동)</h4>
+    <div class="fn-toggles" id="fnToggles"></div>
+    <canvas id="actCanvas" width="900" height="420"></canvas>
+    <input type="range" class="xslider" id="xSlider" min="-4" max="4" step="0.05" value="1">
+    <div style="font-size:.85rem;margin-bottom:8px">현재 입력 x = <b id="xVal">1.00</b></div>
+    <div class="fn-values" id="fnValues"></div>
+    <p class="hint" style="margin-top:10px">※ 그래프의 Leaky ReLU는 눈에 잘 보이도록 α=0.1로 그렸어요. (코드 예제에서는 보통 α=0.01) 회귀 출력층에서 쓰는 선형(Linear) 함수도 체크박스로 켜 볼 수 있어요.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom:8px">🤔 Softmax는 왜 위 그래프에 없을까?</h4>
+    <p style="font-size:.88rem;margin-bottom:10px">Softmax는 입력 하나가 아니라 <b>여러 개의 출력값(z)을 동시에</b> 받아, 전체 합이 1이 되는 확률로 바꿔 주는 함수예요. 그래서 단일 곡선으로는 그릴 수 없습니다. 아래에서 클래스 3개의 출력값을 직접 조절해 보세요 — 세 확률의 합은 항상 100%!</p>
+    <div class="slider-row"><label>클래스 A의 출력 z₁</label><input type="range" id="smz1" min="-5" max="5" step="0.1" value="2"><span class="val" id="smzV1"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar1" style="line-height:22px;background:var(--sup)"></span></div>
+    <div class="slider-row"><label>클래스 B의 출력 z₂</label><input type="range" id="smz2" min="-5" max="5" step="0.1" value="1"><span class="val" id="smzV2"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar2" style="line-height:22px;background:var(--ens)"></span></div>
+    <div class="slider-row"><label>클래스 C의 출력 z₃</label><input type="range" id="smz3" min="-5" max="5" step="0.1" value="0"><span class="val" id="smzV3"></span></div>
+    <div class="prob-bar" style="height:22px"><span id="smxBar3" style="line-height:22px;background:var(--dl)"></span></div>
+    <p class="hint" style="margin-top:10px">가장 큰 출력값을 가진 클래스가 가장 높은 확률을 갖게 되고, 모델은 그 클래스를 정답으로 선택합니다. 이것이 "3개 이상의 선택지 중 하나의 정답을 선택하는 다중 클래스 분류"에 Softmax를 쓰는 이유예요.</p>
+  </div>
+  </div>
+
+  <div class="dlsub" id="anntypes">
+  <h3 class="subsec">4. 신경망 종류 — CNN·RNN·LSTM… <span class="tag warn">암기 불필요, 이해만!</span></h3>
+  <table class="t">
+    <tr><th style="width:150px">종류</th><th style="width:230px">이런 친구예요 (비유)</th><th>어떤 신경망? &amp; 대표 예시</th></tr>
+    <tr>
+      <td><b>ANN</b><br><span style="font-size:.8rem;color:#8a7a63">인공 신경망</span></td>
+      <td>🧱 뇌세포 신경망 모방의 <b>기초 공사</b></td>
+      <td>인간의 뉴런을 흉내 낸 가장 기본적인 형태. <b>모든 딥러닝의 조상님.</b><br><span style="color:#8a7a63;font-size:.85rem">🎯 표 데이터 예측, 기초 분류</span></td>
+    </tr>
+    <tr>
+      <td><b>CNN</b><br><span style="font-size:.8rem;color:#8a7a63">합성곱 신경망</span></td>
+      <td>🔍 돋보기 들고 그림의 <b>힌트(특징) 찾기</b></td>
+      <td>이미지의 공간적 특징을 훑으며 <b>부분 패턴을 추출</b>하는 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 이미지 인식, 얼굴 인식, 자율주행 카메라</span></td>
+    </tr>
+    <tr>
+      <td><b>RNN</b><br><span style="font-size:.8rem;color:#8a7a63">순환 신경망</span></td>
+      <td>🐠 뒤돌아서면 까먹는 <b>금붕어의 이어달리기</b></td>
+      <td>순서 있는 데이터 전담 — 단, 길어지면 앞 내용을 까먹는 <b>장기 의존성 문제</b>가 있음.<br><span style="color:#8a7a63;font-size:.85rem">🎯 짧은 문장 번역, 간단한 음성 인식</span></td>
+    </tr>
+    <tr style="background:var(--dl-bg)">
+      <td><b>LSTM</b><br><span style="font-size:.8rem;color:#8a7a63">장단기 메모리</span></td>
+      <td>📔 중요한 기억만 다이어리에 적는 <b>기억력 천재</b></td>
+      <td><b>'망각 게이트'</b>로 중요한 과거는 기억, 쓸데없는 건 삭제 — RNN 건망증의 해결사.<br><span style="color:#8a7a63;font-size:.85rem">🎯 긴 글 번역, 주가 예측, 챗봇</span></td>
+    </tr>
+    <tr>
+      <td><b>GAN</b><br><span style="font-size:.8rem;color:#8a7a63">생성적 적대 신경망</span></td>
+      <td>👮 위조지폐범 vs 베테랑 경찰의 <b>쫓고 쫓기는 눈치 게임</b></td>
+      <td>가짜를 만드는 <b>생성자</b> vs 진짜를 가리는 <b>판별자</b>의 경쟁으로 학습하는 창작 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 딥페이크, 화질 복원, 가상 인간</span></td>
+    </tr>
+    <tr>
+      <td><b>GNN</b><br><span style="font-size:.8rem;color:#8a7a63">그래프 신경망</span></td>
+      <td>🕸️ 인스타그램 복잡한 <b>인맥 관계도 추적기</b></td>
+      <td>점(노드)과 선(엣지)으로 얽힌 <b>그물망 구조</b>를 분석하는 신경망.<br><span style="color:#8a7a63;font-size:.85rem">🎯 SNS 친구·콘텐츠 추천, 신약 개발</span></td>
+    </tr>
+    <tr>
+      <td><b>Transformer</b><br><span style="font-size:.8rem;color:#8a7a63">트랜스포머</span></td>
+      <td>🖍️ 정답의 핵심 단어에 <b>형광펜 쫙 치기</b> (Attention)</td>
+      <td>단어들의 관계를 <b>동시에(Attention)</b> 계산해 문맥을 통째로 파악 — <b>LLM의 핵심 심장</b>.<br><span style="color:#8a7a63;font-size:.85rem">🎯 ChatGPT, 생성형 AI 서비스</span></td>
+    </tr>
+  </table>
+
+  <div class="card" style="border-top:5px solid var(--dl);background:var(--dl-bg);font-size:.92rem;margin-top:14px">
+    <b style="color:var(--dl-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    "눈(이미지)이 필요할 땐 <b>CNN</b>, 긴 말과 글(텍스트)을 기억할 땐 <b>LSTM</b>과 <b>Transformer</b>, 가짜를 진짜처럼 만들 땐 <b>GAN</b>을 기억하렴!"
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🎯 매칭 게임 — 설명에 맞는 신경망 고르기</h3>
+    <div class="match-q" id="annQ"></div>
+    <div class="chiprow" id="annChips"></div>
+    <div class="bug-msg" id="annMsg"></div>
+    <button class="act neutral" style="margin-top:6px" onclick="initAnnGame()">🔀 다시 하기</button>
+  </div>
+  </div>
+</section>
+
+<section id="hyper">
+  <h2 class="sec ens">⑤ 하이퍼파라미터 — 모델의 성능 조절 손잡이</h2>
+  <table class="t" style="margin-bottom:16px">
+    <tr><th style="width:220px">구분</th><th>정의</th></tr>
+    <tr><td><b>하이퍼파라미터</b> (by 개발자)</td><td>모델의 학습 과정 외부에서 사용자(개발자)가 설정하는 값</td></tr>
+    <tr><td><b>파라미터</b> (by 모델)</td><td>모델이 학습하면서 스스로 변화시키는 값 (가중치, 편향 등)</td></tr>
+  </table>
+  <p class="hint">💡 카드를 클릭해 정의와 예시 값을 확인하세요.</p>
+  <div class="cardgrid" id="grid-hyper"></div>
+  <div class="card" style="margin-top:16px;font-size:.88rem">
+    <b>📌 손실 함수 관련 용어</b><br>
+    · MSE = 평균 제곱 오차 (오차의 제곱값 평균)<br>
+    · MAE = 평균 절대 오차 (오차의 절댓값 평균)
+  </div>
+
+  <h3 class="sub">📝 검증 데이터(Validation Data) — 하이퍼파라미터의 '모의고사'</h3>
+  <div class="card">
+    <p style="font-size:.92rem;margin-bottom:12px">
+      공부에 비유하면 데이터셋은 세 가지로 나뉩니다. <b>교과서·문제집으로 공부(훈련)</b>하고,
+      <b>모의고사로 공부 방법을 점검(검증)</b>한 뒤, <b>수능으로 진짜 실력을 평가(테스트)</b>하죠.
+      하이퍼파라미터(학습률, 레이어 수, epochs…)는 말하자면 <mark>'공부 방법'</mark>이고,
+      검증 데이터는 <mark>그 공부 방법이 올바른지 중간 점검하는 모의고사</mark>입니다.
+    </p>
+
+    <!-- 데이터 분할 비율 도해 (순수 CSS) -->
+    <div style="display:flex;border-radius:10px;overflow:hidden;margin:4px 0 6px;font-size:.82rem;font-weight:700;color:#fff;text-align:center;line-height:1.4">
+      <div style="flex:6;background:var(--sup);padding:10px 4px">훈련 Train<br><span style="font-weight:500;font-size:.78rem;opacity:.9">교과서·문제집 (예: 60%)</span></div>
+      <div style="flex:2;background:var(--ens);padding:10px 4px">검증 Val<br><span style="font-weight:500;font-size:.78rem;opacity:.9">모의고사 (20%)</span></div>
+      <div style="flex:2;background:var(--dl);padding:10px 4px">테스트 Test<br><span style="font-weight:500;font-size:.78rem;opacity:.9">수능 (20%)</span></div>
+    </div>
+    <p class="hint" style="margin-bottom:14px">※ 비율은 예시예요. 케라스에서는 <b>validation_split=0.2</b>처럼 훈련 데이터의 일부를 떼어 검증에 씁니다.</p>
+
+    <table class="t">
+      <tr><th style="width:150px">구분</th><th style="width:130px">실생활 비유</th><th>역할</th></tr>
+      <tr><td><b style="color:var(--sup-deep)">훈련 데이터<br>(Train Data)</b></td><td>교과서와 문제집</td><td>모델의 <b>가중치(Weight)와 편향(Bias)</b>을 실제로 학습시키는 데이터</td></tr>
+      <tr><td><b style="color:var(--ens-deep)">검증 데이터<br>(Validation Data)</b></td><td>학원 모의고사</td><td>학습 <b>도중</b> 중간 점검을 통해 최적의 <b>하이퍼파라미터</b>(학습률, 레이어 수 등)를 결정하는 데이터</td></tr>
+      <tr><td><b style="color:var(--dl-deep)">테스트 데이터<br>(Test Data)</b></td><td>최종 수능 시험</td><td>모든 학습과 튜닝이 <b>끝난 후</b>, 모델의 진짜 실력(<b>일반화 성능</b>)을 최종 평가하는 데이터</td></tr>
+    </table>
+
+    <div style="background:#fdecec;border-radius:10px;padding:12px 16px;font-size:.88rem;margin-top:12px">
+      <b style="color:var(--bad)">🚨 왜 훈련 데이터로 하이퍼파라미터를 정하면 안 될까? — 과적합(Overfitting)</b><br>
+      훈련 데이터 점수만 보고 공부 방법을 고르면, 모델은 <b>문제집을 통째로 외워버리는</b> 길을 택합니다.
+      문제집(훈련)은 100점인데 처음 보는 시험(테스트)은 엉망이 되는 것 — 이것이 과적합이에요.
+      검증 데이터는 모델이 단순 암기가 아니라 <mark>원리를 이해(일반화)하고 있는지 감시하는 기준</mark>이 됩니다.
+      모의고사 점수가 떨어지기 시작하면 "아, 지금 외우고 있구나"를 알아채는 거죠.
+    </div>
+
+    <p class="hint" style="margin-top:10px">💡 아래 컴파일/학습 코드의 <b>validation_split=0.2</b>가 이 '모의고사'를 만드는 부분이에요. 위 플립카드 사전에서도 확인해 보세요!</p>
+  </div>
+
+  <h3 class="sub">🏹 체험존 — AI 양궁 선수 육성 시뮬레이션: 몇 번 훈련시킬까?</h3>
+  <div class="card">
+    <p style="font-size:.92rem;margin-bottom:12px">
+      여러분은 AI 양궁 선수의 <b>코치</b>입니다. <b>훈련 횟수(Epoch)</b>를 조절해 선수를 키운 뒤,
+      <b>🏡 연습장(훈련 데이터)</b>과 <b>🌪️ 실전 대회(테스트 데이터)</b> 성적을 비교해 보세요.
+      <mark>많이 훈련시킬수록 무조건 좋은 게 아닙니다!</mark>
+    </p>
+
+    <div class="slider-row" style="max-width:420px">
+      <label><b>훈련 횟수 (Epoch)</b></label>
+      <input type="range" id="ofEpoch" min="1" max="3" step="1" value="2" oninput="ofUpdate()">
+      <span class="val" id="ofEpochV"></span>
+    </div>
+    <div class="of-ticks"><span>1 · 훈련 부족</span><span>2 · 적당히</span><span>3 · 지나치게</span></div>
+
+    <div id="ofDesc" style="border-radius:10px;padding:12px 16px;font-size:.9rem;line-height:1.6"></div>
+
+    <div class="two-col" style="margin-top:14px">
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.92rem;margin-bottom:6px">🏡 연습장 <span style="color:#8a7a63;font-weight:500">(Train Data)</span></div>
+        <svg id="ofTrainSvg" viewBox="0 0 220 200" style="width:100%;max-width:300px"></svg>
+        <div id="ofTrainScore" style="font-weight:800;font-size:.95rem;margin-top:4px"></div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:.92rem;margin-bottom:6px">🌪️ 실전 대회 <span style="color:#8a7a63;font-weight:500">(Test Data — 처음 보는 환경!)</span></div>
+        <svg id="ofTestSvg" viewBox="0 0 220 200" style="width:100%;max-width:300px"></svg>
+        <div id="ofTestScore" style="font-weight:800;font-size:.95rem;margin-top:4px"></div>
+      </div>
+    </div>
+
+    <div class="pctl" style="margin-top:10px;justify-content:center">
+      <button class="act neutral" onclick="ofUpdate()">🎯 다시 쏘기</button>
+    </div>
+    <p class="hint" style="margin-top:8px">연습장 점수(훈련 정확도)와 실전 점수(테스트 정확도)의 <b>차이가 벌어질수록</b> 과적합입니다. 위 검증 데이터(모의고사)가 바로 이 차이를 학습 도중에 미리 알려주는 장치예요.</p>
+  </div>
+
+  <h3 class="sub">💻 컴파일/학습 코드 (줄 클릭 → 해설)</h3>
+  <div class="codebox"><div class="bar"><span>compile_fit.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-compile"></pre></div>
+  <div class="note-panel" id="note-compile">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="code">
+  <h2 class="sec sup">⑥ 코드 한 줄씩 읽기</h2>
+  <p class="hint">💡 코드의 각 줄을 클릭하면 아래 패널에 해설이 나타납니다.</p>
+
+  <h3 class="sub">📈 선형 회귀 (예측) <span class="tag warn">⚠ 오타 포함 — 버그 찾기에서 확인!</span></h3>
+  <div class="codebox"><div class="bar"><span>linear_regression.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-linreg"></pre></div>
+  <div class="note-panel" id="note-linreg">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🎯 로지스틱 회귀 (분류) <span class="tag warn">⚠ 같은 오타 포함</span></h3>
+  <div class="codebox"><div class="bar"><span>classification.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-clf"></pre></div>
+  <div class="note-panel" id="note-clf">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🧠 케라스 예제 A — 다중 분류 신경망</h3>
+  <div class="codebox"><div class="bar"><span>keras_multiclass.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-kerasA"></pre></div>
+  <div class="note-panel" id="note-kerasA">👆 궁금한 줄을 클릭하세요.</div>
+
+  <h3 class="sub">🧠 케라스 예제 B — 회귀 신경망</h3>
+  <div class="codebox"><div class="bar"><span>keras_regression.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="code-kerasB"></pre></div>
+  <div class="note-panel" id="note-kerasB">👆 궁금한 줄을 클릭하세요.</div>
+</section>
+
+<section id="bughunt">
+  <h2 class="sec dl">⑦ 버그 찾기 모드 🐞</h2>
+  <p class="hint">💡 아래 코드에는 시험에 자주 나오는 실수를 일부러 숨겨 뒀어요! 잘못된 줄을 클릭한 뒤, 올바른 수정을 골라 보세요.</p>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🐞 버그 1 — 데이터 분할 코드</h3>
+    <div class="codebox"><div class="bar"><span>bug_hunt_1.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="bug1-code"></pre></div>
+    <div class="bug-msg" id="bug1-msg"></div>
+    <div class="fix-choices" id="bug1-fix"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">🐞 버그 2 — 스케일러 코드</h3>
+    <div class="codebox"><div class="bar"><span>bug_hunt_2.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre id="bug2-code"></pre></div>
+    <div class="bug-msg" id="bug2-msg"></div>
+    <div class="fix-choices" id="bug2-fix"></div>
+  </div>
+</section>
+
+<section id="codequiz">
+  <h2 class="sec unsup">⑧ 코드 읽기 퀴즈 (2세트)</h2>
+  <div class="card" style="background:var(--unsup-bg);font-size:.9rem;box-shadow:none;border:1px solid #cfe0f7">
+    💬 <b>왜 코드 해석 연습을 할까?</b> 머신러닝이나 딥러닝을 위해 활성화 함수의 수학적 원리를 깊게 이해할 필요는 없어요. 또한 요즘 시대에 모든 소스 코드를 직접 작성할 필요도 없죠. 하지만 소스 코드를 읽고 그 의미를 파악하고, 문제 해결 절차가 합당한지 확인하는 <b>코드 리뷰(Code Review)</b>가 중요합니다.
+  </div>
+  <p class="hint">💡 시험에 나오는 유형! 코드를 읽고 스스로 답을 고른 뒤 정답을 확인하세요.</p>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">세트 1 — 이 신경망 코드를 해석하라!</h3>
+    <div class="codebox"><div class="bar"><span>quiz_model.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre style="padding:12px 16px"><span class="cl blank">model = Sequential([</span><span class="cl blank">    Dense(64), tf.keras.layers.LeakyReLU(alpha=0.01),</span><span class="cl blank">    Dense(32, activation='relu'),</span><span class="cl blank">    Dense(16, activation='tanh'),</span><span class="cl blank">    Dense(1, activation='sigmoid')</span><span class="cl blank">])</span></pre></div>
+    <div id="quizSetC"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub" style="margin-top:0">세트 2 — 이 컴파일/학습 코드를 해석하라!</h3>
+    <div class="codebox"><div class="bar"><span>quiz_compile.py</span><span class="dots"><span style="background:#f66"></span><span style="background:#fc6"></span><span style="background:#6c6"></span></span></div><pre style="padding:12px 16px"><span class="cl blank">model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])</span><span class="cl blank">history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)</span></pre></div>
+    <div id="quizSetB"></div>
+  </div>
+</section>
+
+<section id="project">
+  <h2 class="sec sup">⑨ AI 프로젝트 만들기 (6단계)</h2>
+  <p class="hint">💡 각 단계를 클릭하면 수행 내용과 예시가 펼쳐집니다. 예시는 "기후변화 기온 예측 프로젝트"입니다.</p>
+  <div id="projTimeline"></div>
+</section>
+
+<section id="finalquiz">
+  <h2 class="sec dl">⑩ 실력 점검 — 자가진단 퀴즈 (18문항)</h2>
+  <p class="hint">💡 모든 문항에 답한 뒤 "채점하기"를 누르세요. 점수는 저장되지 않으니 부담 없이 도전! 채점 후 <b>"결과 요약 복사"</b>를 눌러 선생님께 제출할 수 있어요. (위 표지의 학번·이름을 입력해 두세요!)</p>
+  <div id="finalQuizBox"></div>
+  <div style="text-align:center;margin-top:18px">
+    <button class="act fwd" onclick="gradeFinal()">✅ 채점하기</button>
+  </div>
+  <div class="bug-msg" id="gradeWarn" style="max-width:680px;margin:10px auto 0"></div>
+  <div id="quizResult">
+    <div id="scoreTitle">나의 점수</div>
+    <div class="score"><span id="scoreNum">0</span> / 18</div>
+    <div id="resultMeta" style="font-size:.88rem;color:#7a6c58;margin:4px 0 2px"></div>
+    <div id="scoreMsg" style="margin:8px 0 14px;font-weight:700"></div>
+    <div id="wrongReview" style="text-align:left;max-width:680px;margin:0 auto 16px;background:#fff;border-radius:10px;padding:14px 16px;font-size:.9rem"></div>
+    <button class="act fwd" onclick="copyResult(this)">📋 결과 요약 복사 (제출용)</button>
+    <button class="act neutral" onclick="resetFinal()">🔄 다시 풀기</button>
+  </div>
+</section>
+
+<section id="vault">
+  <h2 class="sec dl">⑪ 보너스 — 심화 도전 문제</h2>
+  <p class="hint">기본 개념을 넘어, 실제 현업에서 부딪히는 통찰형 문제예요. 답을 먼저 고민한 뒤 펼쳐 보세요.</p>
+
+  <div class="card" style="background:var(--dl-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q1. 훈련 정확도는 99%인데 검증 정확도가 65%로 뚝 떨어졌다. 무슨 일이 일어난 걸까?</p>
+    <p style="font-size:.9rem">👉 <b>과적합</b>. 모델이 훈련 데이터를 통째로 암기해 일반화에 실패한 상태. 에폭을 줄이거나 드롭아웃·규제를 추가한다. (양궁 시뮬의 Epoch 3 상태!)</p>
+  </div>
+  <div class="card" style="background:var(--ens-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q2. "여러 모델의 예측값을 다시 새 데이터로 삼아 2단계 모델이 학습"하는 앙상블 기법은?</p>
+    <p style="font-size:.9rem">👉 <b>스태킹(Stacking)</b>. 배깅(동시)·부스팅(이어받기)과 달리 예측 패턴 자체를 한 번 더 학습한다.</p>
+  </div>
+  <div class="card" style="background:var(--sup-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q3. 다중 클래스 분류의 출력층 활성화 함수와, 그 확률들의 합은?</p>
+    <p style="font-size:.9rem">👉 <b>소프트맥스(Softmax)</b>, 확률의 합은 항상 <b>1(100%)</b>. 이진 분류라면 시그모이드를 쓴다.</p>
+  </div>
+  <div class="card" style="background:var(--unsup-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q4. 어떤 암 진단 AI가 <b>정확도(accuracy) 99%</b>를 기록했다. 병원장은 기뻐했지만, 개발자는 오히려 얼굴이 굳었다. 왜일까?</p>
+    <p style="font-size:.9rem">👉 <b>정확도의 함정(불균형 데이터)</b>. 전체 환자 중 실제 암 환자가 1%뿐이라면, 모든 사람을 무조건 '정상'이라고 찍는 엉터리 모델도 정확도 99%가 나온다. 정작 살려야 할 암 환자를 전부 놓치는(재현율=0) 최악의 모델일 수 있는 것. 그래서 정확도 하나만 보면 안 되고, <b>정밀도(Precision)·재현율(Recall)</b>을 함께 봐야 한다. — "무엇을 맞혔나"보다 "무엇을 놓쳤나"가 더 중요할 때가 있다.</p>
+  </div>
+  <div class="card" style="background:var(--dl-bg)">
+    <p style="font-weight:800;margin-bottom:6px">Q5. 훈련 정확도 100%, 테스트 정확도도 100%였던 모델을 실제 서비스에 배포했더니 성능이 형편없었다. 과적합도 아닌데, 무엇을 놓친 걸까?</p>
+    <p style="font-size:.9rem">👉 <b>데이터 편향 &amp; 분포 이동(Distribution Shift)</b>. 훈련·테스트를 같은 데이터에서 나눴다면, 그 데이터 자체가 현실을 대표하지 못할 때 둘 다 높은 점수가 나와도 소용없다. 예컨대 낮 시간대 사진만으로 학습한 자율주행 AI는 밤·비 오는 날 무너진다. 테스트 점수는 <b>"수집한 데이터와 비슷한 상황"</b>에서의 실력일 뿐 — 좋은 모델보다 <b>현실을 닮은 좋은 데이터</b>가 먼저다.</p>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  머신러닝과 딥러닝 특강 부교재 · 인터랙티브 학습 페이지 · 정보 교과 시험 대비용<br>
+  <span class="foot-credit">made by <b>jungbucks</b> ·
+    <a href="https://instagram.com/jungbucks" target="_blank" rel="noopener noreferrer">📸 Insta @jungbucks</a> ·
+    <a href="https://blog.naver.com/kachu_t" target="_blank" rel="noopener noreferrer">📝 Blog</a>
+  </span>
+</footer>
+
+<!-- ══ 데이터 (콘텐츠 수정은 이 구간 파일만) ══ -->
+<script src="data/algo-cards.js"></script>
+<script src="data/walkthroughs.js"></script>
+<script src="data/bugs.js"></script>
+<script src="data/hyper.js"></script>
+<script src="data/quizzes.js"></script>
+<script src="data/project.js"></script>
+<script src="data/steps7.js"></script>
+<script src="data/ann-types.js"></script>
+<script src="data/archery.js"></script>
+<!-- ══ 엔진 (로드 순서 변경 금지) ══ -->
+<script src="js/core.js"></script>
+<script src="js/sections/cards.js"></script>
+<script src="js/sections/walkthrough.js"></script>
+<script src="js/sections/bughunt.js"></script>
+<script src="js/sections/perceptron.js"></script>
+<script src="js/sections/scaler.js"></script>
+<script src="js/sections/activation.js"></script>
+<script src="js/sections/hyper.js"></script>
+<script src="js/sections/miniquiz.js"></script>
+<script src="js/sections/project.js"></script>
+<script src="js/sections/finalquiz.js"></script>
+<script src="js/sections/bayes.js"></script>
+<script src="js/sections/steps7.js"></script>
+<script src="js/sections/annmatch.js"></script>
+<script src="js/sections/softmax.js"></script>
+<script src="js/sections/knn.js"></script>
+<script src="js/sections/dtree.js"></script>
+<script src="js/sections/mininet.js"></script>
+<script src="js/sections/archery.js"></script>
+<script src="js/sections/vault.js"></script>
+<script src="js/sections/pagefx.js"></script>
+</body>
+</html>

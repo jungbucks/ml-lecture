@@ -13,6 +13,7 @@
   --unsup:#3a7de8; --unsup-bg:#e9f1fd; --unsup-deep:#2560c4;
   --ens:#2fa05a; --ens-bg:#e8f7ee; --ens-deep:#1f7d43;
   --dl:#8a4fd3; --dl-bg:#f3ecfc; --dl-deep:#6c35b0;
+  --rl:#2ab3a6; --rl-bg:#e6f7f4; --rl-deep:#177f75;
   --ink:#2c2620; --paper:#faf7f2; --card:#ffffff;
   --beige:#f0e3cf; --beige-deep:#d9c39a;
   --ok:#2fa05a; --bad:#d64545;
@@ -40,6 +41,7 @@ header.hero .badges{margin-top:16px;display:flex;gap:8px;justify-content:center;
 .badge.unsup{background:var(--unsup-bg);color:var(--unsup-deep);}
 .badge.ens{background:var(--ens-bg);color:var(--ens-deep);}
 .badge.dl{background:var(--dl-bg);color:var(--dl-deep);}
+.badge.rl{background:var(--rl-bg);color:var(--rl-deep);}
 section{margin-top:56px;}
 h2.sec{font-size:1.4rem;padding:12px 18px;border-radius:12px;background:var(--beige);border-left:6px solid var(--beige-deep);margin-bottom:8px;}
 h2.sec.sup{background:var(--sup-bg);border-left-color:var(--sup);}
@@ -67,6 +69,7 @@ h3.subsec{font-size:1.12rem;padding:9px 14px;border-radius:10px;background:var(-
 .flip.c-sup .face{border-top:5px solid var(--sup);}
 .flip.c-unsup .face{border-top:5px solid var(--unsup);}
 .flip.c-ens .face{border-top:5px solid var(--ens);}
+.flip.c-rl .face{border-top:5px solid var(--rl);}
 #grid-ens .flip{height:265px;}          /* XGBoost·Stacking 설명이 길어 앙상블 카드만 여유 확보 */
 #grid-ens .face.back{padding-bottom:26px;}
 .flip.c-dl .face{border-top:5px solid var(--dl);}
@@ -192,7 +195,7 @@ ol.order-answer li.bad{background:#fdecec;color:#a33;font-weight:700;}
 .match-q{background:var(--dl-bg);border-radius:10px;padding:14px 16px;font-size:.92rem;min-height:60px;}
 footer{text-align:center;padding:40px 16px;color:#a89877;font-size:.82rem;border-top:1px solid var(--beige);margin-top:60px;}
 
-/* ── 과적합 양궁 시뮬레이션 ── */
+/* ── 과대적합 양궁 시뮬레이션 ── */
 .of-a{animation:ofPop .28s ease both;}
 @keyframes ofPop{from{opacity:0;}to{opacity:1;}}
 .of-badge{display:inline-block;font-weight:800;font-size:.9rem;padding:4px 14px;border-radius:20px;margin-bottom:8px;}
@@ -267,6 +270,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
   <div class="badges">
     <span class="badge sup">지도학습</span>
     <span class="badge unsup">비지도학습</span>
+    <span class="badge rl">강화학습</span>
     <span class="badge ens">앙상블학습</span>
     <span class="badge dl">딥러닝</span>
   </div>
@@ -307,7 +311,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
   <p class="hint">💡 카드를 클릭하면 뒤집혀서 정확한 정의가 나옵니다. 앞면의 직관 → 뒷면의 정의 순서로 암기하세요.</p>
 
   <h3 class="sub">🟠 지도학습 — 예측 (회귀)</h3>
-  <p class="hint" style="margin-bottom:10px">숫자(연속값)를 맞히는 회귀. 직선(선형)부터 곡선(다항), 과적합을 막는 규제 모델까지 <b>같은 회귀 가족</b>이에요.</p>
+  <p class="hint" style="margin-bottom:10px">숫자(연속값)를 맞히는 회귀. 직선(선형)부터 곡선(다항), 과대적합을 막는 규제 모델까지 <b>같은 회귀 가족</b>이에요.</p>
   <div class="cardgrid" id="grid-pred"></div>
 
   <h3 class="sub">🟠 지도학습 — 분류</h3>
@@ -452,11 +456,29 @@ body.gated > *:not(#pageGate){visibility:hidden;}
     <b style="color:var(--unsup-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
     데이터가 동글동글 예쁘게 뭉쳐있을 땐 <b>K-Means</b>, 뱀처럼 길게 휘어있거나 노이즈가 많을 땐 <b>DBSCAN</b>, 변수가 너무 많아 머리가 아플 땐 <b>PCA</b>로 먼저 압축하기!
   </div>
+
+  <div id="rl">
+  <h3 class="sub">🕹️ 강화학습 — 정답 대신 '보상'으로 배운다</h3>
+  <p class="hint" style="margin-bottom:10px">지도학습(정답지 보고 공부)·비지도학습(정답 없이 패턴 찾기)에 이은 <b>세 번째 학습 방법</b>이에요. 정답 레이블 대신 <b>행동의 결과로 받는 보상과 벌점</b>이 선생님 역할을 합니다.</p>
+  <div class="cardgrid" id="grid-rl"></div>
+
+  <table class="t" style="margin-top:14px">
+    <tr><th style="width:130px">학습 방법</th><th>어떻게 배우나</th><th style="width:200px">대표 예</th></tr>
+    <tr><td><b style="color:var(--sup-deep)">지도학습</b></td><td>정답(레이블)이 달린 데이터로 공부 — 문제집과 답지</td><td>분류·회귀 (kNN, 선형 회귀…)</td></tr>
+    <tr><td><b style="color:var(--unsup-deep)">비지도학습</b></td><td>정답 없이 데이터 속 구조·패턴을 스스로 발견</td><td>군집화·차원 축소 (K-Means, PCA…)</td></tr>
+    <tr><td><b style="color:var(--rl-deep)">강화학습</b></td><td>행동해 보고 돌아오는 <b>보상/벌점</b>으로 시행착오하며 최선의 전략 학습</td><td>알파고, 게임 AI, 로봇 보행</td></tr>
+  </table>
+
+  <div class="card" style="border-top:5px solid var(--rl);background:var(--rl-bg);font-size:.92rem;margin-top:14px">
+    <b style="color:var(--rl-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    답지를 보며 공부하면 <b>지도</b>, 답 없이 스스로 무리를 찾으면 <b>비지도</b>, 해보고 간식과 벌점으로 배우면 <b>강화</b>!
+  </div>
+  </div>
 </section>
 
 <section id="scaling">
   <h2 class="sec ens">③ 데이터 다듬기 — 스케일링</h2>
-  <p class="hint">계산을 보다 쉽게 수행하기 위해, 서로 다른 변수의 값 범위를 일정하게 맞춰 주는 방식을 <b>스케일링</b>이라 합니다. (변수 개수를 줄이는 PCA의 '차원 축소'와는 다른 개념이에요.) 대표적인 방법은 아래와 같아요.</p>
+  <p class="hint">키(150~190)와 신발 사이즈(230~290)처럼 변수마다 값의 범위가 크게 다르면, <b>범위가 큰 변수가 학습을 지배</b>해 버려요. 이를 막고 계산도 쉽게 하도록 서로 다른 변수의 값 범위를 일정하게 맞춰 주는 방식을 <b>스케일링</b>이라 합니다. (변수 개수를 줄이는 PCA의 '차원 축소'와는 다른 개념이에요.) 대표적인 방법은 아래와 같아요.</p>
   <table class="t">
     <tr><th style="width:170px">방법</th><th>설명</th></tr>
     <tr><td><b>StandardScaler()</b></td><td>데이터를 정규분포(평균 0, 표준편차 1) 형태로 변환</td></tr>
@@ -584,7 +606,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
       <h4 style="color:var(--dl-deep);margin-bottom:8px">🔒 은닉층용</h4>
       <table class="t">
         <tr><th>함수</th><th>설명</th></tr>
-        <tr><td><b>계단 함수</b></td><td>가중합에 편향을 더한 값이 0보다 크면 1, 아니면 0 (초기 퍼셉트론 구조)</td></tr>
+        <tr><td><b>계단 함수</b></td><td>가중합에 편향을 더한 값이 0보다 크면 1, 아니면 0 (초기 퍼셉트론 구조)<br><span style="font-size:.85rem;color:#8a7a63">⚠️ 미분이 안 돼서 역전파(오차 수정)가 불가능 → 요즘 딥러닝 은닉층에선 쓰지 않는 <b>역사 속 원형</b>이에요. 그 자리를 물려받은 게 아래 ReLU 가족!</span></td></tr>
         <tr><td><b>ReLU</b></td><td>은닉층에서 자주 사용되며 입력값이 양수면 그대로, 0 이하면 0으로 출력</td></tr>
         <tr><td><b>Tanh</b></td><td>하이퍼볼릭 탄젠트. 출력값이 -1 ~ 1 사이이며 데이터의 중심을 0으로 맞춤</td></tr>
         <tr><td><b>Leaky ReLU</b></td><td>ReLU에서 0을 출력한 노드의 비활성화 문제를 막기 위해 씀. 0 미만의 음수 입력값에 아주 작은 수(α)를 곱해 아주 작은 음수를 출력함</td></tr>
@@ -686,6 +708,54 @@ body.gated > *:not(#pageGate){visibility:hidden;}
     · MAE = 평균 절대 오차 (오차의 절댓값 평균)
   </div>
 
+  <h3 class="sub">🎢 체험존 — 경사 하강법: 학습률이 하는 일</h3>
+  <div class="card" id="gd">
+    <p style="font-size:.92rem;margin-bottom:10px">모델 학습이란 <b>손실(Loss)이 가장 낮은 골짜기 바닥을 찾아 내려가는 일</b>이에요(경사 하강법). 이때 한 걸음의 보폭이 바로 위 플립카드의 <b>학습률(learning_rate)</b>! 학습률을 고르고 공을 직접 굴려 보세요.</p>
+    <div class="pctl" id="gdBtns">
+      <button class="act neutral" onclick="gdPick('slow',this)">🐌 0.05 · 너무 작게</button>
+      <button class="act fwd" onclick="gdPick('good',this)">✨ 0.3 · 적당히</button>
+      <button class="act neutral" onclick="gdPick('big',this)">🚀 1.05 · 너무 크게</button>
+    </div>
+    <svg viewBox="0 0 400 220" style="width:100%;max-width:560px;display:block;margin:6px auto">
+      <polyline id="gdCurve" fill="none" stroke="#2ab3a6" stroke-width="3" stroke-linecap="round"/>
+      <text x="200" y="207" text-anchor="middle" font-size="10" fill="#177f75" font-weight="700">🎯 최저점 (손실 최소 = 목표)</text>
+      <text x="368" y="216" text-anchor="end" font-size="11" fill="#8a7a63">가중치 w</text>
+      <text x="16" y="20" font-size="11" fill="#8a7a63">손실 ↑</text>
+      <g id="gdTrail"></g>
+      <circle id="gdBall" r="9" fill="#e8863a" stroke="#fff" stroke-width="2"/>
+    </svg>
+    <div class="pctl" style="justify-content:center">
+      <button class="act fwd" onclick="gdStep()">⬇ 한 걸음 내려가기</button>
+      <button class="act neutral" onclick="gdReset()">↺ 초기화</button>
+    </div>
+    <div id="gdInfo" style="border-radius:10px;padding:12px 14px;font-size:.9rem;margin-top:8px"></div>
+  </div>
+
+  <h3 class="sub">📊 분류 평가지표 — 정확도만 믿으면 안 되는 이유</h3>
+  <div id="metrics-clf">
+  <div class="card">
+    <p style="font-size:.92rem;margin-bottom:10px">분류 모델의 예측 결과는 아래 <b>혼동 행렬(Confusion Matrix)</b> 네 칸으로 나뉘어요. (예: 암 진단 AI)</p>
+    <table class="t" style="text-align:center">
+      <tr><th style="width:110px"></th><th>예측: 암 ⚠️</th><th>예측: 정상 ✅</th></tr>
+      <tr><th>실제: 암</th><td style="background:var(--ens-bg)"><b>TP</b> 진짜 양성<br><span style="font-size:.82rem;color:var(--ens-deep)">잘 잡아냈다! 👍</span></td><td style="background:#fdecec"><b>FN</b> 거짓 음성<br><span style="font-size:.82rem;color:var(--bad)">환자를 놓쳤다 😱</span></td></tr>
+      <tr><th>실제: 정상</th><td style="background:var(--sup-bg)"><b>FP</b> 거짓 양성<br><span style="font-size:.82rem;color:var(--sup-deep)">멀쩡한 사람을 오진 💦</span></td><td><b>TN</b> 진짜 음성<br><span style="font-size:.82rem;color:#8a7a63">정상을 정상으로</span></td></tr>
+    </table>
+    <table class="t" style="margin-top:12px">
+      <tr><th style="width:160px">지표</th><th>뜻</th><th style="width:150px">계산</th></tr>
+      <tr><td><b>정확도</b> (Accuracy)</td><td>전체 중에서 맞힌 비율</td><td>(TP+TN) / 전체</td></tr>
+      <tr><td><b>정밀도</b> (Precision)</td><td>모델이 <b>"암"이라고 한 것</b> 중 진짜 암의 비율 — <b>헛다리 짚지 않기</b></td><td>TP / (TP+FP)</td></tr>
+      <tr><td><b>재현율</b> (Recall)</td><td><b>실제 암 환자</b> 중 모델이 잡아낸 비율 — <b>놓치지 않기</b></td><td>TP / (TP+FN)</td></tr>
+    </table>
+    <div style="background:#fdecec;border-radius:10px;padding:12px 16px;font-size:.88rem;margin-top:12px">
+      <b style="color:var(--bad)">🚨 정확도의 함정</b> — 1,000명 중 실제 암 환자가 10명뿐이라면? 모두에게 "정상"이라고 찍는 엉터리 모델도 <b>정확도 99%</b>가 나옵니다. 하지만 재현율은 <b>0%</b> — 살려야 할 환자를 전부 놓친 거죠. (⑪ 심화 도전 Q4가 바로 이 이야기!)
+    </div>
+  </div>
+  <div class="card" style="border-top:5px solid var(--ens);background:var(--ens-bg);font-size:.92rem">
+    <b style="color:var(--ens-deep)">👨‍🏫 선생님의 한 줄 요약</b><br>
+    <b>놓치면 큰일</b> 나는 문제(암 진단·화재 경보)는 <b>재현율</b>, <b>헛다리가 큰일</b>인 문제(스팸 필터 — 중요 메일이 스팸함행!)는 <b>정밀도</b>를 챙겨라!
+  </div>
+  </div>
+
   <h3 class="sub">📝 검증 데이터(Validation Data) — 하이퍼파라미터의 '모의고사'</h3>
   <div class="card">
     <p style="font-size:.92rem;margin-bottom:12px">
@@ -711,9 +781,9 @@ body.gated > *:not(#pageGate){visibility:hidden;}
     </table>
 
     <div style="background:#fdecec;border-radius:10px;padding:12px 16px;font-size:.88rem;margin-top:12px">
-      <b style="color:var(--bad)">🚨 왜 훈련 데이터로 하이퍼파라미터를 정하면 안 될까? — 과적합(Overfitting)</b><br>
+      <b style="color:var(--bad)">🚨 왜 훈련 데이터로 하이퍼파라미터를 정하면 안 될까? — 과대적합(Overfitting)</b><br>
       훈련 데이터 점수만 보고 공부 방법을 고르면, 모델은 <b>문제집을 통째로 외워버리는</b> 길을 택합니다.
-      문제집(훈련)은 100점인데 처음 보는 시험(테스트)은 엉망이 되는 것 — 이것이 과적합이에요.
+      문제집(훈련)은 100점인데 처음 보는 시험(테스트)은 엉망이 되는 것 — 이것이 과대적합이에요('과적합'이라고 부르는 책도 있어요).
       검증 데이터는 모델이 단순 암기가 아니라 <mark>원리를 이해(일반화)하고 있는지 감시하는 기준</mark>이 됩니다.
       모의고사 점수가 떨어지기 시작하면 "아, 지금 외우고 있구나"를 알아채는 거죠.
     </div>
@@ -754,7 +824,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
     <div class="pctl" style="margin-top:10px;justify-content:center">
       <button class="act neutral" onclick="ofUpdate()">🎯 다시 쏘기</button>
     </div>
-    <p class="hint" style="margin-top:8px">연습장 점수(훈련 정확도)와 실전 점수(테스트 정확도)의 <b>차이가 벌어질수록</b> 과적합입니다. 위 검증 데이터(모의고사)가 바로 이 차이를 학습 도중에 미리 알려주는 장치예요.</p>
+    <p class="hint" style="margin-top:8px">연습장 점수(훈련 정확도)와 실전 점수(테스트 정확도)의 <b>차이가 벌어질수록</b> 과대적합입니다. 위 검증 데이터(모의고사)가 바로 이 차이를 학습 도중에 미리 알려주는 장치예요.</p>
   </div>
 
   <h3 class="sub">💻 컴파일/학습 코드 (줄 클릭 → 해설)</h3>
@@ -829,7 +899,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
 </section>
 
 <section id="finalquiz">
-  <h2 class="sec dl">⑩ 실력 점검 — 자가진단 퀴즈 (18문항)</h2>
+  <h2 class="sec dl">⑩ 실력 점검 — 자가진단 퀴즈 (20문항)</h2>
   <p class="hint">💡 모든 문항에 답한 뒤 "채점하기"를 누르세요. 점수는 저장되지 않으니 부담 없이 도전! 채점 후 <b>"결과 요약 복사"</b>를 눌러 선생님께 제출할 수 있어요. (위 표지의 학번·이름을 입력해 두세요!)</p>
   <div id="finalQuizBox"></div>
   <div style="text-align:center;margin-top:18px">
@@ -838,7 +908,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
   <div class="bug-msg" id="gradeWarn" style="max-width:680px;margin:10px auto 0"></div>
   <div id="quizResult">
     <div id="scoreTitle">나의 점수</div>
-    <div class="score"><span id="scoreNum">0</span> / 18</div>
+    <div class="score"><span id="scoreNum">0</span> / 20</div>
     <div id="resultMeta" style="font-size:.88rem;color:#7a6c58;margin:4px 0 2px"></div>
     <div id="scoreMsg" style="margin:8px 0 14px;font-weight:700"></div>
     <div id="wrongReview" style="text-align:left;max-width:680px;margin:0 auto 16px;background:#fff;border-radius:10px;padding:14px 16px;font-size:.9rem"></div>
@@ -853,7 +923,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
 
   <div class="card" style="background:var(--dl-bg)">
     <p style="font-weight:800;margin-bottom:6px">Q1. 훈련 정확도는 99%인데 검증 정확도가 65%로 뚝 떨어졌다. 무슨 일이 일어난 걸까?</p>
-    <p style="font-size:.9rem">👉 <b>과적합</b>. 모델이 훈련 데이터를 통째로 암기해 일반화에 실패한 상태. 에폭을 줄이거나 드롭아웃·규제를 추가한다. (양궁 시뮬의 Epoch 3 상태!)</p>
+    <p style="font-size:.9rem">👉 <b>과대적합</b>. 모델이 훈련 데이터를 통째로 암기해 일반화에 실패한 상태. 에폭을 줄이거나 드롭아웃·규제를 추가한다. (양궁 시뮬의 Epoch 3 상태!)</p>
   </div>
   <div class="card" style="background:var(--ens-bg)">
     <p style="font-weight:800;margin-bottom:6px">Q2. "여러 모델의 예측값을 다시 새 데이터로 삼아 2단계 모델이 학습"하는 앙상블 기법은?</p>
@@ -868,7 +938,7 @@ body.gated > *:not(#pageGate){visibility:hidden;}
     <p style="font-size:.9rem">👉 <b>정확도의 함정(불균형 데이터)</b>. 전체 환자 중 실제 암 환자가 1%뿐이라면, 모든 사람을 무조건 '정상'이라고 찍는 엉터리 모델도 정확도 99%가 나온다. 정작 살려야 할 암 환자를 전부 놓치는(재현율=0) 최악의 모델일 수 있는 것. 그래서 정확도 하나만 보면 안 되고, <b>정밀도(Precision)·재현율(Recall)</b>을 함께 봐야 한다. — "무엇을 맞혔나"보다 "무엇을 놓쳤나"가 더 중요할 때가 있다.</p>
   </div>
   <div class="card" style="background:var(--dl-bg)">
-    <p style="font-weight:800;margin-bottom:6px">Q5. 훈련 정확도 100%, 테스트 정확도도 100%였던 모델을 실제 서비스에 배포했더니 성능이 형편없었다. 과적합도 아닌데, 무엇을 놓친 걸까?</p>
+    <p style="font-weight:800;margin-bottom:6px">Q5. 훈련 정확도 100%, 테스트 정확도도 100%였던 모델을 실제 서비스에 배포했더니 성능이 형편없었다. 과대적합도 아닌데, 무엇을 놓친 걸까?</p>
     <p style="font-size:.9rem">👉 <b>데이터 편향 &amp; 분포 이동(Distribution Shift)</b>. 훈련·테스트를 같은 데이터에서 나눴다면, 그 데이터 자체가 현실을 대표하지 못할 때 둘 다 높은 점수가 나와도 소용없다. 예컨대 낮 시간대 사진만으로 학습한 자율주행 AI는 밤·비 오는 날 무너진다. 테스트 점수는 <b>"수집한 데이터와 비슷한 상황"</b>에서의 실력일 뿐 — 좋은 모델보다 <b>현실을 닮은 좋은 데이터</b>가 먼저다.</p>
   </div>
 </section>
@@ -894,7 +964,7 @@ const SVGS = {
   /* ── 지도학습 · 예측(회귀) ── */
   linreg:`<svg viewBox="0 0 120 80" width="110"><defs><linearGradient id="lrG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#e8863a"/><stop offset="1" stop-color="#c96a1f"/></linearGradient></defs><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="16" y1="64" x2="108" y2="16" stroke="url(#lrG)" stroke-width="3" stroke-linecap="round"/><g fill="#e8863a" stroke="#fff" stroke-width="1"><circle cx="26" cy="60" r="3.4"/><circle cx="42" cy="54" r="3.4"/><circle cx="58" cy="46" r="3.4"/><circle cx="74" cy="36" r="3.4"/><circle cx="90" cy="26" r="3.4"/><circle cx="102" cy="20" r="3.4"/></g></svg>`,
   polyreg:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><path d="M16 50 Q 36 14, 56 42 T 106 24" fill="none" stroke="#c96a1f" stroke-width="3" stroke-linecap="round"/><g fill="#e8863a" stroke="#fff" stroke-width="1"><circle cx="20" cy="50" r="3.2"/><circle cx="34" cy="24" r="3.2"/><circle cx="48" cy="40" r="3.2"/><circle cx="62" cy="42" r="3.2"/><circle cx="76" cy="32" r="3.2"/><circle cx="90" cy="30" r="3.2"/><circle cx="104" cy="22" r="3.2"/></g><text x="66" y="62" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">휘어지는 곡선 자</text></svg>`,
-  ridge:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><polyline points="18,52 30,20 42,56 54,22 66,54 78,26 90,50 104,30" fill="none" stroke="#d64545" stroke-width="1.6" stroke-dasharray="3,2" opacity=".85"/><path d="M18 50 Q 60 32, 104 30" fill="none" stroke="#2fa05a" stroke-width="3" stroke-linecap="round"/><g fill="#8a7a63" stroke="#fff" stroke-width=".8"><circle cx="30" cy="36" r="2.6"/><circle cx="54" cy="36" r="2.6"/><circle cx="78" cy="36" r="2.6"/></g><text x="30" y="16" font-size="7" fill="#d64545" font-weight="700">과적합</text><text x="86" y="24" font-size="7" fill="#2fa05a" font-weight="700">규제✓</text></svg>`,
+  ridge:`<svg viewBox="0 0 120 80" width="110"><line x1="14" y1="68" x2="112" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><line x1="14" y1="10" x2="14" y2="68" stroke="#d9cdb8" stroke-width="1.5"/><polyline points="18,52 30,20 42,56 54,22 66,54 78,26 90,50 104,30" fill="none" stroke="#d64545" stroke-width="1.6" stroke-dasharray="3,2" opacity=".85"/><path d="M18 50 Q 60 32, 104 30" fill="none" stroke="#2fa05a" stroke-width="3" stroke-linecap="round"/><g fill="#8a7a63" stroke="#fff" stroke-width=".8"><circle cx="30" cy="36" r="2.6"/><circle cx="54" cy="36" r="2.6"/><circle cx="78" cy="36" r="2.6"/></g><text x="30" y="16" font-size="7" fill="#d64545" font-weight="700">과대적합</text><text x="86" y="24" font-size="7" fill="#2fa05a" font-weight="700">규제✓</text></svg>`,
 
   /* ── 지도학습 · 분류 ── */
   knn:`<svg viewBox="0 0 120 80" width="110"><circle cx="60" cy="40" r="33" fill="#fdf3e7" stroke="#e8c9a0" stroke-width="1.2" stroke-dasharray="4,3"/><circle cx="60" cy="40" r="18" fill="#fbe3c8" stroke="#c96a1f" stroke-width="1.6" stroke-dasharray="4,3"/><g fill="#d64545"><path d="M50 36 L55 27 L60 36 Z"/><path d="M64 48 L69 39 L74 48 Z"/></g><g fill="#3a7de8"><rect x="66" y="25" width="8" height="8" rx="1.5"/><rect x="30" y="21" width="8" height="8" rx="1.5"/><rect x="82" y="54" width="8" height="8" rx="1.5"/></g><circle cx="60" cy="40" r="6" fill="#2fa05a" stroke="#fff" stroke-width="1.5"/><text x="60" y="43" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">?</text><text x="80" y="15" font-size="7.5" fill="#c96a1f" font-weight="700">k=3</text></svg>`,
@@ -912,6 +982,9 @@ const SVGS = {
   /* ── 비지도 ── */
   kmeans:`<svg viewBox="0 0 120 80" width="110"><g fill="#3a7de8"><circle cx="25" cy="25" r="4"/><circle cx="35" cy="18" r="4"/><circle cx="30" cy="34" r="4"/></g><g fill="#2fa05a"><circle cx="85" cy="22" r="4"/><circle cx="95" cy="30" r="4"/><circle cx="88" cy="38" r="4"/></g><g fill="#e8863a"><circle cx="55" cy="62" r="4"/><circle cx="65" cy="68" r="4"/><circle cx="48" cy="70" r="4"/></g><path d="M30 26 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#3a7de8" stroke-dasharray="3,3"/><path d="M89 30 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#2fa05a" stroke-dasharray="3,3"/><path d="M56 66 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0" fill="none" stroke="#e8863a" stroke-dasharray="3,3"/><text x="60" y="10" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">k개로 뭉치기</text></svg>`,
   dbscan:`<svg viewBox="0 0 120 80" width="110"><g fill="#3a7de8" stroke="#fff" stroke-width=".7"><circle cx="22" cy="46" r="3.2"/><circle cx="30" cy="35" r="3.2"/><circle cx="42" cy="27" r="3.2"/><circle cx="56" cy="23" r="3.2"/><circle cx="70" cy="25" r="3.2"/><circle cx="80" cy="32" r="3.2"/></g><g fill="#2fa05a" stroke="#fff" stroke-width=".7"><circle cx="44" cy="54" r="3.2"/><circle cx="58" cy="50" r="3.2"/><circle cx="72" cy="47" r="3.2"/><circle cx="86" cy="44" r="3.2"/><circle cx="96" cy="52" r="3.2"/><circle cx="100" cy="40" r="3.2"/></g><g stroke="#d64545" stroke-width="2.2" stroke-linecap="round"><line x1="20" y1="12" x2="28" y2="20"/><line x1="28" y1="12" x2="20" y2="20"/></g><text x="33" y="19" font-size="7" fill="#d64545" font-weight="700">노이즈</text><text x="60" y="74" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">밀도로 초승달도 분리</text></svg>`,
+  /* ── 강화학습 ── */
+  rl:`<svg viewBox="0 0 120 80" width="110"><defs><marker id="rlA" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#177f75"/></marker><marker id="rlB" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c96a1f"/></marker></defs><rect x="6" y="26" width="36" height="28" rx="9" fill="#e6f7f4" stroke="#2ab3a6" stroke-width="1.6"/><text x="24" y="44" text-anchor="middle" font-size="9" font-weight="800" fill="#177f75">AI 🐶</text><rect x="78" y="26" width="36" height="28" rx="9" fill="#fdf3e7" stroke="#c96a1f" stroke-width="1.6"/><text x="96" y="44" text-anchor="middle" font-size="9" font-weight="800" fill="#c96a1f">환경</text><path d="M44 28 C 56 14, 64 14, 76 28" fill="none" stroke="#177f75" stroke-width="2" marker-end="url(#rlA)"/><path d="M76 54 C 64 68, 56 68, 44 54" fill="none" stroke="#c96a1f" stroke-width="2" marker-end="url(#rlB)"/><text x="60" y="11" text-anchor="middle" font-size="7.5" fill="#177f75" font-weight="700">행동</text><text x="60" y="78" text-anchor="middle" font-size="7.5" fill="#c96a1f" font-weight="700">보상 +1 / 벌점 −1</text></svg>`,
+
   pca:`<svg viewBox="0 0 120 80" width="110"><defs><marker id="pcaA" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c96a1f"/></marker></defs><ellipse cx="54" cy="42" rx="34" ry="14" fill="#e9f1fd" stroke="#bcd4f5" transform="rotate(-28 54 42)"/><g fill="#3a7de8" stroke="#fff" stroke-width=".7"><circle cx="34" cy="52" r="2.6"/><circle cx="44" cy="47" r="2.6"/><circle cx="54" cy="42" r="2.6"/><circle cx="64" cy="37" r="2.6"/><circle cx="74" cy="32" r="2.6"/><circle cx="46" cy="52" r="2.6"/><circle cx="62" cy="45" r="2.6"/></g><line x1="30" y1="56" x2="80" y2="28" stroke="#c96a1f" stroke-width="2.5" marker-end="url(#pcaA)"/><line x1="54" y1="42" x2="45" y2="30" stroke="#e8863a" stroke-width="1.8" marker-end="url(#pcaA)"/><text x="84" y="24" font-size="8" fill="#c96a1f" font-weight="800">PC1</text><text x="60" y="72" text-anchor="middle" font-size="7.5" fill="#8a7a63" font-weight="700">여러 변수 → 핵심 축 압축</text></svg>`
 };
 
@@ -919,7 +992,7 @@ const ALGO_CARDS = {
   "grid-pred":[
     {cls:"c-sup",svg:"linreg",name:"선형 회귀",one:"점들을 가장 잘 관통하는 직선 긋기! 📈",def:"데이터를 가장 잘 나타내는 직선(또는 평면)을 그려 미래의 숫자를 예측하는 가장 기본적인 회귀"},
     {cls:"c-sup",svg:"polyreg",name:"다항 회귀",one:"빳빳한 자 대신 휘어지는 곡선 자로! 〰️",def:"세상의 데이터는 직선으로만 움직이지 않는다! 데이터가 위아래로 요동치거나 휘어질 때, 최고차항을 올려 곡선 형태로 추세를 예측하는 선형 모델의 확장"},
-    {cls:"c-sup",svg:"ridge",name:"Ridge / Lasso (규제 모델)",one:"과적합에 벌점 주는 족집게 선생님 🚨",def:"기출문제만 달달 외워 응용을 못 푸는 학생(과적합)처럼 모델이 특정 데이터에만 과도하게 fit되는 것을 막으려, 복잡한 수식에 수학적 패널티(규제)를 부여해 범용 예측 능력을 키우는 방어형 선형 모델"}
+    {cls:"c-sup",svg:"ridge",name:"Ridge / Lasso (규제 모델)",one:"과대적합에 벌점 주는 족집게 선생님 🚨",def:"기출문제만 달달 외워 응용을 못 푸는 학생(과대적합)처럼 모델이 특정 데이터에만 과도하게 fit되는 것을 막으려, 복잡한 수식에 수학적 패널티(규제)를 부여해 범용 예측 능력을 키우는 방어형 선형 모델"}
   ],
   "grid-clf":[
     {cls:"c-sup",svg:"knn",name:"k-최근접 이웃 (kNN)",one:"가까운 이웃들에게 물어봐!",def:"새로운 데이터가 들어오면 가장 가까운 이웃들이 누군지 확인해 다수결로 종류 결정"},
@@ -938,6 +1011,9 @@ const ALGO_CARDS = {
     {cls:"c-unsup",svg:"kmeans",name:"K-Means",one:"정답 없이 거리로 뭉치 찾기 (k 지정)",def:"정답이 없는 상태에서 데이터 사이의 거리를 계산해 사람이 정한 k개의 군집으로 나눈다. 동글동글 뭉친 데이터에 강함"},
     {cls:"c-unsup",svg:"dbscan",name:"DBSCAN",one:"소문 듣고 옹기종기 모여든 맛집 대기 줄 🍜",def:"군집 개수 k를 미리 정하지 않아도 데이터가 빽빽한 밀도를 따라 스스로 그룹을 형성. K-Means가 못 나누는 초승달·뱀 모양도 완벽히 분리하고, 어디에도 안 속한 외톨이는 이상치(노이즈)로 알아서 걸러내는 똑똑한 녀석!"},
     {cls:"c-unsup",svg:"pca",name:"PCA (차원 축소)",one:"3D 피규어를 잘 나오는 각도로 2D 사진 📸",def:"원래 정보(분산)를 최대한 손실 없이 유지하면서 10·20개 넘는 복잡한 변수(차원)를 2·3차원으로 압축. 그래프 시각화와 연산 속도를 대폭 올려주는 치트키!"}
+  ],
+  "grid-rl":[
+    {cls:"c-rl",svg:"rl",name:"강화학습 (Reinforcement Learning)",one:"간식과 벌점으로 배우는 강아지 훈련 🦴",def:"정답 레이블 없이, 행동을 해 보고 돌아오는 보상과 벌점을 통해 시행착오하며 보상을 최대로 만드는 전략을 스스로 학습. 알파고·게임 AI·로봇 보행이 대표 사례"}
   ]
 };
 </script>
@@ -1000,7 +1076,7 @@ const WALKTHROUGHS = {
     ["])","모델 완성!"]
   ]},
   scaler:{noteId:"note-scaler",lines:[
-    ["scaler = MixMaxScaler()","① 개발자는 MinMaxScaler를 스케일러로 결정… 그런데 ⚠️ 철자가 이상하죠? 시험 단골 함정 오타예요! '버그 찾기' ④-2번에서 고쳐 보세요."],
+    ["scaler = MixMaxScaler()","① 개발자는 MinMaxScaler를 스케일러로 결정… 그런데 ⚠️ 철자가 이상하죠? 시험 단골 함정 오타예요! '버그 찾기' 섹션(⑦)의 버그 2번에서 고쳐 보세요."],
     ["X_train = scaler.fit_transform(X_train)","② 훈련 데이터(X_train) 기준으로 스케일링 기준을 만들어(fit) 변환(transform)합니다."],
     ["X_test = scaler.transform(X_test)","③ 테스트 데이터는 이미 학습한 스케일링 기준으로 변환만 합니다. (새로 fit하지 않아요!)"]
   ]},
@@ -1045,6 +1121,7 @@ const BUGS=[
 ================================================================ */
 const HYPER=[
   {name:"optimizer",one:"어떻게 최적화할까?",def:"모델 학습을 위한 최적화 알고리즘. adam, sgd 등이 있으며 adam이 대표적. 역전파에서 가중치·편향 수정에 사용됨.",ex:"optimizer='adam'"},
+  {name:"learning_rate",one:"한 번에 얼마나 크게 고칠까?",def:"학습률. 역전파로 가중치·편향을 수정할 때 한 번에 움직이는 폭(보폭). 너무 크면 정답 근처를 겅중겅중 지나쳐 버리고, 너무 작으면 학습이 달팽이처럼 느려짐. optimizer가 이 보폭으로 수정함.",ex:"Adam(learning_rate=0.001)"},
   {name:"loss",one:"예측이 얼마나 틀렸나?",def:"손실 함수. 예측값과 실제값의 차이를 계산. 분류: binary_crossentropy(이진) / categorical_crossentropy(다중). 회귀: MSE, MAE.",ex:"loss='mse'"},
   {name:"metrics",one:"사람이 보는 성적표",def:"인간이 성능을 평가하는 지표(학습에는 관여하지 않음). 분류: accuracy, 회귀: MSE, MAE.",ex:"metrics=['accuracy']"},
   {name:"epochs",one:"전체 반복 학습 횟수",def:"전체 훈련 데이터를 반복 학습시키는 횟수.",ex:"epochs=20"},
@@ -1119,18 +1196,24 @@ const FINAL=[
   {q:"15. 스케일링할 때 테스트 데이터(X_test)에는 fit_transform이 아니라 transform만 쓰는 이유는?",
    opts:["테스트 데이터가 더 작아서","훈련 데이터로 만든 스케일링 기준을 그대로 적용해야 해서","transform이 더 빨라서","테스트 데이터는 스케일링하면 안 돼서"],a:1,
    exp:"기준(fit)은 훈련 데이터로만 만들고, 테스트 데이터는 그 기준으로 변환(transform)만 합니다. 테스트 데이터에 다시 fit하면 시험 문제를 미리 보는 것과 같아요!"},
-  {q:"16. 기출문제만 달달 외운 학생처럼 특정 데이터에만 과도하게 맞춰지는 과적합을 막기 위해, 복잡한 수식에 수학적 패널티(규제)를 부여하는 회귀 모델은?",
+  {q:"16. 기출문제만 달달 외운 학생처럼 특정 데이터에만 과도하게 맞춰지는 과대적합을 막기 위해, 복잡한 수식에 수학적 패널티(규제)를 부여하는 회귀 모델은?",
    opts:["다항 회귀","Ridge / Lasso (규제 모델)","로지스틱 회귀","K-Means"],a:1,
-   exp:"'과적합 방지 + 수학적 패널티(규제)' → Ridge/Lasso. 다항 회귀는 직선을 곡선으로 확장한 모델이고, 로지스틱 회귀는 이름과 달리 분류용이에요."},
+   exp:"'과대적합 방지 + 수학적 패널티(규제)' → Ridge/Lasso. 다항 회귀는 직선을 곡선으로 확장한 모델이고, 로지스틱 회귀는 이름과 달리 분류용이에요."},
   {q:"17. 군집 개수 k를 미리 정하지 않아도 데이터가 빽빽한 밀도를 따라 스스로 그룹을 만들며, 초승달 모양도 분리하고 외톨이는 노이즈(이상치)로 걸러내는 알고리즘은?",
    opts:["K-Means","DBSCAN","PCA","kNN"],a:1,
    exp:"'밀도 기반 + k 불필요 + 노이즈 제거' → DBSCAN. K-Means는 k를 정해야 하고 동글동글한 군집에 강해요. kNN은 지도학습(분류)이라 헷갈리지 마세요!"},
   {q:"18. 정보(분산)를 최대한 유지하면서 수십 개의 복잡한 변수(차원)를 2·3차원으로 압축해 시각화와 연산 속도를 높이는 비지도 학습 기법은?",
    opts:["PCA (차원 축소)","DBSCAN","랜덤 포레스트","SVM"],a:0,
-   exp:"'차원 축소 + 분산 유지 + 시각화' → PCA. 군집을 나누는 게 아니라 변수(차원) 개수 자체를 줄이는 거예요."}
+   exp:"'차원 축소 + 분산 유지 + 시각화' → PCA. 군집을 나누는 게 아니라 변수(차원) 개수 자체를 줄이는 거예요."},
+  {q:"19. 정답(레이블) 없이, 행동의 결과로 주어지는 보상과 벌점을 통해 시행착오를 거치며 최선의 전략을 학습하는 방법은?",
+   opts:["지도학습","비지도학습","강화학습","앙상블 학습"],a:2,
+   exp:"'보상/벌점 + 시행착오' → 강화학습. 알파고·게임 AI가 대표 사례예요. 비지도학습도 정답이 없지만, 보상 피드백 없이 데이터 속 구조를 찾는다는 점이 달라요!"},
+  {q:"20. 실제 암 환자 전체 중에서 모델이 '암'이라고 올바르게 찾아낸 비율을 뜻하는 분류 평가지표는?",
+   opts:["정확도(Accuracy)","정밀도(Precision)","재현율(Recall)","MSE"],a:2,
+   exp:"'실제 양성 중 잡아낸 비율' → 재현율(놓치지 않기). 정밀도는 반대로 '암이라고 예측한 것 중 진짜 암'의 비율(헛다리 짚지 않기)이에요. MSE는 회귀용 손실 함수!"}
 ];
 /* 원본 문항 index → 복습 섹션 매핑 (오답 노트용) */
-const FINAL_SEC={0:["algos","② 알고리즘 도감"],1:["algos","② 알고리즘 도감"],2:["algos","② 알고리즘 도감"],3:["algos","② 알고리즘 도감"],4:["algos","② 알고리즘 도감"],5:["activation","④ 딥러닝 입문 · 활성화 함수"],6:["activation","④ 딥러닝 입문 · 활성화 함수"],7:["hyper","⑤ 하이퍼파라미터"],8:["perceptron","④ 딥러닝 입문 · 퍼셉트론"],9:["anntypes","④ 딥러닝 입문 · 신경망 종류"],10:["scaling","③ 데이터 다듬기(스케일링)"],11:["code","⑥ 코드 읽기"],12:["bayes","② 알고리즘 · 베이즈 체험존"],13:["steps7","① 문제 해결 7단계"],14:["scaling","③ 데이터 다듬기(스케일링)"],15:["algos","② 알고리즘 도감"],16:["algos","② 알고리즘 도감"],17:["algos","② 알고리즘 도감"]};
+const FINAL_SEC={0:["algos","② 알고리즘 도감"],1:["algos","② 알고리즘 도감"],2:["algos","② 알고리즘 도감"],3:["algos","② 알고리즘 도감"],4:["algos","② 알고리즘 도감"],5:["activation","④ 딥러닝 입문 · 활성화 함수"],6:["activation","④ 딥러닝 입문 · 활성화 함수"],7:["hyper","⑤ 하이퍼파라미터"],8:["perceptron","④ 딥러닝 입문 · 퍼셉트론"],9:["anntypes","④ 딥러닝 입문 · 신경망 종류"],10:["scaling","③ 데이터 다듬기(스케일링)"],11:["code","⑥ 코드 읽기"],12:["bayes","② 알고리즘 · 베이즈 체험존"],13:["steps7","① 문제 해결 7단계"],14:["scaling","③ 데이터 다듬기(스케일링)"],15:["algos","② 알고리즘 도감"],16:["algos","② 알고리즘 도감"],17:["algos","② 알고리즘 도감"],18:["rl","② 알고리즘 · 강화학습"],19:["metrics-clf","⑤ 하이퍼파라미터 · 분류 평가지표"]};
 </script>
 <script>
 /* [데이터] AI 프로젝트 6단계 — PROJ[] {name,tasks,ex}, PROJ_COLORS. */
@@ -1183,15 +1266,15 @@ const ANN_MATCH=[
 ];
 </script>
 <script>
-/* [데이터] 과적합 양궁 시뮬 — OF_STATES{1,2,3} {label,bg,fg,desc,train,test}, OF_EPOCH_NAME. */
+/* [데이터] 과대적합 양궁 시뮬 — OF_STATES{1,2,3} {label,bg,fg,desc,train,test}, OF_EPOCH_NAME. */
 /* ================================================================
-   20. 과적합 양궁 시뮬레이션 (⑤ 하이퍼파라미터 섹션 체험존)
+   20. 과대적합 양궁 시뮬레이션 (⑤ 하이퍼파라미터 섹션 체험존)
 ================================================================ */
 const OF_STATES={
   1:{label:'❌ 과소적합 (Underfitting)',bg:'#f0e9db',fg:'#7a6c58',
      desc:'<b>훈련 부족:</b> 교과서를 1페이지만 읽고 시험 보러 간 상태입니다. 연습장에서도, 실전에서도 화살이 과녁을 사방으로 빗나갑니다.',
      train:'wild',test:'wild'},
-  2:{label:'✨ 최적적합 (Good Fit)',bg:'var(--ens-bg)',fg:'var(--ens-deep)',
+  2:{label:'✨ 적합 (Good Fit)',bg:'var(--ens-bg)',fg:'var(--ens-deep)',
      desc:'<b>학습 완료:</b> 원리를 완벽히 이해했습니다! 바람의 영향을 계산할 줄 알아서 연습장과 처음 보는 실전 대회 모두 안정적으로 10점 근처에 명중합니다.',
      train:'good',test:'good'},
   3:{label:'🚨 과대적합 (Overfitting)',bg:'#fdecec',fg:'var(--bad)',
@@ -1199,6 +1282,17 @@ const OF_STATES={
      train:'perfect',test:'disaster'},
 };
 const OF_EPOCH_NAME={1:'1 (부족)',2:'2 (적당)',3:'3 (과다)'};
+</script>
+<script>
+/* [데이터] 경사 하강법 체험존 — GD_LRS{key:{lr,label,desc}}. 학습률 프리셋 3단. */
+/* ================================================================
+   21. 경사 하강법 공굴리기 (⑤ 하이퍼파라미터 섹션 체험존)
+================================================================ */
+const GD_LRS={
+  slow:{lr:0.05,label:"0.05 · 너무 작게",desc:"🐌 <b>안전하지만 하세월.</b> 한 걸음이 너무 짧아 골짜기 바닥까지 수십 걸음 — 학습 시간이 한없이 늘어져요."},
+  good:{lr:0.3,label:"0.3 · 적당히",desc:"✨ <b>성큼성큼 최저점으로!</b> 몇 걸음 만에 골짜기 바닥(손실 최소)에 안정적으로 도착합니다."},
+  big:{lr:1.05,label:"1.05 · 너무 크게",desc:"🚀 <b>겅중겅중 발산!</b> 보폭이 너무 커서 바닥을 건너뛰고 반대편으로, 갈수록 더 높이 튀어 올라요. 학습 실패!"}
+};
 </script>
 <!-- ══ 엔진 (로드 순서 변경 금지) ══ -->
 <script>
@@ -1927,6 +2021,63 @@ function ofUpdate(){
   teEl.style.color=teS.avg>=6?'var(--ens-deep)':(teS.avg<2.5?'var(--bad)':'#7a6c58');
 }
 ofUpdate();
+</script>
+<script>
+/* 경사 하강법 체험존 (⑤) — 공이 손실 골짜기를 내려간다.
+   수학: 위치 u∈[-1,1], 손실=u², 기울기=2u → u_new = u − lr·2u = u(1−2·lr)
+   lr 0.05→천천히 수렴, 0.3→빠르게 수렴, 1.05→계수 |1−2.1|>1 이라 발산. */
+let gdKey='good', gdU=-0.9, gdSteps=0, gdFlown=false;
+const gdCX=200, gdHalf=170, gdBaseY=190, gdAmp=150;
+function gdCurveY(u){ return gdBaseY - gdAmp*u*u; }
+(function gdDrawCurve(){
+  const pts=[];
+  for(let u=-1.06;u<=1.061;u+=0.04) pts.push((gdCX+u*gdHalf).toFixed(1)+','+gdCurveY(u).toFixed(1));
+  document.getElementById('gdCurve').setAttribute('points',pts.join(' '));
+})();
+function gdRender(){
+  const st=GD_LRS[gdKey];
+  const ball=document.getElementById('gdBall');
+  const uDraw=Math.max(-1.06,Math.min(1.06,gdU));
+  ball.setAttribute('cx',gdCX+uDraw*gdHalf);
+  ball.setAttribute('cy',gdCurveY(uDraw)-9);
+  const loss=(gdU*gdU).toFixed(3);
+  const info=document.getElementById('gdInfo');
+  if(gdFlown){
+    info.innerHTML=`💥 <b>공이 골짜기 밖으로 날아갔어요!</b> (${gdSteps}걸음 만에 발산) — 학습률이 너무 크면 손실이 줄기는커녕 폭발합니다. 학습률을 줄여 다시 굴려 보세요.`;
+    info.style.background='#fdecec';
+  }else{
+    info.innerHTML=`👟 걸음 수 <b>${gdSteps}</b> · 현재 손실(Loss) <b>${loss}</b> ${Math.abs(gdU)<0.02?'— 🎉 최저점 도착! 학습 완료':''}<br>${st.desc}`;
+    info.style.background='var(--rl-bg)';
+  }
+}
+function gdTrailDot(){
+  const g=document.getElementById('gdTrail');
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  const uDraw=Math.max(-1.06,Math.min(1.06,gdU));
+  c.setAttribute('cx',gdCX+uDraw*gdHalf); c.setAttribute('cy',gdCurveY(uDraw)-9);
+  c.setAttribute('r',4); c.setAttribute('fill','#2ab3a6'); c.setAttribute('opacity','.35');
+  g.appendChild(c);
+}
+function gdPick(k,btn){
+  gdKey=k;
+  document.querySelectorAll('#gdBtns button').forEach(b=>b.className='act neutral');
+  btn.className='act fwd';
+  gdReset();
+}
+function gdReset(){
+  gdU=-0.9; gdSteps=0; gdFlown=false;
+  document.getElementById('gdTrail').innerHTML='';
+  gdRender();
+}
+function gdStep(){
+  if(gdFlown) return;
+  gdTrailDot();
+  gdU=gdU*(1-2*GD_LRS[gdKey].lr);
+  gdSteps++;
+  if(Math.abs(gdU)>1.5) gdFlown=true;
+  gdRender();
+}
+gdReset();
 </script>
 <script>
 /* ================================================================

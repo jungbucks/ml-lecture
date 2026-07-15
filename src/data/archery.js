@@ -1,12 +1,12 @@
-/* [데이터] 과적합 양궁 시뮬 — OF_STATES{1,2,3} {label,bg,fg,desc,train,test}, OF_EPOCH_NAME. */
+/* [데이터] 과대적합 양궁 시뮬 — OF_STATES{1,2,3} {label,bg,fg,desc,train,test}, OF_EPOCH_NAME. */
 /* ================================================================
-   20. 과적합 양궁 시뮬레이션 (⑤ 하이퍼파라미터 섹션 체험존)
+   20. 과대적합 양궁 시뮬레이션 (⑤ 하이퍼파라미터 섹션 체험존)
 ================================================================ */
 const OF_STATES={
   1:{label:'❌ 과소적합 (Underfitting)',bg:'#f0e9db',fg:'#7a6c58',
      desc:'<b>훈련 부족:</b> 교과서를 1페이지만 읽고 시험 보러 간 상태입니다. 연습장에서도, 실전에서도 화살이 과녁을 사방으로 빗나갑니다.',
      train:'wild',test:'wild'},
-  2:{label:'✨ 최적적합 (Good Fit)',bg:'var(--ens-bg)',fg:'var(--ens-deep)',
+  2:{label:'✨ 적합 (Good Fit)',bg:'var(--ens-bg)',fg:'var(--ens-deep)',
      desc:'<b>학습 완료:</b> 원리를 완벽히 이해했습니다! 바람의 영향을 계산할 줄 알아서 연습장과 처음 보는 실전 대회 모두 안정적으로 10점 근처에 명중합니다.',
      train:'good',test:'good'},
   3:{label:'🚨 과대적합 (Overfitting)',bg:'#fdecec',fg:'var(--bad)',

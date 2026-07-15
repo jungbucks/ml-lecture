@@ -4,6 +4,7 @@
 ================================================================ */
 const HYPER=[
   {name:"optimizer",one:"어떻게 최적화할까?",def:"모델 학습을 위한 최적화 알고리즘. adam, sgd 등이 있으며 adam이 대표적. 역전파에서 가중치·편향 수정에 사용됨.",ex:"optimizer='adam'"},
+  {name:"learning_rate",one:"한 번에 얼마나 크게 고칠까?",def:"학습률. 역전파로 가중치·편향을 수정할 때 한 번에 움직이는 폭(보폭). 너무 크면 정답 근처를 겅중겅중 지나쳐 버리고, 너무 작으면 학습이 달팽이처럼 느려짐. optimizer가 이 보폭으로 수정함.",ex:"Adam(learning_rate=0.001)"},
   {name:"loss",one:"예측이 얼마나 틀렸나?",def:"손실 함수. 예측값과 실제값의 차이를 계산. 분류: binary_crossentropy(이진) / categorical_crossentropy(다중). 회귀: MSE, MAE.",ex:"loss='mse'"},
   {name:"metrics",one:"사람이 보는 성적표",def:"인간이 성능을 평가하는 지표(학습에는 관여하지 않음). 분류: accuracy, 회귀: MSE, MAE.",ex:"metrics=['accuracy']"},
   {name:"epochs",one:"전체 반복 학습 횟수",def:"전체 훈련 데이터를 반복 학습시키는 횟수.",ex:"epochs=20"},

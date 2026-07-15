@@ -56,7 +56,7 @@ const WALKTHROUGHS = {
     ["])","모델 완성!"]
   ]},
   scaler:{noteId:"note-scaler",lines:[
-    ["scaler = MixMaxScaler()","① 개발자는 MinMaxScaler를 스케일러로 결정… 그런데 ⚠️ 철자가 이상하죠? 시험 단골 함정 오타예요! '버그 찾기' ④-2번에서 고쳐 보세요."],
+    ["scaler = MixMaxScaler()","① 개발자는 MinMaxScaler를 스케일러로 결정… 그런데 ⚠️ 철자가 이상하죠? 시험 단골 함정 오타예요! '버그 찾기' 섹션(⑦)의 버그 2번에서 고쳐 보세요."],
     ["X_train = scaler.fit_transform(X_train)","② 훈련 데이터(X_train) 기준으로 스케일링 기준을 만들어(fit) 변환(transform)합니다."],
     ["X_test = scaler.transform(X_test)","③ 테스트 데이터는 이미 학습한 스케일링 기준으로 변환만 합니다. (새로 fit하지 않아요!)"]
   ]},

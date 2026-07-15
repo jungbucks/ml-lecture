@@ -3,6 +3,7 @@
   --unsup:#3a7de8; --unsup-bg:#e9f1fd; --unsup-deep:#2560c4;
   --ens:#2fa05a; --ens-bg:#e8f7ee; --ens-deep:#1f7d43;
   --dl:#8a4fd3; --dl-bg:#f3ecfc; --dl-deep:#6c35b0;
+  --rl:#2ab3a6; --rl-bg:#e6f7f4; --rl-deep:#177f75;
   --ink:#2c2620; --paper:#faf7f2; --card:#ffffff;
   --beige:#f0e3cf; --beige-deep:#d9c39a;
   --ok:#2fa05a; --bad:#d64545;
@@ -30,6 +31,7 @@ header.hero .badges{margin-top:16px;display:flex;gap:8px;justify-content:center;
 .badge.unsup{background:var(--unsup-bg);color:var(--unsup-deep);}
 .badge.ens{background:var(--ens-bg);color:var(--ens-deep);}
 .badge.dl{background:var(--dl-bg);color:var(--dl-deep);}
+.badge.rl{background:var(--rl-bg);color:var(--rl-deep);}
 section{margin-top:56px;}
 h2.sec{font-size:1.4rem;padding:12px 18px;border-radius:12px;background:var(--beige);border-left:6px solid var(--beige-deep);margin-bottom:8px;}
 h2.sec.sup{background:var(--sup-bg);border-left-color:var(--sup);}
@@ -57,6 +59,7 @@ h3.subsec{font-size:1.12rem;padding:9px 14px;border-radius:10px;background:var(-
 .flip.c-sup .face{border-top:5px solid var(--sup);}
 .flip.c-unsup .face{border-top:5px solid var(--unsup);}
 .flip.c-ens .face{border-top:5px solid var(--ens);}
+.flip.c-rl .face{border-top:5px solid var(--rl);}
 #grid-ens .flip{height:265px;}          /* XGBoost·Stacking 설명이 길어 앙상블 카드만 여유 확보 */
 #grid-ens .face.back{padding-bottom:26px;}
 .flip.c-dl .face{border-top:5px solid var(--dl);}
@@ -182,7 +185,7 @@ ol.order-answer li.bad{background:#fdecec;color:#a33;font-weight:700;}
 .match-q{background:var(--dl-bg);border-radius:10px;padding:14px 16px;font-size:.92rem;min-height:60px;}
 footer{text-align:center;padding:40px 16px;color:#a89877;font-size:.82rem;border-top:1px solid var(--beige);margin-top:60px;}
 
-/* ── 과적합 양궁 시뮬레이션 ── */
+/* ── 과대적합 양궁 시뮬레이션 ── */
 .of-a{animation:ofPop .28s ease both;}
 @keyframes ofPop{from{opacity:0;}to{opacity:1;}}
 .of-badge{display:inline-block;font-weight:800;font-size:.9rem;padding:4px 14px;border-radius:20px;margin-bottom:8px;}

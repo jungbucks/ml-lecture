@@ -56,4 +56,4 @@ if (/src="(?:data|js|css)\//.test(html) || /<link rel="stylesheet"/.test(html)) 
 
 fs.mkdirSync(DIST, { recursive: true });
 fs.writeFileSync(OUT, html);
-console.log('✅ 빌드 완료 → dist/ml_dl_interactive.html (' + (html.length / 1024).toFixed(1) + 'KB)');
+console.log('✅ 빌드 완료 → dist/ml_dl_interactive.html (' + (Buffer.byteLength(html, 'utf8') / 1024).toFixed(1) + 'KB)');  // 리뷰 반영: 문자 수(UTF-16)가 아니라 실제 바이트

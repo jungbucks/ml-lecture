@@ -10,6 +10,7 @@ function makeFlip(item){
 }
 Object.entries(ALGO_CARDS).forEach(([gid,items])=>{
   const g=document.getElementById(gid);
+  if(!g){ console.warn('[cards] 그리드 없음(데이터↔마크업 불일치): '+gid); return; }  // 리뷰 반영: 한 그리드 누락이 전체 카드를 죽이지 않게
   items.forEach(it=>g.appendChild(makeFlip(it)));
 });
 
